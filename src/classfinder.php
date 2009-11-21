@@ -45,6 +45,13 @@ namespace TheSeer\Tools {
     */
    class ClassFinder {
 
+      /**
+       * Parse a given file for defintions of classes and interfaces
+       *
+       * @param string $file Filename of file to process
+       *
+       * @return array
+       */
       public function parseFile($file) {
          $entries      = array();
          $classFound   = false;
@@ -103,9 +110,16 @@ namespace TheSeer\Tools {
          return $entries;
       }
 
-      public function parseDirectory(\Iterator $directory) {
+      /**
+       * Process multiple files and parse them for classes and interfaces
+       *
+       * @param Iterator $sources Iterator based list of files to parse
+       *
+       * @return array
+       */
+      public function parseMulti(\Iterator $sources) {
          $entries = array();
-         $worker = new PHPFilterIterator($directory);
+         $worker = new PHPFilterIterator($sources);
          foreach($worker as $file) {
             $entries = array_merge($entries, $this->parseFile($file->getPathname()));
          }

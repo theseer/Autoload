@@ -45,24 +45,67 @@ namespace TheSeer\Tools {
     */
    class AutoloadBuilder {
 
+      /**
+       * Associative array of classes (key) and the files (value) they are in
+       *
+       * @var array
+       */
       protected $classes;
+
+      /**
+       * An optional base dir to strip for the realpath of the filename
+       *
+       * @var string
+       */
       protected $baseDir;
 
+      /**
+       * A flag to signal wether or not the generated code should have a closing ?> tag
+       *
+       * @var boolean
+       */
       protected $omitClosingPHP = true;
 
+      /**
+       * Constructor of AutoloadBuilder class
+       *
+       * @param array $classlist Array of classes
+       * @param $baseDir
+       *
+       * @return void
+       */
       public function __construct(array $classlist, $baseDir = '') {
          $this->classes = $classlist;
          $this->baseDir = $baseDir;
       }
 
+      /**
+       * Setter for the Basedir
+       *
+       * @param string $dir Path to strip from beginning of filenames
+       *
+       * @return void
+       */
       public function setBaseDir($dir) {
          $this->baseDir = $dir;
       }
 
+      /**
+       * Setter to switch closing php tag on and off
+       *
+       * @param boolean $omit Flag to enable or disable omitting
+       *
+       * @return void
+       */
       public function omitClosingTag($omit) {
          $this->omitClosingPHP = $omit;
       }
 
+      /**
+       * Render autoload code into a string
+       *
+       * @return string
+       */
       public function render() {
          $entries = array();
          foreach($this->classes as $class => $file) {
@@ -92,6 +135,13 @@ namespace TheSeer\Tools {
          return $body;
       }
 
+      /**
+       * Save autoload code to given filename
+       *
+       * @param string $filename Filename to store code in
+       *
+       * @return integer|boolean
+       */
       public function save($filename) {
          return file_put_contents($filename, $this->render());
       }
