@@ -113,7 +113,7 @@ namespace TheSeer\Tools {
       /**
        * Process multiple files and parse them for classes and interfaces
        *
-       * @param Iterator $sources Iterator based list of files to parse
+       * @param Iterator $sources Iterator based list of files (SplFileObject) to parse
        *
        * @return array
        */

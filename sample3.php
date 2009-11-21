@@ -12,7 +12,7 @@
 
   $finder = new \TheSeer\Tools\ClassFinder;
 
-  $found = $finder->parseDirectory($scanner('.'));
+  $found = $finder->parseMulti($scanner('.'));
 
   $ab = new \TheSeer\Tools\AutoloadBuilder($found);
   $ab->omitClosingTag(false);
