@@ -56,6 +56,7 @@ namespace TheSeer\Tools {
          $entries      = array();
          $classFound   = false;
          $nsFound      = false;
+         $nsProc       = false;
          $inNamespace  = null;
          $bracketCount = 0;
 
@@ -65,12 +66,19 @@ namespace TheSeer\Tools {
                switch ($tok) {
                   case '{': {
                      $bracketCount++;
+                     $nsProc = false;
                      break;
                   }
                   case '}': {
                      $bracketCount--;
                      if ($bracketCount==0 && $inNamespace) {
                         $inNamespace = null;
+                     }
+                     break;
+                  }
+                  case ";": {
+                     if ($nsProc) {
+                        $nsProc = false;
                      }
                      break;
                   }
@@ -86,13 +94,14 @@ namespace TheSeer\Tools {
                }
                case T_NAMESPACE: {
                   $nsFound = true;
+                  $nsProc  = true;
                   $inNamespace = null;
                   continue;
                }
                case T_NS_SEPARATOR: {
-                  if ($inNamespace) {
+                  if ($nsProc) {
                      $nsFound = true;
-                     $inNamespace .= '\\';
+                     $inNamespace .= '\\\\';
                   }
                   continue;
                }
@@ -101,7 +110,7 @@ namespace TheSeer\Tools {
                      $inNamespace .= strtolower($tok[1]);
                      $nsFound = false;
                   } elseif ($classFound) {
-                     $entries[($inNamespace ? $inNamespace .'\\' : '') . strtolower($tok[1])] = $file;
+                     $entries[($inNamespace ? $inNamespace .'\\\\' : '') . strtolower($tok[1])] = $file;
                      $classFound=false;
                   }
                }
