@@ -59,6 +59,7 @@ namespace TheSeer\Tools {
          $nsProc       = false;
          $inNamespace  = null;
          $bracketCount = 0;
+         $bracketNS    = false;
 
          $token=token_get_all(file_get_contents($file));
          foreach($token as $tok) {
@@ -66,12 +67,15 @@ namespace TheSeer\Tools {
                switch ($tok) {
                   case '{': {
                      $bracketCount++;
+                     if ($nsProc) {
+                        $bracketNS = true;
+                     }
                      $nsProc = false;
                      break;
                   }
                   case '}': {
                      $bracketCount--;
-                     if ($bracketCount==0 && $inNamespace) {
+                     if ($bracketCount==0 && $inNamespace && $bracketNS) {
                         $inNamespace = null;
                      }
                      break;
@@ -79,6 +83,7 @@ namespace TheSeer\Tools {
                   case ";": {
                      if ($nsProc) {
                         $nsProc = false;
+                        $bracketNS = false;
                      }
                      break;
                   }
