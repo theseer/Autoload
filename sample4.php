@@ -16,5 +16,6 @@
   $found = $finder->parseMulti($scanner('.'));
 
   $ab = new \TheSeer\Tools\AutoloadBuilder($found);
-  $ab->omitClosingTag(false);
+  $ab->setIndent("\t");
+  $ab->setLineBreak("\r\n");
   echo $ab->render();
