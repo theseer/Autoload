@@ -162,7 +162,8 @@ namespace TheSeer\Tools {
          $body .= "{$i}{$i}static \$classes = array({$ln}";
          $body .= "{$i}{$i}{$i}" . join(",$ln{$i}{$i}{$i}", $entries) . $ln;
          $body .= "{$i}{$i});{$ln}";
-         $body .= "{$i}{$i}if (isset(\$classes[\$class]) { require \$classes[\$class]; }{$ln}";
+         $body .= "{$i}{$i}\$cn = strtolower(\$class);{$ln}";
+         $body .= "{$i}{$i}if (isset(\$classes[\$cn]) { require \$classes[\$cn]; }{$ln}";
          $body .= "{$i}}{$ln}";
          $body .= ");{$ln}";
 
