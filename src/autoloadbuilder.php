@@ -164,7 +164,7 @@ namespace TheSeer\Tools {
          $body .= "{$i}{$i});{$ln}";
          $body .= "{$i}{$i}\$cn = strtolower(\$class);{$ln}";
          $body .= "{$i}{$i}if (isset(\$classes[\$cn])) {{$ln}";
-         $body .= "{$i}{$i}{$i}require ".($this->baseDir ? '__DIR__ . "/" .' : '') . " \$classes[\$cn];{$ln}{$i}{$i}}{$ln}";
+         $body .= "{$i}{$i}{$i}require ".($this->baseDir ? '__DIR__ .' : '') . " \$classes[\$cn];{$ln}{$i}{$i}}{$ln}";
          $body .= "{$i}}{$ln}";
          $body .= ");{$ln}";
 
