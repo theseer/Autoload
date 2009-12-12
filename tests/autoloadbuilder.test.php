@@ -109,7 +109,10 @@ namespace TheSeer\Tools\Tests {
       public function testSetBaseDirRendering() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setBaseDir(__DIR__);
-         $expected = "      static \$classes = array(\n         'demo' => '' . __DIR__ . '/_data/classfinder/class.php'\n      );";
+         $expected = "require __DIR__ . \"/\" . \$classes[\$cn];";
+         $this->assertContains($expected, $ab->render());
+
+         $expected = "      static \$classes = array(\n         'demo' => '/_data/classfinder/class.php'\n      );";
          $this->assertContains($expected, $ab->render());
       }
 
