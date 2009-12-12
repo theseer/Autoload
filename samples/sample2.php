@@ -1,11 +1,11 @@
 <?php
 
-  require 'src/classfinder.php';
-  require 'src/phpfilter.php';
+  require '../src/classfinder.php';
+  require '../src/phpfilter.php';
 
-  require '../scanner/src/directoryscanner.php';
-  require '../scanner/src/includeexcludefilter.php';
-  require '../scanner/src/filesonlyfilter.php';
+  require '../../scanner/src/directoryscanner.php';
+  require '../../scanner/src/includeexcludefilter.php';
+  require '../../scanner/src/filesonlyfilter.php';
 
 
   $scanner = new \TheSeer\Tools\DirectoryScanner;
@@ -13,5 +13,5 @@
 
   $finder = new \TheSeer\Tools\ClassFinder;
 
-  $rc = $finder->parseMulti($scanner('.'));
+  $rc = $finder->parseMulti($scanner('../'));
   var_dump($rc);

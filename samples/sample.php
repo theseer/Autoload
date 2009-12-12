@@ -1,6 +1,6 @@
 <?php
 
-  require 'src/classfinder.php';
+  require '../src/classfinder.php';
 
   $finder = new \TheSeer\Tools\ClassFinder;
 
