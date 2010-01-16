@@ -39,7 +39,7 @@ namespace TheSeer\Tools\Tests {
 
    use TheSeer\Tools;
 
-use TheSeer\Tools\ClassFinder;
+   use TheSeer\Tools\ClassFinder;
    use TheSeer\Tools\AutoloadBuilder;
 
    /**
@@ -65,7 +65,7 @@ use TheSeer\Tools\ClassFinder;
        */
       public function testDefaultRendering() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $expected = "      static \$classes = array(\n         'demo1' => '".__DIR__."/_data/classfinder/class.php'\n";
+         $expected = "      static \$classes = array(\n         'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
          $this->assertContains($expected, $ab->render());
          $expected = "require \$classes[\$cn]";
          $this->assertContains($expected, $ab->render());
@@ -99,7 +99,7 @@ use TheSeer\Tools\ClassFinder;
       public function testSettingNonDefaultTemplate() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setTemplateFile(__DIR__ . '/_data/templates/simple.php');
-         $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php'\n";
+         $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
          $this->assertContains($expected, $ab->render());
       }
 
@@ -110,7 +110,7 @@ use TheSeer\Tools\ClassFinder;
       public function testSettingTemplateCode() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setTemplateCode('___CLASSLIST___');
-         $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php'\n";
+         $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
          $this->assertContains($expected, $ab->render());
       }
 
@@ -122,7 +122,7 @@ use TheSeer\Tools\ClassFinder;
       public function testWindowsLFRendering() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setLineBreak("\r\n");
-         $expected = "_data/classfinder/class.php'\r\n";
+         $expected = "_data/classfinder/class.php',\r\n";
          $this->assertContains($expected, $ab->render());
       }
 
@@ -149,7 +149,7 @@ use TheSeer\Tools\ClassFinder;
          $expected = "require __DIR__ . \$classes[\$cn];";
          $this->assertContains($expected, $ab->render());
 
-         $expected = "      static \$classes = array(\n         'demo1' => '/_data/classfinder/class.php'\n";
+         $expected = "      static \$classes = array(\n         'demo1' => '/_data/classfinder/class.php',\n";
          $this->assertContains($expected, $ab->render());
       }
 
