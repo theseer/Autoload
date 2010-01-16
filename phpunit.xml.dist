@@ -16,6 +16,7 @@
         </whitelist>
         <blacklist>
             <directory>tests/_data</directory>
+            <directory>src/templates</directory>
         </blacklist>
     </filter>
 
