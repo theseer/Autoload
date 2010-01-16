@@ -158,6 +158,22 @@ namespace TheSeer\Tools\Tests {
         $this->assertArrayHasKey('demo\\\\level2\\\\level3\\\\demo2', $rc);
       }
 
+      public function testBracketParsingBugTest1() {
+        $finder = new \TheSeer\Tools\ClassFinder;
+        $rc = $finder->parseFile(__DIR__.'/_data/classfinder/brackettest1.php');
+        $this->assertEquals(2,count($rc));
+        $this->assertArrayHasKey('x\\\\foo', $rc);
+        $this->assertArrayHasKey('x\\\\baz', $rc);
+      }
+
+      public function testBracketParsingBugTest2() {
+        $finder = new \TheSeer\Tools\ClassFinder;
+        $rc = $finder->parseFile(__DIR__.'/_data/classfinder/brackettest2.php');
+        $this->assertEquals(2,count($rc));
+        $this->assertArrayHasKey('x\\\\foo', $rc);
+        $this->assertArrayHasKey('x\\\\baz', $rc);
+      }
+
       /**
        *
        * @covers \TheSeer\Tools\ClassFinder::parseMulti

@@ -92,6 +92,12 @@ namespace TheSeer\Tools {
             }
 
             switch ($tok[0]) {
+               case T_CURLY_OPEN:
+               case T_DOLLAR_OPEN_CURLY_BRACES: {
+                  $bracketCount++;
+                  continue;
+               }
+
                case T_CLASS:
                case T_INTERFACE: {
                   $classFound = true;
