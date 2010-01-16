@@ -16,5 +16,5 @@
   $found = $finder->parseMulti($scanner('../'));
 
   $ab = new \TheSeer\Tools\AutoloadBuilder($found);
-  $ab->omitClosingTag(false);
+
   echo $ab->render();
