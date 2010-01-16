@@ -217,7 +217,7 @@ namespace TheSeer\Tools {
 
          $replace = array(
             '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
-            '___CLASSLIST___' => join( $this->linebreak . $this->indent, $entries),
+            '___CLASSLIST___' => join( ',' . $this->linebreak . $this->indent, $entries),
             '___BASEDIR___'   => $this->baseDir ? '__DIR__ . ' : ''
          );
 
