@@ -37,7 +37,9 @@
 
 namespace TheSeer\Tools\Tests {
 
-   use TheSeer\Tools\ClassFinder;
+   use TheSeer\Tools;
+
+use TheSeer\Tools\ClassFinder;
    use TheSeer\Tools\AutoloadBuilder;
 
    /**
@@ -52,7 +54,8 @@ namespace TheSeer\Tools\Tests {
 
       public function setUp() {
          $this->classlist = array();
-         $this->classlist['demo'] = __DIR__ . '/_data/classfinder/class.php';
+         $this->classlist['demo1'] = __DIR__ . '/_data/classfinder/class.php';
+         $this->classlist['demo2'] = __DIR__ . '/_data/classfinder/class.php';
       }
 
       /**
@@ -62,7 +65,7 @@ namespace TheSeer\Tools\Tests {
        */
       public function testDefaultRendering() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $expected = "      static \$classes = array(\n         'demo' => '".__DIR__."/_data/classfinder/class.php'\n      );";
+         $expected = "      static \$classes = array(\n         'demo1' => '".__DIR__."/_data/classfinder/class.php'\n";
          $this->assertContains($expected, $ab->render());
       }
 
@@ -79,13 +82,45 @@ namespace TheSeer\Tools\Tests {
 
       /**
        *
+       * @covers \TheSeer\Tools\AutoloadBuilder::setTemplateFile
+       * @expectedException \TheSeer\Tools\AutoloadBuilderException
+       */
+      public function testExceptionForSettingTemplateFileToNonExisting() {
+         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
+         $ab->setTemplateFile('NonExistend.file');
+      }
+
+      /**
+       *
+       * @covers \TheSeer\Tools\AutoloadBuilder::setTemplateFile
+       */
+      public function testSettingNonDefaultTemplate() {
+         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
+         $ab->setTemplateFile(__DIR__ . '/_data/templates/simple.php');
+         $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php'\n";
+         $this->assertContains($expected, $ab->render());
+      }
+
+      /**
+       *
+       * @covers \TheSeer\Tools\AutoloadBuilder::setTemplateCode
+       */
+      public function testSettingTemplateCode() {
+         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
+         $ab->setTemplateCode('___CLASSLIST___');
+         $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php'\n";
+         $this->assertContains($expected, $ab->render());
+      }
+
+      /**
+       *
        * @covers \TheSeer\Tools\AutoloadBuilder::setLinebreak
        * @covers \TheSeer\Tools\AutoloadBuilder::render
        */
       public function testWindowsLFRendering() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setLineBreak("\r\n");
-         $expected = "      static \$classes = array(\r\n         'demo' => '".__DIR__."/_data/classfinder/class.php'\r\n      );";
+         $expected = "_data/classfinder/class.php'\r\n";
          $this->assertContains($expected, $ab->render());
       }
 
@@ -97,7 +132,7 @@ namespace TheSeer\Tools\Tests {
       public function testIndentWithTabsRendering() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setIndent("\t");
-         $expected = "\t\tstatic \$classes = array(\n\t\t\t'demo' => '".__DIR__."/_data/classfinder/class.php'\n\t\t);";
+         $expected = "\t'demo2'";
          $this->assertContains($expected, $ab->render());
       }
 
@@ -112,31 +147,46 @@ namespace TheSeer\Tools\Tests {
          $expected = "require __DIR__ . \$classes[\$cn];";
          $this->assertContains($expected, $ab->render());
 
-         $expected = "      static \$classes = array(\n         'demo' => '/_data/classfinder/class.php'\n      );";
+         $expected = "      static \$classes = array(\n         'demo1' => '/_data/classfinder/class.php'\n";
          $this->assertContains($expected, $ab->render());
       }
 
       /**
        *
-       * @covers \TheSeer\Tools\AutoloadBuilder::omitClosingTag
-       * @covers \TheSeer\Tools\AutoloadBuilder::render
+       * @depends testSettingTemplateCode
+       * @expectedException \TheSeer\Tools\AutoloadBuilderException
        */
-      public function testClosingTagOnRendering() {
+      public function testSettingInvalidTimestamp() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->omitClosingTag(false);
-         $this->assertContains('?>', $ab->render());
+         $ab->setTimestamp('Bad');
       }
 
       /**
        *
-       * @covers \TheSeer\Tools\AutoloadBuilder::omitClosingTag
-       * @covers \TheSeer\Tools\AutoloadBuilder::render
+       * @depends testSettingTemplateCode
        */
-      public function testClosingTagoffRendering() {
+      public function testSettingTimestamp() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->omitClosingTag(true);
-         $this->assertNotContains('?>', $ab->render());
+         $ab->setTemplateCode('___CREATED___');
+         $now = time();
+         $ab->setTimestamp($now);
+         $this->assertEquals(date('r',$now), $ab->render());
       }
+
+      /**
+       *
+       * @depends testSettingTemplateCode
+       * @depends testSettingTimestamp
+       */
+      public function testSettingDateTimeFormat() {
+         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
+         $ab->setTemplateCode('___CREATED___');
+         $now = time();
+         $ab->setTimestamp($now);
+         $ab->setDateTimeFormat('dmYHis');
+         $this->assertEquals(date('dmYHis',$now), $ab->render());
+      }
+
 
    }
 
