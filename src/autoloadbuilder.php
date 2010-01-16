@@ -116,7 +116,7 @@ namespace TheSeer\Tools {
          $this->baseDir = $baseDir;
          $this->indent  = $indent;
          if ($tpl === null) {
-            $tpl = __DIR__ . '/templates/default.php';
+            $tpl = __DIR__ . '/templates/default.php.tpl';
          }
          $this->setTemplateFile($tpl);
       }
@@ -218,7 +218,7 @@ namespace TheSeer\Tools {
          $replace = array(
             '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
             '___CLASSLIST___' => join( $this->linebreak . $this->indent, $entries),
-            '___BASEDIR___'   => $this->baseDir ? '__DIR__' : ''
+            '___BASEDIR___'   => $this->baseDir ? '__DIR__ . ' : ''
          );
 
          return str_replace(array_keys($replace), array_values($replace), $this->template);

@@ -6,7 +6,7 @@ spl_autoload_register(
       );
       $cn = strtolower($class);
       if (isset($classes[$cn])) {
-         require ___BASEDIR___ . $classes[$cn];
+         require ___BASEDIR___$classes[$cn];
       }
    }
 );

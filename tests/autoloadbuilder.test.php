@@ -67,6 +67,8 @@ use TheSeer\Tools\ClassFinder;
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $expected = "      static \$classes = array(\n         'demo1' => '".__DIR__."/_data/classfinder/class.php'\n";
          $this->assertContains($expected, $ab->render());
+         $expected = "require \$classes[\$cn]";
+         $this->assertContains($expected, $ab->render());
       }
 
       /**
