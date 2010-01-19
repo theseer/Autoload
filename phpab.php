@@ -42,11 +42,6 @@
  *   4 - Lint Error
  */
 
-if (version_compare(PHP_VERSION,'5.3.0','<')) {
-  fwrite(STDERR, "This application needs at least PHP version 5.3.0 (running:" . PHP_VERSION . ")\n");
-  exit(1);
-}
-
 require __DIR__ . '/../DirectoryScanner/autoload.php';
 require __DIR__ . '/../ezc/current/Base/src/base.php';
 spl_autoload_register(array('\ezcBase','autoload'));
