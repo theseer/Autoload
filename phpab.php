@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-
 /**
  * Copyright (c) 2009 Arne Blankerts <arne@blankerts.de>
  * All rights reserved.
@@ -43,21 +42,21 @@
  *   4 - Lint Error
  */
 
-   if (version_compare(PHP_VERSION,'5.3.0','<')) {
-      fwrite(STDERR, "This application needs at least PHP version 5.3.0 (running:" . PHP_VERSION . ")\n");
-      exit(1);
-   }
+if (version_compare(PHP_VERSION,'5.3.0','<')) {
+  fwrite(STDERR, "This application needs at least PHP version 5.3.0 (running:" . PHP_VERSION . ")\n");
+  exit(1);
+}
 
-   require __DIR__ . '/../DirectoryScanner/autoload.php';
-   require __DIR__ . '/../ezc/current/Base/src/base.php';
-   spl_autoload_register(array('\ezcBase','autoload'));
+require __DIR__ . '/../DirectoryScanner/autoload.php';
+require __DIR__ . '/../ezc/current/Base/src/base.php';
+spl_autoload_register(array('\ezcBase','autoload'));
 
-   require __DIR__ . '/src/classfinder.php';
-   require __DIR__ . '/src/phpfilter.php';
-   require __DIR__ . '/src/autoloadbuilder.php';
+require __DIR__ . '/src/classfinder.php';
+require __DIR__ . '/src/phpfilter.php';
+require __DIR__ . '/src/autoloadbuilder.php';
 
-   require __DIR__ . '/src/autoloadbuildercli.php';
+require __DIR__ . '/src/autoloadbuildercli.php';
 
-   $exec = new \TheSeer\Tools\AutoloadBuilderCLI();
-   $exec->run();
-   exit(0);
+$exec = new \TheSeer\Tools\AutoloadBuilderCLI();
+$exec->run();
+exit(0);
