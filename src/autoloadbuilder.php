@@ -74,13 +74,6 @@ namespace TheSeer\Tools {
       protected $linebreak = PHP_EOL;
 
       /**
-       * A flag to signal wether or not the generated code should have a closing ?> tag
-       *
-       * @var boolean
-       */
-      protected $omitClosingPHP = true;
-
-      /**
        * PHP Template code to render autoload list
        *
        * @var string
@@ -100,6 +93,13 @@ namespace TheSeer\Tools {
        * @var string
        */
       protected $dateformat = 'r';
+
+      /**
+       * Variables for templates
+       *
+       * @var array
+       */
+      protected $variables = array();
 
       /**
        * Constructor of AutoloadBuilder class
@@ -201,6 +201,16 @@ namespace TheSeer\Tools {
       }
 
       /**
+       * Set a variable for use with template code
+       *
+       * @param string $name  Key name (use as ___key___ in template)
+       * @param string $value Value to use
+       */
+      public function setVariable($name, $value) {
+         $this->variables['___'.$name.'___'] = $value;
+      }
+
+      /**
        * Render autoload code into a string
        *
        * @return string
@@ -215,11 +225,11 @@ namespace TheSeer\Tools {
             $entries[] = "'$class' => '$fname'";
          }
 
-         $replace = array(
+         $replace = array_merge($this->variables, array(
             '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
             '___CLASSLIST___' => join( ',' . $this->linebreak . $this->indent, $entries),
             '___BASEDIR___'   => $this->baseDir ? '__DIR__ . ' : ''
-         );
+         ));
 
          return str_replace(array_keys($replace), array_values($replace), $this->template);
       }
