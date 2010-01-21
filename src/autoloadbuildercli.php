@@ -51,7 +51,7 @@ namespace TheSeer\Tools {
        *
        * @var string
        */
-      const VERSION = "1.0";
+      const VERSION = "%version%";
 
       /**
        * Main executor method
@@ -73,6 +73,13 @@ namespace TheSeer\Tools {
          $outputOption = $input->registerOption( new \ezcConsoleOption(
             'o', 'output', \ezcConsoleInput::TYPE_STRING, 'STDOUT', false,
             'Output file for generated code (default: STDOUT)'
+            ));
+
+         $pharOption = $input->registerOption( new \ezcConsoleOption(
+            'p', 'phar', \ezcConsoleInput::TYPE_NONE, null, false,
+            'Build a phar archive of directory contents',
+            null,
+            array( new \ezcConsoleOptionRule( $input->getOption( 'o' ) ) )
          ));
 
          $input->registerOption( new \ezcConsoleOption(
@@ -137,8 +144,13 @@ namespace TheSeer\Tools {
          }
 
          try {
+            $scanner = $this->getScanner($input);
+            if ($pharOption->value !== false) {
+               $phar = $this->buildPhar($scanner, $input);
+               $scanner->rewind();
+            }
             $finder = new ClassFinder;
-            $found  = $finder->parseMulti($this->getScanner($input));
+            $found  = $finder->parseMulti($scanner);
             $builder = $this->getBuilder($found, $input);
 
             if ($lintOption->value === true) {
@@ -148,9 +160,18 @@ namespace TheSeer\Tools {
             if ($outputOption->value == 'STDOUT') {
                echo $builder->render();
             } else {
-               $builder->save($outputOption->value);
-               echo "Autoload file '{$outputOption->value}' generated.\n\n";
+               if ($pharOption->value !== false) {
+                  $builder->setVariable('PHAR', basename($outputOption->value));
+                  $phar->setStub($builder->render());
+                  $phar->stopBuffering();
+                  echo "phar archive '{$outputOption->value}' generated.\n\n";
+               } else {
+                  $builder->save($outputOption->value);
+                  echo "Autoload file '{$outputOption->value}' generated.\n\n";
+               }
             }
+            // this unset is needed to "fix" a segfault on shutdown
+            unset($scanner);
             exit(0);
 
          } catch (\Exception $e) {
@@ -205,6 +226,11 @@ namespace TheSeer\Tools {
             $ab->setBaseDir(realpath($args[0]));
          }
 
+         $phar = $input->getOption('phar');
+         if ($phar->value) {
+            $ab->setTemplateFile( __DIR__ . '/templates/phar.php.tpl');
+         }
+
          $template = $input->getOption('template');
          if ($template->value) {
             $ab->setTemplateFile($template->value);
@@ -233,6 +259,20 @@ namespace TheSeer\Tools {
          }
 
          return $ab;
+      }
+
+
+      protected function buildPhar(\Iterator $scanner, \ezcConsoleInput $input) {
+         $basedir = $input->getOption('basedir')->value;
+         $phar = new \Phar($input->getOption('output')->value, 0, basename($input->getOption('output')->value));
+         $phar->startBuffering();
+         if ($basedir) {
+            $phar->buildFromIterator($scanner, $basedir);
+         } else {
+            $args = $input->getArguments();
+            $phar->buildFromIterator($scanner, $args[0]);
+         }
+         return $phar;
       }
 
       /**
