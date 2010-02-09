@@ -17,10 +17,10 @@
   <email>arne@blankerts.de</email>
   <active>yes</active>
  </lead>
- <date>2010-01-18</date>
+ <date>2010-02-09</date>
  <version>
-  <release>1.0.0</release>
-  <api>1.0.0</api>
+  <release>1.1.0</release>
+  <api>1.1.0</api>
  </version>
  <stability>
   <release>stable</release>
@@ -34,8 +34,11 @@
     <dir name="Autoload">
      <dir name="templates">
        <file baseinstalldir="/" name="default.php.tpl" role="php" />
+       <file baseinstalldir="/" name="phar.php.tpl" role="php" />
      </dir>
-     <file baseinstalldir="/" name="autoloadbuildercli.php" role="php" />
+     <file baseinstalldir="/" name="autoloadbuildercli.php" role="php">
+        <tasks:replace from="%version%" to="version" type="package-info" />
+     </file>
      <file baseinstalldir="/" name="autoloadbuilder.php" role="php" />
      <file baseinstalldir="/" name="classfinder.php" role="php" />
      <file baseinstalldir="/" name="phpfilter.php" role="php" />
@@ -44,12 +47,10 @@
    <file baseinstalldir="/" name="phpab.php" role="script">
     <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config"/>
     <tasks:replace from="@php_bin@" to="php_bin" type="pear-config" />
-    <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
    <file baseinstalldir="/" name="phpab.bat" role="script">
     <tasks:replace from="@php_bin@" to="php_bin" type="pear-config" />
     <tasks:replace from="@bin_dir@" to="bin_dir" type="pear-config" />
-    <tasks:replace from="@package_version@" to="version" type="package-info" />
    </file>
   </dir>
  </contents>
