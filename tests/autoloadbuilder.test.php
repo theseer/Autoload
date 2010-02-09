@@ -189,6 +189,18 @@ namespace TheSeer\Tools\Tests {
          $this->assertEquals(date('dmYHis',$now), $ab->render());
       }
 
+      /**
+       *
+       * @depends testSettingTemplateCode
+       * @covers \TheSeer\Tools\AutoloadBuilder::setVariable
+       */
+      public function testSetVariable() {
+         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
+         $ab->setTemplateCode('___TEST___');
+         $ab->setVariable('TEST','variableValue');
+         $this->assertEquals('variableValue', $ab->render());
+      }
+
 
    }
 
