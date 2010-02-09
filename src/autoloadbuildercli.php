@@ -345,6 +345,7 @@ Usage: phpab [switches] <directory>
   -t, --template   Path to code template to use
 
   -o, --output     Output file for generated code (default: STDOUT)
+  -p, --phar       Create a phar archive (requires -o )
 
       --format     Dateformat string for timestamp
       --linebreak  Linebreak style (CR, CR/LF or LF)
