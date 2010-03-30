@@ -151,6 +151,9 @@ namespace TheSeer\Tools {
             }
             $finder = new ClassFinder;
             $found  = $finder->parseMulti($scanner);
+            // this unset is needed to "fix" a segfault on shutdown
+            unset($scanner);
+
             $builder = $this->getBuilder($found, $input);
 
             if ($lintOption->value === true) {
@@ -170,8 +173,6 @@ namespace TheSeer\Tools {
                   echo "Autoload file '{$outputOption->value}' generated.\n\n";
                }
             }
-            // this unset is needed to "fix" a segfault on shutdown
-            unset($scanner);
             exit(0);
 
          } catch (\Exception $e) {
