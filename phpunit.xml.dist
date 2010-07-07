@@ -13,11 +13,10 @@
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">src</directory>
+            <exclude>
+                <directory>src/templates</directory>
+            </exclude>
         </whitelist>
-        <blacklist>
-            <directory>tests/_data</directory>
-            <directory>src/templates</directory>
-        </blacklist>
     </filter>
 
     <logging>
