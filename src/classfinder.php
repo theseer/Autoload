@@ -45,6 +45,12 @@ namespace TheSeer\Tools {
     */
    class ClassFinder {
 
+      protected $dependencies = array();
+
+      public function getDependencies() {
+         return $this->dependencies;
+      }
+
       /**
        * Parse a given file for defintions of classes and interfaces
        *
@@ -53,15 +59,19 @@ namespace TheSeer\Tools {
        * @return array
        */
       public function parseFile($file) {
-         $entries      = array();
-         $classFound   = false;
-         $nsFound      = false;
-         $nsProc       = false;
-         $inNamespace  = null;
-         $bracketCount = 0;
-         $bracketNS    = false;
+         $entries         = array();
+         $classFound      = false;
+         $nsFound         = false;
+         $nsProc          = false;
+         $inNamespace     = null;
+         $bracketCount    = 0;
+         $bracketNS       = false;
+         $extendsFound    = false;
+         $implementsFound = false;
+         $lastClass       = '';
+         $dependsClass    = '';
 
-         $token=token_get_all(file_get_contents($file));
+         $token = token_get_all(file_get_contents($file));
          foreach($token as $tok) {
             if (!is_array($tok)) {
                switch ($tok) {
@@ -70,7 +80,17 @@ namespace TheSeer\Tools {
                      if ($nsProc) {
                         $bracketNS = true;
                      }
+                     if ($dependsClass != '') {
+                        if (!isset($this->dependencies[$lastClass])) {
+                           $this->dependencies[$lastClass] = array();
+                        }
+                        $this->dependencies[$lastClass][] = $dependsClass;
+                        $dependsClass = '';
+                     }
+
                      $nsProc = false;
+                     $implementsFound = false;
+                     $extendsFound    = false;
                      break;
                   }
                   case '}': {
@@ -82,8 +102,19 @@ namespace TheSeer\Tools {
                   }
                   case ";": {
                      if ($nsProc) {
-                        $nsProc = false;
+                        $nsProc    = false;
                         $bracketNS = false;
+                     }
+                     break;
+                  }
+                  case ',': {
+                     if ($implementsFound) {
+                        if (!isset($this->dependencies[$lastClass])) {
+                           $this->dependencies[$lastClass] = array();
+                        }
+                        $this->dependencies[$lastClass][] = $dependsClass;
+                        $dependsClass   = '';
+                        $classNameStart = true;
                      }
                      break;
                   }
@@ -97,33 +128,56 @@ namespace TheSeer\Tools {
                   $bracketCount++;
                   continue;
                }
-
+               case T_IMPLEMENTS: {
+                  $implementsFound = true;
+                  $classNameStart  = true;
+                  continue;
+               }
+               case T_EXTENDS: {
+                  $extendsFound    = true;
+                  $implementsFound = false;
+                  $classNameStart  = true;
+                  continue;
+               }
                case T_CLASS:
                case T_INTERFACE: {
                   $classFound = true;
                   continue;
                }
                case T_NAMESPACE: {
-                  $nsFound = true;
-                  $nsProc  = true;
+                  $nsFound     = true;
+                  $nsProc      = true;
                   $inNamespace = null;
                   continue;
                }
                case T_NS_SEPARATOR: {
                   if ($nsProc) {
-                     $nsFound = true;
+                     $nsFound      = true;
                      $inNamespace .= '\\\\';
+                  }
+                  if ($extendsFound || $implementsFound) {
+                     if (!$classNameStart) $dependsClass .= '\\\\';
+                     $classNameStart = false;
                   }
                   continue;
                }
+
                case T_STRING: {
                   if ($nsFound) {
                      $inNamespace .= strtolower($tok[1]);
                      $nsFound = false;
                   } elseif ($classFound) {
-                     $entries[($inNamespace ? $inNamespace .'\\\\' : '') . strtolower($tok[1])] = $file;
-                     $classFound=false;
+                     $lastClass = ($inNamespace ? $inNamespace .'\\\\' : '') . strtolower($tok[1]);
+                     $entries[$lastClass] = $file;
+                     $classFound = false;
+                  } elseif ($extendsFound || $implementsFound) {
+                     if ($classNameStart && $inNamespace) {
+                        $dependsClass   = $inNamespace . '\\\\';
+                        $classNameStart = false;
+                     }
+                     $dependsClass .= strtolower($tok[1]);
                   }
+                  continue;
                }
             }
          }
@@ -139,7 +193,7 @@ namespace TheSeer\Tools {
        */
       public function parseMulti(\Iterator $sources) {
          $entries = array();
-         $worker = new PHPFilterIterator($sources);
+         $worker  = new PHPFilterIterator($sources);
          foreach($worker as $file) {
             $entries = array_merge($entries, $this->parseFile($file->getPathname()));
          }
