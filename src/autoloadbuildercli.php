@@ -63,7 +63,7 @@ namespace TheSeer\Tools {
          $input = new \ezcConsoleInput();
 
          $versionOption = $input->registerOption( new \ezcConsoleOption( 'v', 'version' ) );
-         $versionOption->shorthelp = 'Prints the version and exits';
+         $versionOption->shorthelp    = 'Prints the version and exits';
          $versionOption->isHelpOption = true;
 
          $helpOption = $input->registerOption( new \ezcConsoleOption( 'h', 'help' ) );
@@ -128,13 +128,13 @@ namespace TheSeer\Tools {
          } catch (\ezcConsoleException $e) {
             echo $e->getMessage()."\n\n";
             $this->showVersion();
-            $this->showUsage($input);
+            $this->showUsage();
             exit(3);
          }
 
          if ($helpOption->value === true) {
             $this->showVersion();
-            $this->showUsage($input);
+            $this->showUsage();
             exit(0);
          }
 
@@ -194,15 +194,17 @@ namespace TheSeer\Tools {
 
          $include = $input->getOption('include');
          if (is_array($include->value)) {
-            $scanner->setInclude($include->value);
+            $scanner->setIncludes($include->value);
          } else {
             $scanner->addInclude($include->value);
          }
 
          $exclude = $input->getOption('exclude');
          if ($exclude->value) {
-            foreach($exclude->value as $exc) {
-               $scanner->addExclude($exc);
+            if (is_array($exclude->value)) {
+               $scanner->setExcludes($exclude->value);
+            } else {
+               $scanner->addExclude($exclude->value);
             }
          }
 
@@ -234,6 +236,12 @@ namespace TheSeer\Tools {
 
          $template = $input->getOption('template');
          if ($template->value) {
+            if (!file_exists($template->value)) {
+               $alternative = __DIR__.'/templates/'.$template->value;
+               if (file_exists($alternative)) {
+                  $template->value = $alternative;
+               }
+            }
             $ab->setTemplateFile($template->value);
          }
 
@@ -265,7 +273,7 @@ namespace TheSeer\Tools {
 
       protected function buildPhar(\Iterator $scanner, \ezcConsoleInput $input) {
          $basedir = $input->getOption('basedir')->value;
-         $phar = new \Phar($input->getOption('output')->value, 0, basename($input->getOption('output')->value));
+         $phar    = new \Phar($input->getOption('output')->value, 0, basename($input->getOption('output')->value));
          $phar->startBuffering();
          if ($basedir) {
             $phar->buildFromIterator($scanner, $basedir);
@@ -317,7 +325,9 @@ namespace TheSeer\Tools {
          $rc = proc_close($process);
 
          if ($rc == 255) {
-            fwrite(STDERR, "Syntax errors during lint:\n" . str_replace('in - on line', 'in generated code on line', $stderr) . "\n");
+            fwrite(STDERR, "Syntax errors during lint:\n" .
+                           str_replace('in - on line', 'in generated code on line', $stderr) .
+                           "\n");
             return false;
          }
 
@@ -335,7 +345,7 @@ namespace TheSeer\Tools {
       /**
        * Helper to output usage information
        */
-      protected function showUsage(\ezcConsoleInput $input) {
+      protected function showUsage() {
          print <<<EOF
 Usage: phpab [switches] <directory>
 
