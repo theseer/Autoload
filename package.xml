@@ -17,10 +17,10 @@
   <email>arne@blankerts.de</email>
   <active>yes</active>
  </lead>
- <date>2010-02-09</date>
+ <date>2010-07-20</date>
  <version>
-  <release>1.1.0</release>
-  <api>1.1.0</api>
+  <release>1.2.1</release>
+  <api>1.2.0</api>
  </version>
  <stability>
   <release>stable</release>
@@ -34,6 +34,7 @@
     <dir name="Autoload">
      <dir name="templates">
        <file baseinstalldir="/" name="default.php.tpl" role="php" />
+       <file baseinstalldir="/" name="php52.php.tpl" role="php" />
        <file baseinstalldir="/" name="phar.php.tpl" role="php" />
      </dir>
      <file baseinstalldir="/" name="autoloadbuildercli.php" role="php">
