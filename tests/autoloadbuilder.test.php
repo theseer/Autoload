@@ -201,6 +201,18 @@ namespace TheSeer\Tools\Tests {
          $this->assertEquals('variableValue', $ab->render());
       }
 
+      /**
+       *
+       * @depends testSettingTemplateCode
+       * @covers \TheSeer\Tools\AutoloadBuilder::render
+       */
+      public function testGetUniqueValueForAutoloadName() {
+         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
+         $ab->setTemplateCode('___AUTOLOAD___');
+         $first = $ab->render();
+         $this->assertNotEquals($first, $ab->render());
+      }
+
 
    }
 
