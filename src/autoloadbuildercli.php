@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2009 Arne Blankerts <arne@blankerts.de>
+ * Copyright (c) 2009-2010 Arne Blankerts <arne@blankerts.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -117,6 +117,11 @@ namespace TheSeer\Tools {
          $input->registerOption( new \ezcConsoleOption(
             '', 'lint-php', \ezcConsoleInput::TYPE_STRING, null, false,
             'PHP binary path for linting (default: /usr/bin/php or c:\\php\\php.exe)'
+         ));
+
+         $input->registerOption( new \ezcConsoleOption(
+            'c', 'compat', \ezcConsoleInput::TYPE_NONE, null, false,
+            'Generate PHP 5.2 compliant code'
          ));
 
          $input->argumentDefinition = new \ezcConsoleArguments();
@@ -243,6 +248,9 @@ namespace TheSeer\Tools {
                }
             }
             $ab->setTemplateFile($template->value);
+         } else if ($input->getOption('compat')->value) {
+            $ab->setTemplateFile(__DIR__ . '/templates/php52.php.tpl');
+            $ab->setCompat(true);
          }
 
          $format = $input->getOption('format');
@@ -357,6 +365,8 @@ Usage: phpab [switches] <directory>
 
   -o, --output     Output file for generated code (default: STDOUT)
   -p, --phar       Create a phar archive (requires -o )
+
+  -c, --compat     Generate PHP 5.2 compatible code
 
       --format     Dateformat string for timestamp
       --linebreak  Linebreak style (CR, CR/LF or LF)

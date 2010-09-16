@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2009 Arne Blankerts <arne@blankerts.de>
+ * Copyright (c) 2009-2010 Arne Blankerts <arne@blankerts.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -102,6 +102,13 @@ namespace TheSeer\Tools {
       protected $variables = array();
 
       /**
+       * Flag to toggle PHP 5.2 compat mode
+       *
+       * @var boolean
+       */
+      protected $compat = false;
+
+      /**
        * Constructor of AutoloadBuilder class
        *
        * @param array  $classlist Array of classes
@@ -119,6 +126,15 @@ namespace TheSeer\Tools {
             $tpl = __DIR__ . '/templates/default.php.tpl';
          }
          $this->setTemplateFile($tpl);
+      }
+
+      /**
+       * Toggle PHP 5.2 compat mode
+       *
+       * @param boolean  $mode   Mode to set compat to
+       */
+      public function setCompat($mode) {
+         $this->compat = $mode;
       }
 
       /**
@@ -225,10 +241,15 @@ namespace TheSeer\Tools {
             $entries[] = "'$class' => '$fname'";
          }
 
+         $baseDir = '';
+         if ($this->baseDir) {
+            $baseDir = $this->compat ? 'dirname(__FILE__) . ' : '__DIR__ . ';
+         }
+
          $replace = array_merge($this->variables, array(
             '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
             '___CLASSLIST___' => join( ',' . $this->linebreak . $this->indent, $entries),
-            '___BASEDIR___'   => $this->baseDir ? '__DIR__ . ' : '',
+            '___BASEDIR___'   => $baseDir,
             '___AUTOLOAD___'  => uniqid('autoload')
          ));
          return str_replace(array_keys($replace), array_values($replace), $this->template);

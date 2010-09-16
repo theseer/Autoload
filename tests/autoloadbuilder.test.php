@@ -155,6 +155,22 @@ namespace TheSeer\Tools\Tests {
 
       /**
        *
+       * @covers \TheSeer\Tools\AutoloadBuilder::setBaseDir
+       * @covers \TheSeer\Tools\AutoloadBuilder::render
+       */
+      public function testSetBaseDirRenderingInCompatMode() {
+         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
+         $ab->setCompat(true);
+         $ab->setBaseDir(__DIR__);
+         $expected = "require dirname(__FILE__) . \$classes[\$cn];";
+         $this->assertContains($expected, $ab->render());
+
+         $expected = "      static \$classes = array(\n         'demo1' => '/_data/classfinder/class.php',\n";
+         $this->assertContains($expected, $ab->render());
+      }
+
+      /**
+       *
        * @depends testSettingTemplateCode
        * @expectedException \TheSeer\Tools\AutoloadBuilderException
        */
