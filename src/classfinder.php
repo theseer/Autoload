@@ -45,9 +45,23 @@ namespace TheSeer\Tools {
     */
    class ClassFinder {
 
+      protected $withDeps;
+
+      protected $foundClasses = array();
       protected $dependencies = array();
 
+      public function __construct($doDeps = false) {
+         $this->withDeps = $doDeps;
+      }
+
+      public function getClasses() {
+         return $this->foundClasses;
+      }
+
       public function getDependencies() {
+         if (!$this->withDeps) {
+            throw new ClassFinderException('Dependency collection disabled', ClassFinderException::NoDependencies);
+         }
          return $this->dependencies;
       }
 
@@ -56,7 +70,7 @@ namespace TheSeer\Tools {
        *
        * @param string $file Filename of file to process
        *
-       * @return array
+       * @return integer
        */
       public function parseFile($file) {
          $entries         = array();
@@ -80,7 +94,7 @@ namespace TheSeer\Tools {
                      if ($nsProc) {
                         $bracketNS = true;
                      }
-                     if ($dependsClass != '') {
+                     if ($this->withDeps && ($dependsClass != '')) {
                         if (!isset($this->dependencies[$lastClass])) {
                            $this->dependencies[$lastClass] = array();
                         }
@@ -108,7 +122,7 @@ namespace TheSeer\Tools {
                      break;
                   }
                   case ',': {
-                     if ($implementsFound) {
+                     if ($this->withDeps && $implementsFound) {
                         if (!isset($this->dependencies[$lastClass])) {
                            $this->dependencies[$lastClass] = array();
                         }
@@ -181,7 +195,9 @@ namespace TheSeer\Tools {
                }
             }
          }
-         return $entries;
+
+         $this->foundClasses = array_merge($this->foundClasses, $entries);
+         return count($entries);
       }
 
       /**
@@ -189,16 +205,22 @@ namespace TheSeer\Tools {
        *
        * @param Iterator $sources Iterator based list of files (SplFileObject) to parse
        *
-       * @return array
+       * @return integer
        */
       public function parseMulti(\Iterator $sources) {
-         $entries = array();
+         $count = 0;
          $worker  = new PHPFilterIterator($sources);
          foreach($worker as $file) {
-            $entries = array_merge($entries, $this->parseFile($file->getPathname()));
+            $count += $this->parseFile($file->getPathname());
          }
-         return $entries;
+         return $count;
       }
+
+   }
+
+   class ClassFinderException extends \Exception {
+
+      const NoDependencies = 1;
 
    }
 }

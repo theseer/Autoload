@@ -50,128 +50,137 @@ namespace TheSeer\Tools\Tests {
       public function testNoClassDefined() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/noclass.php');
-        $this->assertTrue(empty($rc));
+        $this->assertEquals(0,$rc);
       }
 
       public function testOneClass() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
-        $this->assertEquals(1,count($rc));
-        $this->assertArrayHasKey('demo', $rc);
+        $this->assertEquals(1,$rc);
+        $this->assertArrayHasKey('demo', $finder->getClasses());
       }
 
       public function testFullPathToClass() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
-        $this->assertEquals(__DIR__.'/_data/classfinder/class.php', $rc['demo']);
+        $demo = $finder->getClasses();
+        $this->assertEquals(__DIR__.'/_data/classfinder/class.php', $demo['demo']);
       }
 
       public function testMultipleClasses() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/multiclass.php');
-        $this->assertEquals(3,count($rc));
-        $this->assertArrayHasKey('demo1', $rc);
-        $this->assertArrayHasKey('demo2', $rc);
-        $this->assertArrayHasKey('demo3', $rc);
+        $this->assertEquals(3,$rc);
+        $classes = $finder->getClasses();
+        $this->assertArrayHasKey('demo1', $classes);
+        $this->assertArrayHasKey('demo2', $classes);
+        $this->assertArrayHasKey('demo3', $classes);
       }
 
       public function testExtends() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/extends.php');
-        $this->assertEquals(2,count($rc));
-        $this->assertArrayHasKey('demo1', $rc);
-        $this->assertArrayHasKey('demo2', $rc);
+        $this->assertEquals(2,$rc);
+        $classes = $finder->getClasses();
+        $this->assertArrayHasKey('demo1', $classes);
+        $this->assertArrayHasKey('demo2', $classes);
       }
 
       public function testInterface() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/interface.php');
-        $this->assertEquals(1,count($rc));
-        $this->assertArrayHasKey('demo', $rc);
+        $this->assertEquals(1,$rc);
+        $this->assertArrayHasKey('demo', $finder->getClasses());
       }
 
       public function testImplements() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/implements.php');
-        $this->assertEquals(2,count($rc));
-        $this->assertArrayHasKey('demo1', $rc);
-        $this->assertArrayHasKey('demo2', $rc);
+        $this->assertEquals(2,$rc);
+        $classes = $finder->getClasses();
+        $this->assertArrayHasKey('demo1', $classes);
+        $this->assertArrayHasKey('demo2', $classes);
       }
 
       public function testImplementsExtends() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/implementsextends.php');
-        $this->assertEquals(3,count($rc));
-        $this->assertArrayHasKey('test', $rc);
-        $this->assertArrayHasKey('demo1', $rc);
-        $this->assertArrayHasKey('demo2', $rc);
+        $this->assertEquals(3,$rc);
+        $classes = $finder->getClasses();
+        $this->assertArrayHasKey('test', $classes);
+        $this->assertArrayHasKey('demo1', $classes);
+        $this->assertArrayHasKey('demo2', $classes);
       }
 
       public function testNamespaceBracketSyntax() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace1.php');
-        $this->assertEquals(1,count($rc));
-        $this->assertArrayHasKey('demo\\\\demo1', $rc);
+        $this->assertEquals(1,$rc);
+        $this->assertArrayHasKey('demo\\\\demo1', $finder->getClasses());
       }
 
       public function testNamespaceBracketSyntaxMultiLevel() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace2.php');
-        $this->assertEquals(1,count($rc));
-        $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $rc);
+        $this->assertEquals(1,$rc);
+        $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $finder->getClasses());
       }
 
       public function testNamespaceSemicolonSyntax() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace3.php');
-        $this->assertEquals(1,count($rc));
-        $this->assertArrayHasKey('demo\\\\demo1', $rc);
+        $this->assertEquals(1,$rc);
+        $this->assertArrayHasKey('demo\\\\demo1', $finder->getClasses());
       }
 
       public function testNamespaceSemicolonSyntaxMultiLevel() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace4.php');
-        $this->assertEquals(1,count($rc));
-        $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $rc);
+        $this->assertEquals(1,$rc);
+        $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $finder->getClasses());
       }
 
       public function testNamespaceBracketCounting() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace5.php');
-        $this->assertEquals(1,count($rc));
-        $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $rc);
+        $this->assertEquals(1,$rc);
+        $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $finder->getClasses());
       }
 
       public function testNamespaceSemicolonSyntaxMultiNS() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace6.php');
-        $this->assertEquals(2,count($rc));
-        $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $rc);
-        $this->assertArrayHasKey('demo\\\\level2\\\\level3\\\\demo2', $rc);
+        $this->assertEquals(2,$rc);
+        $classes = $finder->getClasses();
+        $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $classes);
+        $this->assertArrayHasKey('demo\\\\level2\\\\level3\\\\demo2', $classes);
       }
 
       public function testNamespaceBracketSyntaxMultiNS() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace7.php');
-        $this->assertEquals(2,count($rc));
-        $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $rc);
-        $this->assertArrayHasKey('demo\\\\level2\\\\level3\\\\demo2', $rc);
+        $this->assertEquals(2,$rc);
+        $classes = $finder->getClasses();
+        $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $classes);
+        $this->assertArrayHasKey('demo\\\\level2\\\\level3\\\\demo2', $classes);
       }
 
       public function testBracketParsingBugTest1() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/brackettest1.php');
-        $this->assertEquals(2,count($rc));
-        $this->assertArrayHasKey('x\\\\foo', $rc);
-        $this->assertArrayHasKey('x\\\\baz', $rc);
+        $this->assertEquals(2,$rc);
+        $classes = $finder->getClasses();
+        $this->assertArrayHasKey('x\\\\foo', $classes);
+        $this->assertArrayHasKey('x\\\\baz', $classes);
       }
 
       public function testBracketParsingBugTest2() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/brackettest2.php');
-        $this->assertEquals(2,count($rc));
-        $this->assertArrayHasKey('x\\\\foo', $rc);
-        $this->assertArrayHasKey('x\\\\baz', $rc);
+        $this->assertEquals(2,$rc);
+        $classes = $finder->getClasses();
+        $this->assertArrayHasKey('x\\\\foo', $classes);
+        $this->assertArrayHasKey('x\\\\baz', $classes);
       }
 
       /**
@@ -186,10 +195,11 @@ namespace TheSeer\Tools\Tests {
          );
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseMulti(new \ArrayIterator($list));
-        $this->assertEquals(3,count($rc));
-        $this->assertArrayHasKey('demo1', $rc);
-        $this->assertArrayHasKey('demo2', $rc);
-        $this->assertArrayHasKey('demo\\\\demo1', $rc);
+        $this->assertEquals(3,$rc);
+        $classes = $finder->getClasses();
+        $this->assertArrayHasKey('demo1', $classes);
+        $this->assertArrayHasKey('demo2', $classes);
+        $this->assertArrayHasKey('demo\\\\demo1', $classes);
       }
 
    }
