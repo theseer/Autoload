@@ -43,10 +43,12 @@ namespace TheSeer\Tools {
     * @author     Arne Blankerts <arne@blankerts.de>
     * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
     */
-   class classDependecySorter {
+   class ClassDependencySorter {
 
       protected $classList;
       protected $dependencies;
+
+      protected $level;
 
       protected $sorted = array();
 
@@ -56,6 +58,7 @@ namespace TheSeer\Tools {
       }
 
       public function process() {
+         $this->level = 0;
          foreach($this->classList as $class => $file) {
             if (!in_array($class, $this->sorted)) {
                $this->resolve($class);
@@ -64,9 +67,6 @@ namespace TheSeer\Tools {
          $res = array();
          foreach($this->sorted as $class) {
             if (!isset($this->classList[$class])) {
-               if (!class_exists($class, false)) {
-                  fwrite(STDERR, "WARNING: Missing definition for class '$class'\n");
-               }
                continue;
             }
             $res[$class] = $this->classList[$class];
@@ -75,6 +75,10 @@ namespace TheSeer\Tools {
       }
 
       protected function resolve($class) {
+         $this->level++;
+         if ($this->level==50) {
+            throw new \Exception("Can't resolve more than 50 levels of dependencies");
+         }
          if (isset($this->dependencies[$class])) {
             foreach($this->dependencies[$class] as $depclass) {
                if (!in_array($depclass, $this->sorted)) {
