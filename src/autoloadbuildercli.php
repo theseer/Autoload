@@ -39,7 +39,7 @@
 namespace TheSeer\Tools {
 
    /**
-    * CLI interface to AutoloadBuilder
+    * CLI interface to AutoloadBuilder / StaticBuilder
     *
     * @author     Arne Blankerts <arne@blankerts.de>
     * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
@@ -124,6 +124,25 @@ namespace TheSeer\Tools {
             'Generate PHP 5.2 compliant code'
          ));
 
+         $input->registerOption( new \ezcConsoleOption(
+            'r', 'run', \ezcConsoleInput::TYPE_NONE, null, false,
+            'Execute template php code',
+            null,
+            array( new \ezcConsoleOptionRule( $input->getOption( 't' ) ) )
+            ));
+
+         $staticOption = $input->registerOption( new \ezcConsoleOption(
+            's', 'static', \ezcConsoleInput::TYPE_NONE, null, false,
+            'Build a static require file',
+            null,
+            array(),
+            array(
+               new \ezcConsoleOptionRule( $input->getOption( 'c' ) ),
+               new \ezcConsoleOptionRule( $input->getOption( 't' ) ),
+               new \ezcConsoleOptionRule( $input->getOption( 'r' ) )
+            )
+         ));
+
          $input->argumentDefinition = new \ezcConsoleArguments();
          $input->argumentDefinition[0] = new \ezcConsoleArgument( "directory" );
          $input->argumentDefinition[0]->shorthelp = "The directory to process.";
@@ -131,8 +150,8 @@ namespace TheSeer\Tools {
          try {
             $input->process();
          } catch (\ezcConsoleException $e) {
-            echo $e->getMessage()."\n\n";
             $this->showVersion();
+            echo $e->getMessage()."\n\n";
             $this->showUsage();
             exit(3);
          }
@@ -154,12 +173,16 @@ namespace TheSeer\Tools {
                $phar = $this->buildPhar($scanner, $input);
                $scanner->rewind();
             }
-            $finder = new ClassFinder;
+            $finder = new ClassFinder($input->getOption('static')->value);
             $found  = $finder->parseMulti($scanner);
             // this unset is needed to "fix" a segfault on shutdown
             unset($scanner);
+            if ($found==0) {
+               fwrite(STDERR, "No classes were found - process aborted.\n\n");
+               exit(1);
+            }
 
-            $builder = $this->getBuilder($found, $input);
+            $builder = $this->getBuilder($finder, $input);
 
             if ($lintOption->value === true) {
                exit( $this->lintCode($builder->render(), $input) ? 0 : 4);
@@ -181,6 +204,7 @@ namespace TheSeer\Tools {
             exit(0);
 
          } catch (\Exception $e) {
+            $this->showVersion();
             fwrite(STDERR, "Error while processing request:\n");
             fwrite(STDERR, ' - ' . $e->getMessage()."\n");
             exit(1);
@@ -220,11 +244,24 @@ namespace TheSeer\Tools {
       /**
        * Helper to get instance of AutoloadBuilder with cli options applied
        *
-       * @param Array            $found Iterator or Array with files to process
-       * @param \ezcConsoleInput $input CLI Options pased to app
+       * @param ClassFinder      $finder Instance of ClassFinder to get classes from
+       * @param \ezcConsoleInput $input  CLI Options pased to app
        */
-      protected function getBuilder(Array $found, \ezcConsoleInput $input) {
-         $ab = new AutoloadBuilder($found);
+      protected function getBuilder(ClassFinder $finder, \ezcConsoleInput $input) {
+         $isStatic = $input->getOption('static')->value;
+         $isPhar   = $input->getOption('phar')->value;
+         $isCompat = $input->getOption('compat')->value;
+
+         if ($isStatic === true) {
+            $ab = new StaticBuilder($finder->getClasses());
+            $ab->setDependencies($finder->getDependencies());
+            $ab->setPharMode($isPhar);
+         } else {
+            $ab = new AutoloadBuilder($finder->getClasses());
+         }
+
+         $ab->setRun($input->getOption('run')->value);
+         $ab->setCompat($isCompat);
 
          $basedir = $input->getOption('basedir');
          if ($basedir->value) {
@@ -232,11 +269,6 @@ namespace TheSeer\Tools {
          } else {
             $args = $input->getArguments();
             $ab->setBaseDir(realpath($args[0]));
-         }
-
-         $phar = $input->getOption('phar');
-         if ($phar->value) {
-            $ab->setTemplateFile( __DIR__ . '/templates/phar.php.tpl');
          }
 
          $template = $input->getOption('template');
@@ -248,9 +280,25 @@ namespace TheSeer\Tools {
                }
             }
             $ab->setTemplateFile($template->value);
-         } else if ($input->getOption('compat')->value) {
-            $ab->setTemplateFile(__DIR__ . '/templates/php52.php.tpl');
-            $ab->setCompat(true);
+         } else {
+
+            // determine auto template to use
+            $tplFile = 'default.php.tpl';
+            if ($isCompat) {
+               $tplFile = 'php52.php.tpl';
+            }
+
+            if ($isPhar) {
+               if ($isStatic) {
+                  $tplFile = 'staticphar.php.tpl';
+               } else {
+                  $tplFile = 'phar.php.tpl';
+               }
+            } elseif ($isStatic) {
+               $tplFile = 'static.php.tpl';
+            }
+
+            $ab->setTemplateFile(__DIR__.'/templates/'.$tplFile);
          }
 
          $format = $input->getOption('format');
@@ -261,6 +309,8 @@ namespace TheSeer\Tools {
          $indent = $input->getOption('indent');
          if ($indent->value) {
             $ab->setIndent($indent->value);
+         } elseif ($isStatic) {
+            $ab->setIndent('');
          }
 
          $linebreak = $input->getOption('linebreak');
@@ -362,11 +412,13 @@ Usage: phpab [switches] <directory>
 
   -b, --basedir    Basedir for filepaths
   -t, --template   Path to code template to use
+  -r, --run        Execute template php code
 
   -o, --output     Output file for generated code (default: STDOUT)
   -p, --phar       Create a phar archive (requires -o )
 
   -c, --compat     Generate PHP 5.2 compatible code
+  -s, --static     Generate a static require file
 
       --format     Dateformat string for timestamp
       --linebreak  Linebreak style (CR, CR/LF or LF)
