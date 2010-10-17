@@ -65,7 +65,7 @@ namespace TheSeer\Tools\Tests {
        */
       public function testDefaultRendering() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $expected = "      static \$classes = array(\n         'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
+         $expected = "         \$classes = array(\n            'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
          $this->assertContains($expected, $ab->render());
          $expected = "require \$classes[\$cn]";
          $this->assertContains($expected, $ab->render());
@@ -149,7 +149,7 @@ namespace TheSeer\Tools\Tests {
          $expected = "require __DIR__ . \$classes[\$cn];";
          $this->assertContains($expected, $ab->render());
 
-         $expected = "      static \$classes = array(\n         'demo1' => '/_data/classfinder/class.php',\n";
+         $expected = "         \$classes = array(\n            'demo1' => '/_data/classfinder/class.php',\n";
          $this->assertContains($expected, $ab->render());
       }
 
@@ -165,7 +165,7 @@ namespace TheSeer\Tools\Tests {
          $expected = "require dirname(__FILE__) . \$classes[\$cn];";
          $this->assertContains($expected, $ab->render());
 
-         $expected = "      static \$classes = array(\n         'demo1' => '/_data/classfinder/class.php',\n";
+         $expected = "         \$classes = array(\n            'demo1' => '/_data/classfinder/class.php',\n";
          $this->assertContains($expected, $ab->render());
       }
 
@@ -229,6 +229,17 @@ namespace TheSeer\Tools\Tests {
          $this->assertNotEquals($first, $ab->render());
       }
 
+      /**
+       * @depends testSettingTemplateCode
+       * @covers \TheSeer\Tools\AutoloadBuilder::setCompat
+       */
+      public function testSetCompatMode() {
+         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
+         $ab->setCompat(true);
+         $ab->setBaseDir('.');
+         $ab->setTemplateCode('___BASEDIR___');
+         $this->assertEquals('dirname(__FILE__) . ', $ab->render());
+      }
 
    }
 
