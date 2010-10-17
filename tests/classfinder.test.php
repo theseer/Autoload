@@ -202,6 +202,30 @@ namespace TheSeer\Tools\Tests {
         $this->assertArrayHasKey('demo\\\\demo1', $classes);
       }
 
+      /**
+       *
+       * @expectedException \TheSeer\Tools\ClassFinderException
+       */
+      public function testDependenciesDisabledThrowsException() {
+        $finder = new \TheSeer\Tools\ClassFinder(false);
+        $dep = $finder->getDependencies();
+      }
+
+      /**
+       * @covers \TheSeer\Tools\ClassFInder::parseFile
+       * @covers \TheSeer\Tools\ClassFinder::getDependencies
+       */
+      public function testDependenciesFound() {
+        $finder = new \TheSeer\Tools\ClassFinder(true);
+        $rc = $finder->parseFile(__DIR__.'/_data/dependency/file1.php');
+
+        $dep = $finder->getDependencies();
+        $expect = array('test\\\\demo1','test\\\\demo2');
+
+        $this->assertArrayHasKey('foo\\\\demo3', $dep);
+        $this->assertEquals($expect, $dep['foo\\\\demo3']);
+      }
+
    }
 
 }
