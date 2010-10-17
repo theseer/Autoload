@@ -77,7 +77,7 @@ namespace TheSeer\Tools {
       protected function resolve($class) {
          $this->level++;
          if ($this->level==50) {
-            throw new \Exception("Can't resolve more than 50 levels of dependencies");
+            throw new ClassDependencySorterException("Can't resolve more than 50 levels of dependencies",ClassDependencySorterException::TooManyDependencyLevels);
          }
          if (isset($this->dependencies[$class])) {
             foreach($this->dependencies[$class] as $depclass) {
@@ -88,5 +88,11 @@ namespace TheSeer\Tools {
          }
          $this->sorted[] = $class;
       }
+   }
+
+   class ClassDependencySorterException extends \Exception {
+
+      const TooManyDependencyLevels = 1;
+
    }
 }
