@@ -57,6 +57,26 @@ namespace TheSeer\Tools {
       }
 
       public function render() {
+         $baseDir = '';
+         if ($this->phar) {
+            $baseDir = "'phar://". $this->variables['___PHAR___']."' . ";
+         } else if ($this->baseDir) {
+            $baseDir = $this->compat ? 'dirname(__FILE__) . ' : '__DIR__ . ';
+         }
+
+         $entries = $this->sortByDependency();
+
+         $replace = array_merge($this->variables, array(
+            '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
+            '___FILELIST___' => join( $this->linebreak . $this->indent, $entries),
+            '___BASEDIR___'   => $baseDir,
+            '___AUTOLOAD___'  => uniqid('autoload')
+         ));
+
+         return str_replace(array_keys($replace), array_values($replace), $this->template);
+      }
+
+      protected function sortByDependency() {
          $sorter  = new ClassDependencySorter($this->classes, $this->dependencies);
          $list    = $sorter->process();
          $entries = array();
@@ -67,21 +87,7 @@ namespace TheSeer\Tools {
             }
             $entries[] = "require ___BASEDIR___'$fname';";
          }
-
-         $baseDir = '';
-         if ($this->phar) {
-            $baseDir = "'phar://". $this->variables['___PHAR___']."' . ";
-         } else if ($this->baseDir) {
-            $baseDir = $this->compat ? 'dirname(__FILE__) . ' : '__DIR__ . ';
-         }
-
-         $replace = array_merge($this->variables, array(
-            '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
-            '___FILELIST___' => join( $this->linebreak . $this->indent, $entries),
-            '___BASEDIR___'   => $baseDir,
-            '___AUTOLOAD___'  => uniqid('autoload')
-         ));
-         return str_replace(array_keys($replace), array_values($replace), $this->template);
+         return $entries;
       }
    }
 
