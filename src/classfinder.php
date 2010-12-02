@@ -55,6 +55,7 @@ namespace TheSeer\Tools {
       }
 
       public function getClasses() {
+         ksort($this->foundClasses);
          return $this->foundClasses;
       }
 
