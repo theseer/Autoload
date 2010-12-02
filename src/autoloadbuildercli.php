@@ -124,23 +124,9 @@ namespace TheSeer\Tools {
             'Generate PHP 5.2 compliant code'
          ));
 
-         $input->registerOption( new \ezcConsoleOption(
-            'r', 'run', \ezcConsoleInput::TYPE_NONE, null, false,
-            'Execute template php code',
-            null,
-            array( new \ezcConsoleOptionRule( $input->getOption( 't' ) ) )
-            ));
-
          $staticOption = $input->registerOption( new \ezcConsoleOption(
             's', 'static', \ezcConsoleInput::TYPE_NONE, null, false,
-            'Build a static require file',
-            null,
-            array(),
-            array(
-               new \ezcConsoleOptionRule( $input->getOption( 'c' ) ),
-               new \ezcConsoleOptionRule( $input->getOption( 't' ) ),
-               new \ezcConsoleOptionRule( $input->getOption( 'r' ) )
-            )
+            'Build a static require file'
          ));
 
          $input->argumentDefinition = new \ezcConsoleArguments();
@@ -260,7 +246,6 @@ namespace TheSeer\Tools {
             $ab = new AutoloadBuilder($finder->getClasses());
          }
 
-         $ab->setRun($input->getOption('run')->value);
          $ab->setCompat($isCompat);
 
          $basedir = $input->getOption('basedir');
@@ -412,7 +397,6 @@ Usage: phpab [switches] <directory>
 
   -b, --basedir    Basedir for filepaths
   -t, --template   Path to code template to use
-  -r, --run        Execute template php code
 
   -o, --output     Output file for generated code (default: STDOUT)
   -p, --phar       Create a phar archive (requires -o )

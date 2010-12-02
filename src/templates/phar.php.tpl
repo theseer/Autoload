@@ -5,7 +5,8 @@ spl_autoload_register(
       if ($classes === null) {
          $classes = array(
             ___CLASSLIST___
-      );
+         );
+      }
       $cn = strtolower($class);
       if (isset($classes[$cn])) {
          require 'phar://___PHAR___' . $classes[$cn];

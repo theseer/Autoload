@@ -17,10 +17,10 @@
   <email>arne@blankerts.de</email>
   <active>yes</active>
  </lead>
- <date>2010-07-20</date>
+ <date>2010-10-17</date>
  <version>
-  <release>1.2.1</release>
-  <api>1.2.0</api>
+  <release>1.3.0</release>
+  <api>1.3.0</api>
  </version>
  <stability>
   <release>stable</release>
@@ -36,12 +36,16 @@
        <file baseinstalldir="/" name="default.php.tpl" role="php" />
        <file baseinstalldir="/" name="php52.php.tpl" role="php" />
        <file baseinstalldir="/" name="phar.php.tpl" role="php" />
+       <file baseinstalldir="/" name="staticphar.php.tpl" role="php" />
+       <file baseinstalldir="/" name="static.php.tpl" role="php" />
      </dir>
      <file baseinstalldir="/" name="autoloadbuildercli.php" role="php">
         <tasks:replace from="%version%" to="version" type="package-info" />
      </file>
      <file baseinstalldir="/" name="autoloadbuilder.php" role="php" />
      <file baseinstalldir="/" name="classfinder.php" role="php" />
+     <file baseinstalldir="/" name="dependencysorter.php" role="php" />
+     <file baseinstalldir="/" name="staticbuilder.php" role="php" />
      <file baseinstalldir="/" name="phpfilter.php" role="php" />
     </dir>
    </dir>
