@@ -226,6 +226,37 @@ namespace TheSeer\Tools {
       public function setVariable($name, $value) {
          $this->variables['___'.$name.'___'] = $value;
       }
+      
+      
+      /**
+       * Resolve relative location of file path to basedir if one is set 
+       * 
+       * @param string $fname
+       * 
+       * @return string
+       */
+      protected function resolvePath($fname) {        
+         static $basedir = array();
+         if (empty($this->baseDir)) {
+            return $fname;
+         }
+         if (empty($basedir)) {
+            $basedir=explode('/', $this->baseDir);
+         }
+         $filedir=explode('/', dirname(realpath($fname)));
+         $pos = 0;
+         $max = count($basedir);
+         while ($filedir[$pos]==$basedir[$pos]) {
+            $pos++;
+            if ($pos==$max) break;
+         }
+         if ($pos ==0 ) return $fname;
+         $rel = join('/',array_slice($filedir, $pos));
+         if ($pos<count($basedir)) {
+            $rel = str_repeat('../', count($basedir)-$pos) . $rel;
+         }
+         return '/' . $rel . '/' . basename($fname);
+      }
 
       /**
        * Render autoload code into a string
@@ -235,10 +266,7 @@ namespace TheSeer\Tools {
       public function render() {
          $entries = array();
          foreach($this->classes as $class => $file) {
-            $fname = realpath($file);
-            if (!empty($this->baseDir) && strpos($fname, $this->baseDir)===0) {
-               $fname = str_replace($this->baseDir, '', $fname);
-            }
+            $fname = $this->resolvePath($file);
             $entries[] = "'$class' => '$fname'";
          }
 
