@@ -250,7 +250,11 @@ namespace TheSeer\Tools {
 
          $basedir = $input->getOption('basedir');
          if ($basedir->value) {
-            $ab->setBaseDir($basedir->value);
+            $bdir = realpath($basedir->value);
+            if (!$bdir || !is_dir($bdir)) {
+               throw new \RuntimeException("Given basedir '{$basedir->value}' does not exist or is not a directory");
+            }
+            $ab->setBaseDir($bdir);
          } else {
             $args = $input->getArguments();
             $ab->setBaseDir(realpath($args[0]));
