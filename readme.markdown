@@ -78,24 +78,28 @@ Usage
 
 phpab [switches] <directory>
 
-    -i, --include    File pattern to include (default: *.php)
-    -e, --exclude    File pattern to exclude
+  -i, --include    File pattern to include (default: *.php)
+  -e, --exclude    File pattern to exclude
 
-    -b, --basedir    Basedir for filepaths
-    -t, --template   Path to code template to use
+  -b, --basedir    Basedir for filepaths
+  -t, --template   Path to code template to use
 
-    -o, --output     Output file for generated code (default: STDOUT)
-    -p, --phar       Create a phar archive (requires -o )
+  -o, --output     Output file for generated code (default: STDOUT)
+  -p, --phar       Create a phar archive (requires -o )
 
-	--format     Dateformat string for timestamp
-	--linebreak  Linebreak style (CR, CR/LF or LF)
-        --indent     String used for indenting (default: 3 spaces)
+  -c, --compat     Generate PHP 5.2 compatible code
+  -s, --static     Generate a static require file
 
-        --lint       Run lint on generated code and exit
-        --lint-php   PHP binary to use for linting (default: /usr/bin/php or c:\php\php.exe)
+      --format     Dateformat string for timestamp
+      --linebreak  Linebreak style (CR, CR/LF or LF)
+      --indent     String used for indenting (default: 3 spaces)
 
-    -h, --help       Prints this usage information
-    -v, --version    Prints the version and exits
+      --lint       Run lint on generated code and exit
+      --lint-php   PHP binary to use for linting (default: /usr/bin/php or c:\php\php.exe)
+
+  -h, --help       Prints this usage information
+  -v, --version    Prints the version and exits
+
 
 
 Usaage Samples
