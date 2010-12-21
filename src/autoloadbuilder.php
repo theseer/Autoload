@@ -236,13 +236,10 @@ namespace TheSeer\Tools {
        * @return string
        */
       protected function resolvePath($fname) {        
-         static $basedir = array();
          if (empty($this->baseDir)) {
             return $fname;
          }
-         if (empty($basedir)) {
-            $basedir=explode('/', $this->baseDir);
-         }
+         $basedir=explode('/', $this->baseDir);
          $filedir=explode('/', dirname(realpath($fname)));
          $pos = 0;
          $max = count($basedir);
@@ -255,7 +252,7 @@ namespace TheSeer\Tools {
          if ($pos<count($basedir)) {
             $rel = str_repeat('../', count($basedir)-$pos) . $rel;
          }
-         return '/' . $rel . '/' . basename($fname);
+         return '/' . (!empty($rel) ? $rel . '/' : '') . basename($fname);
       }
 
       /**
