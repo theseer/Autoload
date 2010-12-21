@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2009 Arne Blankerts <arne@blankerts.de>
+ * Copyright (c) 2009-2010 Arne Blankerts <arne@blankerts.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -54,8 +54,8 @@ namespace TheSeer\Tools\Tests {
 
       public function setUp() {
          $this->classlist = array();
-         $this->classlist['demo1'] = __DIR__ . '/_data/classfinder/class.php';
-         $this->classlist['demo2'] = __DIR__ . '/_data/classfinder/class.php';
+         $this->classlist['demo1'] = realpath(__DIR__ . '/_data/classfinder/class.php');
+         $this->classlist['demo2'] = realpath(__DIR__ . '/_data/classfinder/class.php');
       }
 
       /**
@@ -138,37 +138,47 @@ namespace TheSeer\Tools\Tests {
          $this->assertContains($expected, $ab->render());
       }
 
+
       /**
        *
        * @covers \TheSeer\Tools\AutoloadBuilder::setBaseDir
        * @covers \TheSeer\Tools\AutoloadBuilder::render
        */
-      public function testSetBaseDirRendering() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setBaseDir(__DIR__);
+      public function testSetBaseDirRendering() {         
+         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);         
+         $ab->setBaseDir(realpath(__DIR__ . '/..'));
+         $result = $ab->render();
+         
          $expected = "require __DIR__ . \$classes[\$cn];";
-         $this->assertContains($expected, $ab->render());
+         $this->assertContains($expected, $result);
 
-         $expected = "         \$classes = array(\n            'demo1' => '/_data/classfinder/class.php',\n";
-         $this->assertContains($expected, $ab->render());
+         $expected = "         \$classes = array(\n            'demo1' => '/tests/_data/classfinder/class.php',\n";
+         $this->assertContains($expected, $result);
       }
-
+      
       /**
        *
-       * @covers \TheSeer\Tools\AutoloadBuilder::setBaseDir
        * @covers \TheSeer\Tools\AutoloadBuilder::render
        */
-      public function testSetBaseDirRenderingInCompatMode() {
+      public function testRenderingInCompatMode() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setCompat(true);
-         $ab->setBaseDir(__DIR__);
+         $ab->setBaseDir(realpath(__DIR__));
          $expected = "require dirname(__FILE__) . \$classes[\$cn];";
          $this->assertContains($expected, $ab->render());
 
-         $expected = "         \$classes = array(\n            'demo1' => '/_data/classfinder/class.php',\n";
-         $this->assertContains($expected, $ab->render());
       }
 
+      /**       
+       * @covers \TheSeer\Tools\AutoloadBuilder::resolvePath
+       */
+      public function testRelativeSubBaseDirRendering() {    
+         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
+         $ab->setBaseDir(realpath(__DIR__.'/_data/dependency'));
+         $expected = "'demo1' => '/../classfinder/class.php'";
+         $this->assertContains($expected, $ab->render());
+      }
+      
       /**
        *
        * @depends testSettingTemplateCode
