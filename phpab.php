@@ -47,7 +47,6 @@ require __DIR__ . '/../ezc/current/Base/src/base.php';
 spl_autoload_register(array('\ezcBase','autoload'));
 
 require __DIR__ . '/src/classfinder.php';
-require __DIR__ . '/src/phpfilter.php';
 require __DIR__ . '/src/autoloadbuilder.php';
 require __DIR__ . '/src/staticbuilder.php';
 require __DIR__ . '/src/dependencysorter.php';
