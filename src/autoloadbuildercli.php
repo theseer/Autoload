@@ -305,7 +305,7 @@ namespace TheSeer\Tools {
          $linebreak = $input->getOption('linebreak');
          if ($linebreak->value !== false) {
             $lbr = array('LF' => "\n", 'CR' => "\r", 'CRLF' => "\r\n" );
-            if (in_array($linebreak->value, $lbr)) {
+            if (isset($lbr[$linebreak->value])) {
                $ab->setLineBreak($lbr[$linebreak->value]);
             } else {
                $ab->setLineBreak($linebreak->value);
@@ -423,3 +423,4 @@ EOF;
       }
    }
 }
+
