@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2009-2010 Arne Blankerts <arne@blankerts.de>
+ * Copyright (c) 2009-2011 Arne Blankerts <arne@blankerts.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -73,7 +73,7 @@ namespace TheSeer\Tools {
        * @return integer
        */
       public function parseFile($file) {
-         $entries         = array();
+         $entries         = 0;
          $classFound      = false;
          $nsFound         = false;
          $nsProc          = false;
@@ -182,7 +182,17 @@ namespace TheSeer\Tools {
                      $nsFound = false;
                   } elseif ($classFound) {
                      $lastClass = ($inNamespace ? $inNamespace .'\\\\' : '') . strtolower($tok[1]);
-                     $entries[$lastClass] = $file;
+                     if (isset($this->foundClasses[$lastClass])) {
+                        throw new ClassFinderException(sprintf(
+                           "Redeclaration of class '%s' detected\n   Original:  %s\n   Secondary: %s\n\n",
+                           $lastClass,
+                           $this->foundClasses[$lastClass],
+                           $file
+                           ), ClassFinderException::ClassRedeclaration
+                        );
+                     }
+                     $this->foundClasses[$lastClass] = $file;
+                     $entries++;
                      $classFound = false;
                   } elseif ($extendsFound || $implementsFound) {
                      if ($classNameStart && $inNamespace) {
@@ -196,8 +206,7 @@ namespace TheSeer\Tools {
             }
          }
 
-         $this->foundClasses = array_merge($this->foundClasses, $entries);
-         return count($entries);
+         return $entries;
       }
 
       /**
@@ -221,6 +230,7 @@ namespace TheSeer\Tools {
    class ClassFinderException extends \Exception {
 
       const NoDependencies = 1;
+      const ClassRedeclaration = 2;
 
    }
 }

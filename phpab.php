@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * Copyright (c) 2009-2010 Arne Blankerts <arne@blankerts.de>
+ * Copyright (c) 2009-2011 Arne Blankerts <arne@blankerts.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -51,8 +51,8 @@ require __DIR__ . '/src/autoloadbuilder.php';
 require __DIR__ . '/src/staticbuilder.php';
 require __DIR__ . '/src/dependencysorter.php';
 
-require __DIR__ . '/src/autoloadbuildercli.php';
+require __DIR__ . '/src/cli.php';
 
-$exec = new \TheSeer\Tools\AutoloadBuilderCLI();
+$exec = new \TheSeer\Tools\CLI();
 $exec->run();
 exit(0);

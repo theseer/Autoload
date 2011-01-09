@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2009-2010 Arne Blankerts <arne@blankerts.de>
+ * Copyright (c) 2009-2011 Arne Blankerts <arne@blankerts.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -44,7 +44,7 @@ namespace TheSeer\Tools {
     * @author     Arne Blankerts <arne@blankerts.de>
     * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
     */
-   class AutoloadBuilderCLI {
+   class CLI {
 
       /**
        * Version identifier
@@ -297,7 +297,11 @@ namespace TheSeer\Tools {
 
          $indent = $input->getOption('indent');
          if ($indent->value) {
-            $ab->setIndent($indent->value);
+            if (is_numeric($indent->value)) {
+               $ab->setIndent(str_repeat(' ', $indent->value));
+            } else {
+               $ab->setIndent($indent->value);
+            }
          } elseif ($isStatic) {
             $ab->setIndent('');
          }
@@ -386,7 +390,7 @@ namespace TheSeer\Tools {
        * Helper to output version information
        */
       protected function showVersion() {
-         printf("phpab %s - Copyright (C) 2009 - 2010 by Arne Blankerts\n\n", self::VERSION);
+         printf("phpab %s - Copyright (C) 2009 - 2011 by Arne Blankerts\n\n", self::VERSION);
       }
 
       /**
@@ -409,8 +413,8 @@ Usage: phpab [switches] <directory>
   -s, --static     Generate a static require file
 
       --format     Dateformat string for timestamp
-      --linebreak  Linebreak style (CR, CR/LF or LF)
-      --indent     String used for indenting (default: 3 spaces)
+      --linebreak  Linebreak style (CR, CRLF or LF, default: LF)
+      --indent     String used for indenting or number of spaces (default: 12 spaces)
 
       --lint       Run lint on generated code and exit
       --lint-php   PHP binary to use for linting (default: /usr/bin/php or c:\php\php.exe)
