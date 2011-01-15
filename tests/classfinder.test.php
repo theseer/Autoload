@@ -60,6 +60,17 @@ namespace TheSeer\Tools\Tests {
         $this->assertArrayHasKey('demo', $finder->getClasses());
       }
 
+      /**
+       * 
+       * @expectedException  \TheSeer\Tools\ClassFinderException
+       * @expectedExceptionCode  \TheSeer\Tools\ClassFinderException::ClassRedeclaration
+       */
+      public function testRedeclaringThrowsException() {
+        $finder = new \TheSeer\Tools\ClassFinder;
+        $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
+        $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
+      }
+      
       public function testFullPathToClass() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/class.php');

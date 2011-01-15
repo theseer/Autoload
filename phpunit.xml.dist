@@ -14,7 +14,7 @@
             <directory suffix=".php">src</directory>
             <exclude>
                 <directory>src/templates</directory>
-                <file>src/autoloadbuildercli.php</file>
+                <file>src/cli.php</file>
             </exclude>
         </whitelist>
     </filter>
