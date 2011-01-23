@@ -87,6 +87,7 @@ namespace TheSeer\Tools {
             }
          }
          $this->sorted[] = $class;
+         $this->level--;
       }
    }
 
