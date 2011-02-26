@@ -61,7 +61,7 @@ namespace TheSeer\Tools\Tests {
       }
 
       /**
-       * 
+       *
        * @expectedException  \TheSeer\Tools\ClassFinderException
        * @expectedExceptionCode  \TheSeer\Tools\ClassFinderException::ClassRedeclaration
        */
@@ -70,7 +70,7 @@ namespace TheSeer\Tools\Tests {
         $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
         $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
       }
-      
+
       public function testFullPathToClass() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
@@ -174,6 +174,14 @@ namespace TheSeer\Tools\Tests {
         $classes = $finder->getClasses();
         $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $classes);
         $this->assertArrayHasKey('demo\\\\level2\\\\level3\\\\demo2', $classes);
+      }
+
+      public function testNamespaceParsingIgnoresConstantAccessUseOfNamespaceKeyword() {
+        $finder = new \TheSeer\Tools\ClassFinder;
+        $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespaceconstant.php');
+        $this->assertEquals(1,$rc);
+        $classes = $finder->getClasses();
+        $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $classes);
       }
 
       public function testBracketParsingBugTest1() {

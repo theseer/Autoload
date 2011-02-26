@@ -86,7 +86,7 @@ namespace TheSeer\Tools {
          $dependsClass    = '';
 
          $token = token_get_all(file_get_contents($file));
-         foreach($token as $tok) {
+         foreach($token as $pos => $tok) {
             if (!is_array($tok)) {
                switch ($tok) {
                   case '{': {
@@ -159,6 +159,10 @@ namespace TheSeer\Tools {
                   continue;
                }
                case T_NAMESPACE: {
+                  if ($token[$pos + 1][0] == T_NS_SEPARATOR) {
+                     // Ignore inline use of namespace keyword
+                     continue;
+                  }
                   $nsFound     = true;
                   $nsProc      = true;
                   $inNamespace = null;
