@@ -30,8 +30,8 @@ by default. Because the code has template support, it is possible to alternativl
 To generate phar archives, the phar writing support needs to be enabled within php. Details can be found in the [php manual](http://php.net/manual/en/phar.configuration.php)
 
 
-PHP AutoloadBuilderCLI
-======================
+PHP AutoloadBuilder CLI
+=======================
 
 The PHP AutoloadBuilder CLI ist a command line application to automate the process of generating an autoload include file.
 
@@ -69,7 +69,7 @@ This has to be done only once. Now the PEAR Installer can be used to install pac
     install ok: channel://components.ez.no/ConsoleTools-1.6
     install ok: channel://pear.netpirates.net/Autoload-1.1.0
 
-After the installation you can find the phpab source files inside your local PEAR directory; the path in fedora linux 
+After the installation you can find the phpab source files inside your local PEAR directory; the path in Fedora linux 
 usually is `/usr/share/pear/theseer`.
 
 
@@ -101,7 +101,7 @@ phpab [switches] <directory>
     -v, --version    Prints the version and exits
 
 
-Usaage Samples
+Usage Samples
 --------------
 
     [theseer@rikka ~]$ phpab -o src/autoload.inc.php src
