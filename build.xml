@@ -13,7 +13,10 @@
 
  <!-- Run unit tests and generate junit.xml and clover.xml -->
  <target name="phpunit">
-  <exec executable="phpunit" failonerror="true"/>
+  <condition property="phpunit" value="phpunit.bat">
+   <os family="windows" />
+  </condition>
+  <exec executable="${phpunit}" failonerror="true"/>
  </target>
 
  <!-- Run pdepend, phpmd, phpcpd, and phpcs in parallel -->
