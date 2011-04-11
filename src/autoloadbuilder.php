@@ -118,7 +118,7 @@ namespace TheSeer\Tools {
        *
        * @return void
        */
-      public function __construct(array $classlist, $baseDir = '', $tpl = null, $indent = '            ') {         
+      public function __construct(array $classlist, $baseDir = '', $tpl = null, $indent = '            ') {
          $this->classes = $classlist;
          ksort($this->classes);
          $this->baseDir = $baseDir;

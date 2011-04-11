@@ -65,7 +65,9 @@ namespace TheSeer\Tools\Tests {
        */
       public function testDefaultRendering() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $expected = "         \$classes = array(\n            'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
+         $expected = "         \$classes = array(\n            'demo1' => '"
+            . __DIR__ . DIRECTORY_SEPARATOR . '_data' . DIRECTORY_SEPARATOR
+            . 'classfinder' . DIRECTORY_SEPARATOR . 'class.php\',' . PHP_EOL;
          $this->assertContains($expected, $ab->render());
          $expected = "require \$classes[\$cn]";
          $this->assertContains($expected, $ab->render());
@@ -77,9 +79,10 @@ namespace TheSeer\Tools\Tests {
        */
       public function testSaveFile() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->save('/tmp/test.php');
-         $this->assertFileExists('/tmp/test.php');
-         unlink('/tmp/test.php');
+         $tmpFile = tempnam(sys_get_temp_dir(), 'test');
+         $ab->save($tmpFile);
+         $this->assertFileExists($tmpFile);
+         unlink($tmpFile);
       }
 
       /**
@@ -99,7 +102,9 @@ namespace TheSeer\Tools\Tests {
       public function testSettingNonDefaultTemplate() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setTemplateFile(__DIR__ . '/_data/templates/simple.php');
-         $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
+         $expected = "'demo1' => '" . __DIR__ . DIRECTORY_SEPARATOR . '_data'
+            . DIRECTORY_SEPARATOR . 'classfinder' . DIRECTORY_SEPARATOR
+            . 'class.php\',' . PHP_EOL;
          $this->assertContains($expected, $ab->render());
       }
 
@@ -110,7 +115,9 @@ namespace TheSeer\Tools\Tests {
       public function testSettingTemplateCode() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setTemplateCode('___CLASSLIST___');
-         $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
+         $expected = "'demo1' => '" . __DIR__ . DIRECTORY_SEPARATOR . '_data'
+            . DIRECTORY_SEPARATOR . 'classfinder' . DIRECTORY_SEPARATOR
+            . 'class.php\',' . PHP_EOL;
          $this->assertContains($expected, $ab->render());
       }
 
@@ -122,7 +129,8 @@ namespace TheSeer\Tools\Tests {
       public function testWindowsLFRendering() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setLineBreak("\r\n");
-         $expected = "_data/classfinder/class.php',\r\n";
+         $expected = '_data' . DIRECTORY_SEPARATOR . 'classfinder'
+            . DIRECTORY_SEPARATOR . "class.php',\r\n";
          $this->assertContains($expected, $ab->render());
       }
 
@@ -152,7 +160,10 @@ namespace TheSeer\Tools\Tests {
          $expected = "require __DIR__ . \$classes[\$cn];";
          $this->assertContains($expected, $result);
 
-         $expected = "         \$classes = array(\n            'demo1' => '/tests/_data/classfinder/class.php',\n";
+         $expected = "         \$classes = array(\n            'demo1' => '"
+            . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . '_data'
+            . DIRECTORY_SEPARATOR . 'classfinder' . DIRECTORY_SEPARATOR
+            . 'class.php\',' . PHP_EOL;
          $this->assertContains($expected, $result);
       }
       
@@ -175,7 +186,9 @@ namespace TheSeer\Tools\Tests {
       public function testRelativeSubBaseDirRendering() {    
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setBaseDir(realpath(__DIR__.'/_data/dependency'));
-         $expected = "'demo1' => '/../classfinder/class.php'";
+         $expected = "'demo1' => '" . DIRECTORY_SEPARATOR . '..'
+            . DIRECTORY_SEPARATOR . 'classfinder' . DIRECTORY_SEPARATOR
+            . 'class.php\'';
          $this->assertContains($expected, $ab->render());
       }
       
