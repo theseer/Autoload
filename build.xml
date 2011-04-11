@@ -16,6 +16,7 @@
   <condition property="phpunit" value="phpunit.bat">
    <os family="windows" />
   </condition>
+  <property name="phpunit" value="phpunit" />
   <exec executable="${phpunit}" failonerror="true"/>
  </target>
 
