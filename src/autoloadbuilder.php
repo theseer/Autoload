@@ -239,8 +239,8 @@ namespace TheSeer\Tools {
          if (empty($this->baseDir)) {
             return $fname;
          }
-         $basedir=explode('/', $this->baseDir);
-         $filedir=explode('/', dirname(realpath($fname)));
+         $basedir=explode(DIRECTORY_SEPARATOR, $this->baseDir);
+         $filedir=explode(DIRECTORY_SEPARATOR, dirname(realpath($fname)));
          $pos = 0;
          $max = count($basedir);
          while ($filedir[$pos]==$basedir[$pos]) {
@@ -248,11 +248,11 @@ namespace TheSeer\Tools {
             if ($pos==$max) break;
          }
          if ($pos ==0 ) return $fname;
-         $rel = join('/',array_slice($filedir, $pos));
+         $rel = join(DIRECTORY_SEPARATOR, array_slice($filedir, $pos));
          if ($pos<count($basedir)) {
-            $rel = str_repeat('../', count($basedir)-$pos) . $rel;
+            $rel = str_repeat('..' . DIRECTORY_SEPARATOR, count($basedir)-$pos) . $rel;
          }
-         return '/' . (!empty($rel) ? $rel . '/' : '') . basename($fname);
+         return DIRECTORY_SEPARATOR . (!empty($rel) ? $rel . DIRECTORY_SEPARATOR : '') . basename($fname);
       }
 
       /**
