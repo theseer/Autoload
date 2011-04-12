@@ -71,7 +71,7 @@ namespace TheSeer\Tools {
        *
        * @var string
        */
-      protected $linebreak = PHP_EOL;
+      protected $linebreak = "\n";
 
       /**
        * PHP Template code to render autoload list
@@ -118,7 +118,7 @@ namespace TheSeer\Tools {
        *
        * @return void
        */
-      public function __construct(array $classlist, $baseDir = '', $tpl = null, $indent = '            ') {         
+      public function __construct(array $classlist, $baseDir = '', $tpl = null, $indent = '            ') {
          $this->classes = $classlist;
          ksort($this->classes);
          $this->baseDir = $baseDir;
@@ -226,29 +226,32 @@ namespace TheSeer\Tools {
       public function setVariable($name, $value) {
          $this->variables['___'.$name.'___'] = $value;
       }
-      
-      
+
+
       /**
-       * Resolve relative location of file path to basedir if one is set 
-       * 
+       * Resolve relative location of file path to basedir if one is set and fix potential
+       * broken windows pathnames when run on windows.
+       *
        * @param string $fname
-       * 
+       *
        * @return string
        */
-      protected function resolvePath($fname) {        
+      protected function resolvePath($fname) {
          if (empty($this->baseDir)) {
-            return $fname;
+            return str_replace('\\', '/', $fname);
          }
-         $basedir=explode('/', $this->baseDir);
-         $filedir=explode('/', dirname(realpath($fname)));
+         $basedir = explode(DIRECTORY_SEPARATOR, $this->baseDir);
+         $filedir = explode(DIRECTORY_SEPARATOR, dirname(realpath($fname)));
          $pos = 0;
          $max = count($basedir);
-         while ($filedir[$pos]==$basedir[$pos]) {
+         while ($filedir[$pos] == $basedir[$pos]) {
             $pos++;
-            if ($pos==$max) break;
+            if ($pos == $max) break;
          }
-         if ($pos ==0 ) return $fname;
-         $rel = join('/',array_slice($filedir, $pos));
+         if ($pos == 0) {
+            return str_replace('\\', '/', $fname);
+         }
+         $rel = join('/', array_slice($filedir, $pos));
          if ($pos<count($basedir)) {
             $rel = str_repeat('../', count($basedir)-$pos) . $rel;
          }

@@ -315,7 +315,7 @@ namespace TheSeer\Tools {
                $ab->setLineBreak($linebreak->value);
             }
          } else {
-            $ab->setLineBreak(PHP_EOL);
+            $ab->setLineBreak("\n");
          }
 
          return $ab;
