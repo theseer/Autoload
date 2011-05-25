@@ -187,6 +187,9 @@ namespace TheSeer\Tools {
                   } elseif ($classFound) {
                      $lastClass = ($inNamespace ? $inNamespace .'\\\\' : '') . strtolower($tok[1]);
                      if (isset($this->foundClasses[$lastClass])) {
+                        if ($this->foundClasses[$lastClass] === $file) {
+                            continue;
+                        }
                         throw new ClassFinderException(sprintf(
                            "Redeclaration of class '%s' detected\n   Original:  %s\n   Secondary: %s\n\n",
                            $lastClass,
