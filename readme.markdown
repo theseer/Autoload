@@ -113,3 +113,18 @@ Usage Samples
     [theseer@rikka ~]$ phpab -p -o framework.phar framework/src
 
 
+Contributing
+============
+
+Setting up the development environment
+--------------------------------------
+
+For the unit test suite to run phpab expects to find a clone of [DirectoryScanner](https://github.com/theseer/DirectoryScanner) alongside the cloned phpab folder.
+
+    YourAutoloadClone/
+    DirectoyScanner/
+
+if that folder is not present the test runner will just run into an error.
+
+> Warning: require(/.../Autoload/tests/../../DirectoryScanner/autoload.php): failed to open stream: No such file or directory in /.../Autoload/tests/init.php on line 3
+
