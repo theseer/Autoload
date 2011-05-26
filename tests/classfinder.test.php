@@ -68,7 +68,17 @@ namespace TheSeer\Tools\Tests {
       public function testRedeclaringThrowsException() {
         $finder = new \TheSeer\Tools\ClassFinder;
         $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
-        $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
+        $finder->parseFile(__DIR__.'/_data/classfinder/redeclaration.php');
+      }
+
+      public function testRedeclaringClassInSameFileDoesNotThrowExceptionInTolerantMode()
+      {
+        $finder = new \TheSeer\Tools\ClassFinder(false, true);
+        $rc = $finder->parseFile(__DIR__.'/_data/classfinder/redeclaration.php');
+        $this->assertEquals(2, $rc);
+        $classes = $finder->getClasses();
+        $this->assertArrayHasKey('demo', $classes);
+        $this->assertArrayHasKey('exception', $classes);
       }
 
       public function testFullPathToClass() {
