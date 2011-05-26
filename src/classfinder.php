@@ -46,12 +46,14 @@ namespace TheSeer\Tools {
    class ClassFinder {
 
       protected $withDeps;
+      protected $isInTolerantMode;
 
       protected $foundClasses = array();
       protected $dependencies = array();
 
-      public function __construct($doDeps = false) {
+      public function __construct($doDeps = false, $tolerantMode = false) {
          $this->withDeps = $doDeps;
+         $this->isInTolerantMode = $tolerantMode;
       }
 
       public function getClasses() {
@@ -187,7 +189,7 @@ namespace TheSeer\Tools {
                   } elseif ($classFound) {
                      $lastClass = ($inNamespace ? $inNamespace .'\\\\' : '') . strtolower($tok[1]);
                      if (isset($this->foundClasses[$lastClass])) {
-                        if ($this->foundClasses[$lastClass] === $file) {
+                        if ($this->canTolerateRedeclaration($lastClass, $file)) {
                             continue;
                         }
                         throw new ClassFinderException(sprintf(
@@ -214,6 +216,15 @@ namespace TheSeer\Tools {
          }
 
          return $entries;
+      }
+
+      /**
+       * @return boolean
+       */
+      protected function canTolerateRedeclaration($redeclaredClassName, $redeclaredInFilePath)
+      {
+          return $this->foundClasses[$redeclaredClassName] === $redeclaredInFilePath
+              && $this->isInTolerantMode === true;
       }
 
       /**

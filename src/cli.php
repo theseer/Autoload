@@ -129,6 +129,11 @@ namespace TheSeer\Tools {
             'Build a static require file'
          ));
 
+         $staticOption = $input->registerOption( new \ezcConsoleOption(
+            '', 'tolerant', \ezcConsoleInput::TYPE_NONE, null, false,
+            'Ignore Class Redeclarations in the same file'
+         ));
+
          $input->argumentDefinition = new \ezcConsoleArguments();
          $input->argumentDefinition[0] = new \ezcConsoleArgument( "directory" );
          $input->argumentDefinition[0]->shorthelp = "The directory to process.";
@@ -159,7 +164,10 @@ namespace TheSeer\Tools {
                $phar = $this->buildPhar($scanner, $input);
                $scanner->rewind();
             }
-            $finder = new ClassFinder($input->getOption('static')->value);
+            $finder = new ClassFinder(
+                $input->getOption('static')->value,
+                $input->getOption('tolerant')->value
+            );
             $found  = $finder->parseMulti($scanner);
             // this unset is needed to "fix" a segfault on shutdown
             unset($scanner);
@@ -415,6 +423,8 @@ Usage: phpab [switches] <directory>
       --format     Dateformat string for timestamp
       --linebreak  Linebreak style (CR, CRLF or LF, default: LF)
       --indent     String used for indenting or number of spaces (default: 12 spaces)
+
+      --tolerant   Ignore Class Redeclarations in the same file
 
       --lint       Run lint on generated code and exit
       --lint-php   PHP binary to use for linting (default: /usr/bin/php or c:\php\php.exe)

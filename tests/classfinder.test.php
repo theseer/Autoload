@@ -71,9 +71,9 @@ namespace TheSeer\Tools\Tests {
         $finder->parseFile(__DIR__.'/_data/classfinder/redeclaration.php');
       }
 
-      public function testRedeclaringClassInSameFileDoesNotThrowException()
+      public function testRedeclaringClassInSameFileDoesNotThrowExceptionInTolerantMode()
       {
-        $finder = new \TheSeer\Tools\ClassFinder;
+        $finder = new \TheSeer\Tools\ClassFinder(false, true);
         $rc = $finder->parseFile(__DIR__.'/_data/classfinder/redeclaration.php');
         $this->assertEquals(2, $rc);
         $classes = $finder->getClasses();
