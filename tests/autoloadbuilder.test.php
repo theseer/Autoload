@@ -76,10 +76,11 @@ namespace TheSeer\Tools\Tests {
        * @covers \TheSeer\Tools\AutoloadBuilder::save
        */
       public function testSaveFile() {
+         $tempFileName = sprintf('%s/%s.php', sys_get_temp_dir(), uniqid());
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->save('/tmp/test.php');
-         $this->assertFileExists('/tmp/test.php');
-         unlink('/tmp/test.php');
+         $ab->save($tempFileName);
+         $this->assertFileExists($tempFileName);
+         unlink($tempFileName);
       }
 
       /**
@@ -144,18 +145,18 @@ namespace TheSeer\Tools\Tests {
        * @covers \TheSeer\Tools\AutoloadBuilder::setBaseDir
        * @covers \TheSeer\Tools\AutoloadBuilder::render
        */
-      public function testSetBaseDirRendering() {         
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);         
+      public function testSetBaseDirRendering() {
+         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setBaseDir(realpath(__DIR__ . '/..'));
          $result = $ab->render();
-         
+
          $expected = "require __DIR__ . \$classes[\$cn];";
          $this->assertContains($expected, $result);
 
          $expected = "         \$classes = array(\n            'demo1' => '/tests/_data/classfinder/class.php',\n";
          $this->assertContains($expected, $result);
       }
-      
+
       /**
        *
        * @covers \TheSeer\Tools\AutoloadBuilder::render
@@ -169,16 +170,16 @@ namespace TheSeer\Tools\Tests {
 
       }
 
-      /**       
+      /**
        * @covers \TheSeer\Tools\AutoloadBuilder::resolvePath
        */
-      public function testRelativeSubBaseDirRendering() {    
+      public function testRelativeSubBaseDirRendering() {
          $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
          $ab->setBaseDir(realpath(__DIR__.'/_data/dependency'));
          $expected = "'demo1' => '/../classfinder/class.php'";
          $this->assertContains($expected, $ab->render());
       }
-      
+
       /**
        *
        * @depends testSettingTemplateCode
