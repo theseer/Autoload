@@ -8,10 +8,10 @@
   require '../../scanner/src/filesonlyfilter.php';
 
 
-  $scanner = new \TheSeer\Tools\DirectoryScanner;
+  $scanner = new \TheSeer\Autoload\DirectoryScanner;
   $scanner->addInclude('*.php');
 
-  $finder = new \TheSeer\Tools\ClassFinder;
+  $finder = new \TheSeer\Autoload\ClassFinder;
 
   $rc = $finder->parseMulti($scanner('../'));
   var_dump($rc);

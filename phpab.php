@@ -53,6 +53,6 @@ require __DIR__ . '/src/dependencysorter.php';
 
 require __DIR__ . '/src/cli.php';
 
-$exec = new \TheSeer\Tools\CLI();
+$exec = new \TheSeer\Autoload\CLI();
 $exec->run();
 exit(0);

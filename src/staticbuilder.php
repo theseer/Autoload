@@ -35,60 +35,60 @@
  * @license    BSD License
  */
 
-namespace TheSeer\Tools {
+namespace TheSeer\Autoload {
 
-   /**
-    * Builds static require list for inclusion into projects
-    *
-    * @author     Arne Blankerts <arne@blankerts.de>
-    * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
-    */
-   class StaticBuilder extends AutoloadBuilder {
+    /**
+     * Builds static require list for inclusion into projects
+     *
+     * @author     Arne Blankerts <arne@blankerts.de>
+     * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
+     */
+    class StaticBuilder extends AutoloadBuilder {
 
-      protected $dependencies;
-      protected $phar;
+        protected $dependencies;
+        protected $phar;
 
-      public function setDependencies(Array $dep) {
-         $this->dependencies = $dep;
-      }
+        public function setDependencies(Array $dep) {
+            $this->dependencies = $dep;
+        }
 
-      public function setPharMode($phar) {
-         $this->phar = $phar;
-      }
+        public function setPharMode($phar) {
+            $this->phar = $phar;
+        }
 
-      public function render() {
-         $baseDir = '';
-         if ($this->phar) {
-            $baseDir = "'phar://". $this->variables['___PHAR___']."' . ";
-         } else if ($this->baseDir) {
-            $baseDir = $this->compat ? 'dirname(__FILE__) . ' : '__DIR__ . ';
-         }
+        public function render() {
+            $baseDir = '';
+            if ($this->phar) {
+                $baseDir = "'phar://". $this->variables['___PHAR___']."' . ";
+            } else if ($this->baseDir) {
+                $baseDir = $this->compat ? 'dirname(__FILE__) . ' : '__DIR__ . ';
+            }
 
-         $entries = $this->sortByDependency();
+            $entries = $this->sortByDependency();
 
-         $replace = array_merge($this->variables, array(
+            $replace = array_merge($this->variables, array(
             '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
             '___FILELIST___' => join( $this->linebreak . $this->indent, $entries),
             '___BASEDIR___'   => $baseDir,
             '___AUTOLOAD___'  => uniqid('autoload')
-         ));
+            ));
 
-         return str_replace(array_keys($replace), array_values($replace), $this->template);
-      }
+            return str_replace(array_keys($replace), array_values($replace), $this->template);
+        }
 
-      protected function sortByDependency() {
-         $sorter  = new ClassDependencySorter($this->classes, $this->dependencies);
-         $list    = $sorter->process();
-         $entries = array();
-         foreach(array_unique($list) as $file) {
-            $fname = realpath($file);
-            if (!empty($this->baseDir) && strpos($fname, $this->baseDir)===0) {
-               $fname = str_replace($this->baseDir, '', $fname);
+        protected function sortByDependency() {
+            $sorter  = new ClassDependencySorter($this->classes, $this->dependencies);
+            $list    = $sorter->process();
+            $entries = array();
+            foreach(array_unique($list) as $file) {
+                $fname = realpath($file);
+                if (!empty($this->baseDir) && strpos($fname, $this->baseDir)===0) {
+                    $fname = str_replace($this->baseDir, '', $fname);
+                }
+                $entries[] = "require ___BASEDIR___'$fname';";
             }
-            $entries[] = "require ___BASEDIR___'$fname';";
-         }
-         return $entries;
-      }
-   }
+            return $entries;
+        }
+    }
 
 }

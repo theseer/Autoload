@@ -35,223 +35,221 @@
  * @license    BSD License
  */
 
-namespace TheSeer\Tools\Tests {
+namespace TheSeer\Autoload\Tests {
 
-   use TheSeer\Tools;
+    use TheSeer\Autoload\ClassFinder;
+    use TheSeer\Autoload\AutoloadBuilder;
 
-   use TheSeer\Tools\ClassFinder;
-   use TheSeer\Tools\AutoloadBuilder;
+    /**
+     * Unit tests for PHPFilter iterator class
+     *
+     * @author     Arne Blankerts <arne@blankerts.de>
+     * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
+     */
+    class AutoloadBuilderTest extends \PHPUnit_Framework_TestCase {
 
-   /**
-    * Unit tests for PHPFilter iterator class
-    *
-    * @author     Arne Blankerts <arne@blankerts.de>
-    * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
-    */
-   class AutoloadBuilderTest extends \PHPUnit_Framework_TestCase {
+        protected $classlist;
 
-      protected $classlist;
+        public function setUp() {
+            $this->classlist = array();
+            $this->classlist['demo1'] = realpath(__DIR__ . '/_data/classfinder/class.php');
+            $this->classlist['demo2'] = realpath(__DIR__ . '/_data/classfinder/class.php');
+        }
 
-      public function setUp() {
-         $this->classlist = array();
-         $this->classlist['demo1'] = realpath(__DIR__ . '/_data/classfinder/class.php');
-         $this->classlist['demo2'] = realpath(__DIR__ . '/_data/classfinder/class.php');
-      }
+        /**
+         *
+         * @covers \TheSeer\Autoload\AutoloadBuilder::__construct
+         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         */
+        public function testDefaultRendering() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $expected = "         \$classes = array(\n            'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
+            $this->assertContains($expected, $ab->render());
+            $expected = "require \$classes[\$cn]";
+            $this->assertContains($expected, $ab->render());
+        }
 
-      /**
-       *
-       * @covers \TheSeer\Tools\AutoloadBuilder::__construct
-       * @covers \TheSeer\Tools\AutoloadBuilder::render
-       */
-      public function testDefaultRendering() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $expected = "         \$classes = array(\n            'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
-         $this->assertContains($expected, $ab->render());
-         $expected = "require \$classes[\$cn]";
-         $this->assertContains($expected, $ab->render());
-      }
+        /**
+         *
+         * @covers \TheSeer\Autoload\AutoloadBuilder::save
+         */
+        public function testSaveFile() {
+            $tempFileName = sprintf('%s/%s.php', sys_get_temp_dir(), uniqid());
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->save($tempFileName);
+            $this->assertFileExists($tempFileName);
+            unlink($tempFileName);
+        }
 
-      /**
-       *
-       * @covers \TheSeer\Tools\AutoloadBuilder::save
-       */
-      public function testSaveFile() {
-         $tempFileName = sprintf('%s/%s.php', sys_get_temp_dir(), uniqid());
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->save($tempFileName);
-         $this->assertFileExists($tempFileName);
-         unlink($tempFileName);
-      }
+        /**
+         *
+         * @covers \TheSeer\Autoload\AutoloadBuilder::setTemplateFile
+         * @expectedException \TheSeer\Autoload\AutoloadBuilderException
+         */
+        public function testExceptionForSettingTemplateFileToNonExisting() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setTemplateFile('NonExistend.file');
+        }
 
-      /**
-       *
-       * @covers \TheSeer\Tools\AutoloadBuilder::setTemplateFile
-       * @expectedException \TheSeer\Tools\AutoloadBuilderException
-       */
-      public function testExceptionForSettingTemplateFileToNonExisting() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setTemplateFile('NonExistend.file');
-      }
+        /**
+         *
+         * @covers \TheSeer\Autoload\AutoloadBuilder::setTemplateFile
+         */
+        public function testSettingNonDefaultTemplate() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setTemplateFile(__DIR__ . '/_data/templates/simple.php');
+            $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
+            $this->assertContains($expected, $ab->render());
+        }
 
-      /**
-       *
-       * @covers \TheSeer\Tools\AutoloadBuilder::setTemplateFile
-       */
-      public function testSettingNonDefaultTemplate() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setTemplateFile(__DIR__ . '/_data/templates/simple.php');
-         $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
-         $this->assertContains($expected, $ab->render());
-      }
+        /**
+         *
+         * @covers \TheSeer\Autoload\AutoloadBuilder::setTemplateCode
+         */
+        public function testSettingTemplateCode() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setTemplateCode('___CLASSLIST___');
+            $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
+            $this->assertContains($expected, $ab->render());
+        }
 
-      /**
-       *
-       * @covers \TheSeer\Tools\AutoloadBuilder::setTemplateCode
-       */
-      public function testSettingTemplateCode() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setTemplateCode('___CLASSLIST___');
-         $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
-         $this->assertContains($expected, $ab->render());
-      }
+        /**
+         *
+         * @covers \TheSeer\Autoload\AutoloadBuilder::setLinebreak
+         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         */
+        public function testWindowsLFRendering() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setLineBreak("\r\n");
+            $expected = "_data/classfinder/class.php',\r\n";
+            $this->assertContains($expected, $ab->render());
+        }
 
-      /**
-       *
-       * @covers \TheSeer\Tools\AutoloadBuilder::setLinebreak
-       * @covers \TheSeer\Tools\AutoloadBuilder::render
-       */
-      public function testWindowsLFRendering() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setLineBreak("\r\n");
-         $expected = "_data/classfinder/class.php',\r\n";
-         $this->assertContains($expected, $ab->render());
-      }
-
-      /**
-       *
-       * @covers \TheSeer\Tools\AutoloadBuilder::setIndent
-       * @covers \TheSeer\Tools\AutoloadBuilder::render
-       */
-      public function testIndentWithTabsRendering() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setIndent("\t");
-         $expected = "\t'demo2'";
-         $this->assertContains($expected, $ab->render());
-      }
+        /**
+         *
+         * @covers \TheSeer\Autoload\AutoloadBuilder::setIndent
+         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         */
+        public function testIndentWithTabsRendering() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setIndent("\t");
+            $expected = "\t'demo2'";
+            $this->assertContains($expected, $ab->render());
+        }
 
 
-      /**
-       *
-       * @covers \TheSeer\Tools\AutoloadBuilder::setBaseDir
-       * @covers \TheSeer\Tools\AutoloadBuilder::render
-       */
-      public function testSetBaseDirRendering() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setBaseDir(realpath(__DIR__ . '/..'));
-         $result = $ab->render();
+        /**
+         *
+         * @covers \TheSeer\Autoload\AutoloadBuilder::setBaseDir
+         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         */
+        public function testSetBaseDirRendering() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setBaseDir(realpath(__DIR__ . '/..'));
+            $result = $ab->render();
 
-         $expected = "require __DIR__ . \$classes[\$cn];";
-         $this->assertContains($expected, $result);
+            $expected = "require __DIR__ . \$classes[\$cn];";
+            $this->assertContains($expected, $result);
 
-         $expected = "         \$classes = array(\n            'demo1' => '/tests/_data/classfinder/class.php',\n";
-         $this->assertContains($expected, $result);
-      }
+            $expected = "         \$classes = array(\n            'demo1' => '/tests/_data/classfinder/class.php',\n";
+            $this->assertContains($expected, $result);
+        }
 
-      /**
-       *
-       * @covers \TheSeer\Tools\AutoloadBuilder::render
-       */
-      public function testRenderingInCompatMode() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setCompat(true);
-         $ab->setBaseDir(realpath(__DIR__));
-         $expected = "require dirname(__FILE__) . \$classes[\$cn];";
-         $this->assertContains($expected, $ab->render());
+        /**
+         *
+         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         */
+        public function testRenderingInCompatMode() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setCompat(true);
+            $ab->setBaseDir(realpath(__DIR__));
+            $expected = "require dirname(__FILE__) . \$classes[\$cn];";
+            $this->assertContains($expected, $ab->render());
 
-      }
+        }
 
-      /**
-       * @covers \TheSeer\Tools\AutoloadBuilder::resolvePath
-       */
-      public function testRelativeSubBaseDirRendering() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setBaseDir(realpath(__DIR__.'/_data/dependency'));
-         $expected = "'demo1' => '/../classfinder/class.php'";
-         $this->assertContains($expected, $ab->render());
-      }
+        /**
+         * @covers \TheSeer\Autoload\AutoloadBuilder::resolvePath
+         */
+        public function testRelativeSubBaseDirRendering() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setBaseDir(realpath(__DIR__.'/_data/dependency'));
+            $expected = "'demo1' => '/../classfinder/class.php'";
+            $this->assertContains($expected, $ab->render());
+        }
 
-      /**
-       *
-       * @depends testSettingTemplateCode
-       * @expectedException \TheSeer\Tools\AutoloadBuilderException
-       */
-      public function testSettingInvalidTimestamp() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setTimestamp('Bad');
-      }
+        /**
+         *
+         * @depends testSettingTemplateCode
+         * @expectedException \TheSeer\Autoload\AutoloadBuilderException
+         */
+        public function testSettingInvalidTimestamp() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setTimestamp('Bad');
+        }
 
-      /**
-       *
-       * @depends testSettingTemplateCode
-       */
-      public function testSettingTimestamp() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setTemplateCode('___CREATED___');
-         $now = time();
-         $ab->setTimestamp($now);
-         $this->assertEquals(date('r',$now), $ab->render());
-      }
+        /**
+         *
+         * @depends testSettingTemplateCode
+         */
+        public function testSettingTimestamp() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setTemplateCode('___CREATED___');
+            $now = time();
+            $ab->setTimestamp($now);
+            $this->assertEquals(date('r',$now), $ab->render());
+        }
 
-      /**
-       *
-       * @depends testSettingTemplateCode
-       * @depends testSettingTimestamp
-       */
-      public function testSettingDateTimeFormat() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setTemplateCode('___CREATED___');
-         $now = time();
-         $ab->setTimestamp($now);
-         $ab->setDateTimeFormat('dmYHis');
-         $this->assertEquals(date('dmYHis',$now), $ab->render());
-      }
+        /**
+         *
+         * @depends testSettingTemplateCode
+         * @depends testSettingTimestamp
+         */
+        public function testSettingDateTimeFormat() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setTemplateCode('___CREATED___');
+            $now = time();
+            $ab->setTimestamp($now);
+            $ab->setDateTimeFormat('dmYHis');
+            $this->assertEquals(date('dmYHis',$now), $ab->render());
+        }
 
-      /**
-       *
-       * @depends testSettingTemplateCode
-       * @covers \TheSeer\Tools\AutoloadBuilder::setVariable
-       */
-      public function testSetVariable() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setTemplateCode('___TEST___');
-         $ab->setVariable('TEST','variableValue');
-         $this->assertEquals('variableValue', $ab->render());
-      }
+        /**
+         *
+         * @depends testSettingTemplateCode
+         * @covers \TheSeer\Autoload\AutoloadBuilder::setVariable
+         */
+        public function testSetVariable() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setTemplateCode('___TEST___');
+            $ab->setVariable('TEST','variableValue');
+            $this->assertEquals('variableValue', $ab->render());
+        }
 
-      /**
-       *
-       * @depends testSettingTemplateCode
-       * @covers \TheSeer\Tools\AutoloadBuilder::render
-       */
-      public function testGetUniqueValueForAutoloadName() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setTemplateCode('___AUTOLOAD___');
-         $first = $ab->render();
-         $this->assertNotEquals($first, $ab->render());
-      }
+        /**
+         *
+         * @depends testSettingTemplateCode
+         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         */
+        public function testGetUniqueValueForAutoloadName() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setTemplateCode('___AUTOLOAD___');
+            $first = $ab->render();
+            $this->assertNotEquals($first, $ab->render());
+        }
 
-      /**
-       * @depends testSettingTemplateCode
-       * @covers \TheSeer\Tools\AutoloadBuilder::setCompat
-       */
-      public function testSetCompatMode() {
-         $ab = new \TheSeer\Tools\AutoloadBuilder($this->classlist);
-         $ab->setCompat(true);
-         $ab->setBaseDir('.');
-         $ab->setTemplateCode('___BASEDIR___');
-         $this->assertEquals('dirname(__FILE__) . ', $ab->render());
-      }
+        /**
+         * @depends testSettingTemplateCode
+         * @covers \TheSeer\Autoload\AutoloadBuilder::setCompat
+         */
+        public function testSetCompatMode() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setCompat(true);
+            $ab->setBaseDir('.');
+            $ab->setTemplateCode('___BASEDIR___');
+            $this->assertEquals('dirname(__FILE__) . ', $ab->render());
+        }
 
-   }
+    }
 
 }

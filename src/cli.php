@@ -36,376 +36,376 @@
  * @license    BSD License
  */
 
-namespace TheSeer\Tools {
+namespace TheSeer\Autoload {
 
-   /**
-    * CLI interface to AutoloadBuilder / StaticBuilder
-    *
-    * @author     Arne Blankerts <arne@blankerts.de>
-    * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
-    */
-   class CLI {
+    /**
+     * CLI interface to AutoloadBuilder / StaticBuilder
+     *
+     * @author     Arne Blankerts <arne@blankerts.de>
+     * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
+     */
+    class CLI {
 
-      /**
-       * Version identifier
-       *
-       * @var string
-       */
-      const VERSION = "%version%";
+        /**
+         * Version identifier
+         *
+         * @var string
+         */
+        const VERSION = "%version%";
 
-      /**
-       * Main executor method
-       *
-       * @return void
-       */
-      public function run() {
+        /**
+         * Main executor method
+         *
+         * @return void
+         */
+        public function run() {
 
-         $input = new \ezcConsoleInput();
+            $input = new \ezcConsoleInput();
 
-         $versionOption = $input->registerOption( new \ezcConsoleOption( 'v', 'version' ) );
-         $versionOption->shorthelp    = 'Prints the version and exits';
-         $versionOption->isHelpOption = true;
+            $versionOption = $input->registerOption( new \ezcConsoleOption( 'v', 'version' ) );
+            $versionOption->shorthelp    = 'Prints the version and exits';
+            $versionOption->isHelpOption = true;
 
-         $helpOption = $input->registerOption( new \ezcConsoleOption( 'h', 'help' ) );
-         $helpOption->isHelpOption = true;
-         $helpOption->shorthelp    = 'Prints this usage information';
+            $helpOption = $input->registerOption( new \ezcConsoleOption( 'h', 'help' ) );
+            $helpOption->isHelpOption = true;
+            $helpOption->shorthelp    = 'Prints this usage information';
 
-         $outputOption = $input->registerOption( new \ezcConsoleOption(
+            $outputOption = $input->registerOption( new \ezcConsoleOption(
             'o', 'output', \ezcConsoleInput::TYPE_STRING, 'STDOUT', false,
             'Output file for generated code (default: STDOUT)'
             ));
 
-         $pharOption = $input->registerOption( new \ezcConsoleOption(
+            $pharOption = $input->registerOption( new \ezcConsoleOption(
             'p', 'phar', \ezcConsoleInput::TYPE_NONE, null, false,
             'Build a phar archive of directory contents',
             null,
             array( new \ezcConsoleOptionRule( $input->getOption( 'o' ) ) )
-         ));
+            ));
 
-         $input->registerOption( new \ezcConsoleOption(
+            $input->registerOption( new \ezcConsoleOption(
             'i', 'include', \ezcConsoleInput::TYPE_STRING, '*.php', true,
             'File pattern to include (default: *.php)'
-         ));
-         $input->registerOption( new \ezcConsoleOption(
+            ));
+            $input->registerOption( new \ezcConsoleOption(
             'e', 'exclude', \ezcConsoleInput::TYPE_STRING, null, true,
             'File pattern to exclude'
-         ));
-         $input->registerOption( new \ezcConsoleOption(
+            ));
+            $input->registerOption( new \ezcConsoleOption(
             'b', 'basedir', \ezcConsoleInput::TYPE_STRING, null, false,
             'Basedir for filepaths'
-         ));
-         $input->registerOption( new \ezcConsoleOption(
+            ));
+            $input->registerOption( new \ezcConsoleOption(
             't', 'template', \ezcConsoleInput::TYPE_STRING, null, false,
             'Path to code template to use'
-         ));
-         $input->registerOption( new \ezcConsoleOption(
+            ));
+            $input->registerOption( new \ezcConsoleOption(
             '', 'format', \ezcConsoleInput::TYPE_STRING, null, false,
             'Dateformat string for timestamp'
-         ));
-         $input->registerOption( new \ezcConsoleOption(
+            ));
+            $input->registerOption( new \ezcConsoleOption(
             '', 'linebreak', \ezcConsoleInput::TYPE_STRING, null, false,
             'Linebreak style (CR, CR/LF or LF)'
-         ));
-         $input->registerOption( new \ezcConsoleOption(
+            ));
+            $input->registerOption( new \ezcConsoleOption(
             '', 'indent', \ezcConsoleInput::TYPE_STRING, null, false,
             'String used for indenting (default: 3 spaces)'
-         ));
-         $lintOption = $input->registerOption( new \ezcConsoleOption(
+            ));
+            $lintOption = $input->registerOption( new \ezcConsoleOption(
             '', 'lint', \ezcConsoleInput::TYPE_NONE, null, false,
             'Run lint on generated code'
-         ));
-         $input->registerOption( new \ezcConsoleOption(
+            ));
+            $input->registerOption( new \ezcConsoleOption(
             '', 'lint-php', \ezcConsoleInput::TYPE_STRING, null, false,
             'PHP binary path for linting (default: /usr/bin/php or c:\\php\\php.exe)'
-         ));
+            ));
 
-         $input->registerOption( new \ezcConsoleOption(
+            $input->registerOption( new \ezcConsoleOption(
             'c', 'compat', \ezcConsoleInput::TYPE_NONE, null, false,
             'Generate PHP 5.2 compliant code'
-         ));
+            ));
 
-         $staticOption = $input->registerOption( new \ezcConsoleOption(
+            $staticOption = $input->registerOption( new \ezcConsoleOption(
             's', 'static', \ezcConsoleInput::TYPE_NONE, null, false,
             'Build a static require file'
-         ));
+            ));
 
-         $staticOption = $input->registerOption( new \ezcConsoleOption(
+            $staticOption = $input->registerOption( new \ezcConsoleOption(
             '', 'tolerant', \ezcConsoleInput::TYPE_NONE, null, false,
             'Ignore Class Redeclarations in the same file'
-         ));
+            ));
 
-         $input->argumentDefinition = new \ezcConsoleArguments();
-         $input->argumentDefinition[0] = new \ezcConsoleArgument( "directory" );
-         $input->argumentDefinition[0]->shorthelp = "The directory to process.";
+            $input->argumentDefinition = new \ezcConsoleArguments();
+            $input->argumentDefinition[0] = new \ezcConsoleArgument( "directory" );
+            $input->argumentDefinition[0]->shorthelp = "The directory to process.";
 
-         try {
-            $input->process();
-         } catch (\ezcConsoleException $e) {
-            $this->showVersion();
-            echo $e->getMessage()."\n\n";
-            $this->showUsage();
-            exit(3);
-         }
-
-         if ($helpOption->value === true) {
-            $this->showVersion();
-            $this->showUsage();
-            exit(0);
-         }
-
-         if ($versionOption->value === true ) {
-            $this->showVersion();
-            exit(0);
-         }
-
-         try {
-            $scanner = $this->getScanner($input);
-            if ($pharOption->value !== false) {
-               $phar = $this->buildPhar($scanner, $input);
-               $scanner->rewind();
+            try {
+                $input->process();
+            } catch (\ezcConsoleException $e) {
+                $this->showVersion();
+                echo $e->getMessage()."\n\n";
+                $this->showUsage();
+                exit(3);
             }
-            $finder = new ClassFinder(
+
+            if ($helpOption->value === true) {
+                $this->showVersion();
+                $this->showUsage();
+                exit(0);
+            }
+
+            if ($versionOption->value === true ) {
+                $this->showVersion();
+                exit(0);
+            }
+
+            try {
+                $scanner = $this->getScanner($input);
+                if ($pharOption->value !== false) {
+                    $phar = $this->buildPhar($scanner, $input);
+                    $scanner->rewind();
+                }
+                $finder = new ClassFinder(
                 $input->getOption('static')->value,
                 $input->getOption('tolerant')->value
-            );
-            $found  = $finder->parseMulti($scanner);
-            // this unset is needed to "fix" a segfault on shutdown
-            unset($scanner);
-            if ($found==0) {
-               fwrite(STDERR, "No classes were found - process aborted.\n\n");
-               exit(1);
+                );
+                $found  = $finder->parseMulti($scanner);
+                // this unset is needed to "fix" a segfault on shutdown
+                unset($scanner);
+                if ($found==0) {
+                    fwrite(STDERR, "No classes were found - process aborted.\n\n");
+                    exit(1);
+                }
+
+                $builder = $this->getBuilder($finder, $input);
+
+                if ($lintOption->value === true) {
+                    exit( $this->lintCode($builder->render(), $input) ? 0 : 4);
+                }
+
+                if ($outputOption->value == 'STDOUT') {
+                    echo $builder->render();
+                } else {
+                    if ($pharOption->value !== false) {
+                        $builder->setVariable('PHAR', basename($outputOption->value));
+                        $phar->setStub($builder->render());
+                        $phar->stopBuffering();
+                        echo "phar archive '{$outputOption->value}' generated.\n\n";
+                    } else {
+                        $builder->save($outputOption->value);
+                        echo "Autoload file '{$outputOption->value}' generated.\n\n";
+                    }
+                }
+                exit(0);
+
+            } catch (\Exception $e) {
+                $this->showVersion();
+                fwrite(STDERR, "Error while processing request:\n");
+                fwrite(STDERR, ' - ' . $e->getMessage()."\n");
+                exit(1);
             }
+        }
 
-            $builder = $this->getBuilder($finder, $input);
+        /**
+         * Helper to get instance of DirectoryScanner with cli options applied
+         *
+         * @param ezcConsoleInput $input  CLI Options pased to app
+         *
+         * @return Theseer\Autoload\IncludeExcludeFilterIterator
+         */
+        protected function getScanner(\ezcConsoleInput $input) {
+            $scanner = new DirectoryScanner;
 
-            if ($lintOption->value === true) {
-               exit( $this->lintCode($builder->render(), $input) ? 0 : 4);
-            }
-
-            if ($outputOption->value == 'STDOUT') {
-               echo $builder->render();
+            $include = $input->getOption('include');
+            if (is_array($include->value)) {
+                $scanner->setIncludes($include->value);
             } else {
-               if ($pharOption->value !== false) {
-                  $builder->setVariable('PHAR', basename($outputOption->value));
-                  $phar->setStub($builder->render());
-                  $phar->stopBuffering();
-                  echo "phar archive '{$outputOption->value}' generated.\n\n";
-               } else {
-                  $builder->save($outputOption->value);
-                  echo "Autoload file '{$outputOption->value}' generated.\n\n";
-               }
+                $scanner->addInclude($include->value);
             }
-            exit(0);
 
-         } catch (\Exception $e) {
-            $this->showVersion();
-            fwrite(STDERR, "Error while processing request:\n");
-            fwrite(STDERR, ' - ' . $e->getMessage()."\n");
-            exit(1);
-         }
-      }
-
-      /**
-       * Helper to get instance of DirectoryScanner with cli options applied
-       *
-       * @param ezcConsoleInput $input  CLI Options pased to app
-       *
-       * @return Theseer\Tools\IncludeExcludeFilterIterator
-       */
-      protected function getScanner(\ezcConsoleInput $input) {
-         $scanner = new DirectoryScanner;
-
-         $include = $input->getOption('include');
-         if (is_array($include->value)) {
-            $scanner->setIncludes($include->value);
-         } else {
-            $scanner->addInclude($include->value);
-         }
-
-         $exclude = $input->getOption('exclude');
-         if ($exclude->value) {
-            if (is_array($exclude->value)) {
-               $scanner->setExcludes($exclude->value);
-            } else {
-               $scanner->addExclude($exclude->value);
+            $exclude = $input->getOption('exclude');
+            if ($exclude->value) {
+                if (is_array($exclude->value)) {
+                    $scanner->setExcludes($exclude->value);
+                } else {
+                    $scanner->addExclude($exclude->value);
+                }
             }
-         }
 
-         $args = $input->getArguments();
-         return $scanner($args[0]);
-      }
-
-      /**
-       * Helper to get instance of AutoloadBuilder with cli options applied
-       *
-       * @param ClassFinder      $finder Instance of ClassFinder to get classes from
-       * @param \ezcConsoleInput $input  CLI Options pased to app
-       */
-      protected function getBuilder(ClassFinder $finder, \ezcConsoleInput $input) {
-         $isStatic = $input->getOption('static')->value;
-         $isPhar   = $input->getOption('phar')->value;
-         $isCompat = $input->getOption('compat')->value;
-
-         if ($isStatic === true) {
-            $ab = new StaticBuilder($finder->getClasses());
-            $ab->setDependencies($finder->getDependencies());
-            $ab->setPharMode($isPhar);
-         } else {
-            $ab = new AutoloadBuilder($finder->getClasses());
-         }
-
-         $ab->setCompat($isCompat);
-
-         $basedir = $input->getOption('basedir');
-         if ($basedir->value) {
-            $bdir = realpath($basedir->value);
-            if (!$bdir || !is_dir($bdir)) {
-               throw new \RuntimeException("Given basedir '{$basedir->value}' does not exist or is not a directory");
-            }
-            $ab->setBaseDir($bdir);
-         } else {
             $args = $input->getArguments();
-            $ab->setBaseDir(realpath($args[0]));
-         }
+            return $scanner($args[0]);
+        }
 
-         $template = $input->getOption('template');
-         if ($template->value) {
-            if (!file_exists($template->value)) {
-               $alternative = __DIR__.'/templates/'.$template->value;
-               if (file_exists($alternative)) {
-                  $template->value = $alternative;
-               }
+        /**
+         * Helper to get instance of AutoloadBuilder with cli options applied
+         *
+         * @param ClassFinder      $finder Instance of ClassFinder to get classes from
+         * @param \ezcConsoleInput $input  CLI Options pased to app
+         */
+        protected function getBuilder(ClassFinder $finder, \ezcConsoleInput $input) {
+            $isStatic = $input->getOption('static')->value;
+            $isPhar   = $input->getOption('phar')->value;
+            $isCompat = $input->getOption('compat')->value;
+
+            if ($isStatic === true) {
+                $ab = new StaticBuilder($finder->getClasses());
+                $ab->setDependencies($finder->getDependencies());
+                $ab->setPharMode($isPhar);
+            } else {
+                $ab = new AutoloadBuilder($finder->getClasses());
             }
-            $ab->setTemplateFile($template->value);
-         } else {
 
-            // determine auto template to use
-            $tplFile = 'default.php.tpl';
-            if ($isCompat) {
-               $tplFile = 'php52.php.tpl';
+            $ab->setCompat($isCompat);
+
+            $basedir = $input->getOption('basedir');
+            if ($basedir->value) {
+                $bdir = realpath($basedir->value);
+                if (!$bdir || !is_dir($bdir)) {
+                    throw new \RuntimeException("Given basedir '{$basedir->value}' does not exist or is not a directory");
+                }
+                $ab->setBaseDir($bdir);
+            } else {
+                $args = $input->getArguments();
+                $ab->setBaseDir(realpath($args[0]));
             }
 
-            if ($isPhar) {
-               if ($isStatic) {
-                  $tplFile = 'staticphar.php.tpl';
-               } else {
-                  $tplFile = 'phar.php.tpl';
-               }
+            $template = $input->getOption('template');
+            if ($template->value) {
+                if (!file_exists($template->value)) {
+                    $alternative = __DIR__.'/templates/'.$template->value;
+                    if (file_exists($alternative)) {
+                        $template->value = $alternative;
+                    }
+                }
+                $ab->setTemplateFile($template->value);
+            } else {
+
+                // determine auto template to use
+                $tplFile = 'default.php.tpl';
+                if ($isCompat) {
+                    $tplFile = 'php52.php.tpl';
+                }
+
+                if ($isPhar) {
+                    if ($isStatic) {
+                        $tplFile = 'staticphar.php.tpl';
+                    } else {
+                        $tplFile = 'phar.php.tpl';
+                    }
+                } elseif ($isStatic) {
+                    $tplFile = 'static.php.tpl';
+                }
+
+                $ab->setTemplateFile(__DIR__.'/templates/'.$tplFile);
+            }
+
+            $format = $input->getOption('format');
+            if ($format->value) {
+                $ab->setDateTimeFormat($format->value);
+            }
+
+            $indent = $input->getOption('indent');
+            if ($indent->value) {
+                if (is_numeric($indent->value)) {
+                    $ab->setIndent(str_repeat(' ', $indent->value));
+                } else {
+                    $ab->setIndent($indent->value);
+                }
             } elseif ($isStatic) {
-               $tplFile = 'static.php.tpl';
+                $ab->setIndent('');
             }
 
-            $ab->setTemplateFile(__DIR__.'/templates/'.$tplFile);
-         }
-
-         $format = $input->getOption('format');
-         if ($format->value) {
-            $ab->setDateTimeFormat($format->value);
-         }
-
-         $indent = $input->getOption('indent');
-         if ($indent->value) {
-            if (is_numeric($indent->value)) {
-               $ab->setIndent(str_repeat(' ', $indent->value));
+            $linebreak = $input->getOption('linebreak');
+            if ($linebreak->value !== false) {
+                $lbr = array('LF' => "\n", 'CR' => "\r", 'CRLF' => "\r\n" );
+                if (isset($lbr[$linebreak->value])) {
+                    $ab->setLineBreak($lbr[$linebreak->value]);
+                } else {
+                    $ab->setLineBreak($linebreak->value);
+                }
             } else {
-               $ab->setIndent($indent->value);
+                $ab->setLineBreak("\n");
             }
-         } elseif ($isStatic) {
-            $ab->setIndent('');
-         }
 
-         $linebreak = $input->getOption('linebreak');
-         if ($linebreak->value !== false) {
-            $lbr = array('LF' => "\n", 'CR' => "\r", 'CRLF' => "\r\n" );
-            if (isset($lbr[$linebreak->value])) {
-               $ab->setLineBreak($lbr[$linebreak->value]);
+            return $ab;
+        }
+
+
+        protected function buildPhar(\Iterator $scanner, \ezcConsoleInput $input) {
+            $basedir = $input->getOption('basedir')->value;
+            $phar    = new \Phar($input->getOption('output')->value, 0, basename($input->getOption('output')->value));
+            $phar->startBuffering();
+            if ($basedir) {
+                $phar->buildFromIterator($scanner, $basedir);
             } else {
-               $ab->setLineBreak($linebreak->value);
+                $args = $input->getArguments();
+                $phar->buildFromIterator($scanner, $args[0]);
             }
-         } else {
-            $ab->setLineBreak("\n");
-         }
+            return $phar;
+        }
 
-         return $ab;
-      }
-
-
-      protected function buildPhar(\Iterator $scanner, \ezcConsoleInput $input) {
-         $basedir = $input->getOption('basedir')->value;
-         $phar    = new \Phar($input->getOption('output')->value, 0, basename($input->getOption('output')->value));
-         $phar->startBuffering();
-         if ($basedir) {
-            $phar->buildFromIterator($scanner, $basedir);
-         } else {
-            $args = $input->getArguments();
-            $phar->buildFromIterator($scanner, $args[0]);
-         }
-         return $phar;
-      }
-
-      /**
-       * Helper to execute a lint check on generated code
-       *
-       * @param string           $code  Generated code to lint
-       * @param \ezcConsoleInput $input CLI Options pased to app
-       *
-       * @return boolean
-       */
-      protected function lintCode($code, $input) {
-         $dsp = array(
+        /**
+         * Helper to execute a lint check on generated code
+         *
+         * @param string           $code  Generated code to lint
+         * @param \ezcConsoleInput $input CLI Options pased to app
+         *
+         * @return boolean
+         */
+        protected function lintCode($code, $input) {
+            $dsp = array(
             0 => array("pipe", "r"),
             1 => array("pipe", "w"),
             2 => array("pipe", "w")
-         );
+            );
 
-         $php = $input->getOption('lint-php');
-         if ($php->value === false) {
-            $binary = PHP_OS === 'WIN' ? 'C:\php\php.exe' : '/usr/bin/php';
-         } else {
-            $binary = $php->value;
-         }
+            $php = $input->getOption('lint-php');
+            if ($php->value === false) {
+                $binary = PHP_OS === 'WIN' ? 'C:\php\php.exe' : '/usr/bin/php';
+            } else {
+                $binary = $php->value;
+            }
 
-         $process = proc_open($binary . ' -l', $dsp, $pipes);
+            $process = proc_open($binary . ' -l', $dsp, $pipes);
 
-         if (!is_resource($process)) {
-            fwrite(STDERR, "Opening php binary for linting failed.\n");
-            exit(1);
-         }
+            if (!is_resource($process)) {
+                fwrite(STDERR, "Opening php binary for linting failed.\n");
+                exit(1);
+            }
 
-         fwrite($pipes[0], $code);
-         fclose($pipes[0]);
+            fwrite($pipes[0], $code);
+            fclose($pipes[0]);
 
-         $stdout = stream_get_contents($pipes[1]);
-         fclose($pipes[1]);
+            $stdout = stream_get_contents($pipes[1]);
+            fclose($pipes[1]);
 
-         $stderr = stream_get_contents($pipes[2]);
-         fclose($pipes[2]);
+            $stderr = stream_get_contents($pipes[2]);
+            fclose($pipes[2]);
 
-         $rc = proc_close($process);
+            $rc = proc_close($process);
 
-         if ($rc == 255) {
-            fwrite(STDERR, "Syntax errors during lint:\n" .
-                           str_replace('in - on line', 'in generated code on line', $stderr) .
+            if ($rc == 255) {
+                fwrite(STDERR, "Syntax errors during lint:\n" .
+                str_replace('in - on line', 'in generated code on line', $stderr) .
                            "\n");
-            return false;
-         }
+                return false;
+            }
 
-         echo "Lint check of geneated code okay\n\n";
-         return true;
-      }
+            echo "Lint check of geneated code okay\n\n";
+            return true;
+        }
 
-      /**
-       * Helper to output version information
-       */
-      protected function showVersion() {
-         printf("phpab %s - Copyright (C) 2009 - 2011 by Arne Blankerts\n\n", self::VERSION);
-      }
+        /**
+         * Helper to output version information
+         */
+        protected function showVersion() {
+            printf("phpab %s - Copyright (C) 2009 - 2011 by Arne Blankerts\n\n", self::VERSION);
+        }
 
-      /**
-       * Helper to output usage information
-       */
-      protected function showUsage() {
-         print <<<EOF
+        /**
+         * Helper to output usage information
+         */
+        protected function showUsage() {
+            print <<<EOF
 Usage: phpab [switches] <directory>
 
   -i, --include    File pattern to include (default: *.php)
@@ -434,7 +434,7 @@ Usage: phpab [switches] <directory>
 
 
 EOF;
-      }
-   }
+        }
+    }
 }
 

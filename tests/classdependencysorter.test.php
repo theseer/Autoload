@@ -35,90 +35,88 @@
  * @license    BSD License
  */
 
-namespace TheSeer\Tools\Tests {
+namespace TheSeer\Autoload\Tests {
 
-   use TheSeer\Tools;
+    use TheSeer\Autoload\ClassFinder;
+    use TheSeer\Autoload\AutoloadBuilder;
+    use TheSeer\Autoload\ClassDependencySorter;
 
-   use TheSeer\Tools\ClassFinder;
-   use TheSeer\Tools\AutoloadBuilder;
-   use TheSeer\Tools\ClassDependencySorter;
-
-   /**
-    * Unit tests for ClassDependencySorter class
-    *
-    * @author     Arne Blankerts <arne@blankerts.de>
-    * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
-    */
-   class ClassDependencySorterTest extends \PHPUnit_Framework_TestCase {
+    /**
+     * Unit tests for ClassDependencySorter class
+     *
+     * @author     Arne Blankerts <arne@blankerts.de>
+     * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
+     */
+    class ClassDependencySorterTest extends \PHPUnit_Framework_TestCase {
 
 
-      public function testProcessingDependenciesInOneFile() {
-         $classes = array(
+        public function testProcessingDependenciesInOneFile() {
+            $classes = array(
             'class1' => 'file1',
             'class2' => 'file1'
-         );
+            );
 
-         $dependency=array(
+            $dependency=array(
             'class1' => array('class2')
-         );
+            );
 
-         $x = new ClassDependencySorter($classes, $dependency);
-         $r = $x->process();
+            $x = new ClassDependencySorter($classes, $dependency);
+            $r = $x->process();
 
-         $expectOrder=array('class2','class1');
-         $this->assertEquals(2, count($r));
-         $this->assertEquals($expectOrder, array_keys($r));
-      }
+            $expectOrder=array('class2','class1');
+            $this->assertEquals(2, count($r));
+            $this->assertEquals($expectOrder, array_keys($r));
+        }
 
-      public function testProcessingDependenciesOverFileBounderies() {
+        public function testProcessingDependenciesOverFileBounderies() {
 
-         $classes = array(
+            $classes = array(
             'class3' => 'file3',
             'class1' => 'file1',
             'class2' => 'file2'
-         );
+            );
 
-         $dependency=array(
+            $dependency=array(
             'class2' => array('class3'),
             'class1' => array('class2')
-         );
+            );
 
-         $x = new ClassDependencySorter($classes, $dependency);
-         $r = $x->process();
+            $x = new ClassDependencySorter($classes, $dependency);
+            $r = $x->process();
 
-         $expectOrder=array(
+            $expectOrder=array(
             'class3','class2','class1'
-         );
+            );
 
-         $expectFilesOrder=array(
+            $expectFilesOrder=array(
             'file3','file2','file1'
-         );
+            );
 
-         $this->assertEquals(3, count($r));
-         $this->assertEquals($expectOrder, array_keys($r));
-         $this->assertEquals($expectFilesOrder, array_unique(array_values($r)));
-      }
+            $this->assertEquals(3, count($r));
+            $this->assertEquals($expectOrder, array_keys($r));
+            $this->assertEquals($expectFilesOrder, array_unique(array_values($r)));
+        }
 
-      /**
-       * @expectedException \TheSeer\Tools\ClassDependencySorterException
-       */
-      public function testRecusriveDependencyThrowsException() {
-         $classes=array('test1' => 'file1');
-         $dependency=array('test1' => array('test1'));
+        /**
+         * @expectedException \TheSeer\Autoload\ClassDependencySorterException
+         */
+        public function testRecusriveDependencyThrowsException() {
+            $classes=array('test1' => 'file1');
+            $dependency=array('test1' => array('test1'));
 
-         $x = new ClassDependencySorter($classes, $dependency);
-         $r = $x->process();
+            $x = new ClassDependencySorter($classes, $dependency);
+            $r = $x->process();
 
-      }
+        }
 
-      public function testUnkownDependencyGetsSkippedSilently() {
-         $classes=array('test1' => 'file1');
-         $dependency=array('test1' => array('test2'));
+        public function testUnkownDependencyGetsSkippedSilently() {
+            $classes=array('test1' => 'file1');
+            $dependency=array('test1' => array('test2'));
 
-         $x = new ClassDependencySorter($classes, $dependency);
-         $r = $x->process();
+            $x = new ClassDependencySorter($classes, $dependency);
+            $r = $x->process();
 
-      }
+        }
 
-   }
+    }
 }

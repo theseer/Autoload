@@ -35,65 +35,65 @@
  * @license    BSD License
  */
 
-namespace TheSeer\Tools {
+namespace TheSeer\Autoload {
 
-   /**
-    * Sorting classes by depdendency for static requires
-    *
-    * @author     Arne Blankerts <arne@blankerts.de>
-    * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
-    */
-   class ClassDependencySorter {
+    /**
+     * Sorting classes by depdendency for static requires
+     *
+     * @author     Arne Blankerts <arne@blankerts.de>
+     * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
+     */
+    class ClassDependencySorter {
 
-      protected $classList;
-      protected $dependencies;
+        protected $classList;
+        protected $dependencies;
 
-      protected $level;
+        protected $level;
 
-      protected $sorted = array();
+        protected $sorted = array();
 
-      public function __construct(Array $classes, Array $dependencies) {
-         $this->classList    = $classes;
-         $this->dependencies = $dependencies;
-      }
+        public function __construct(Array $classes, Array $dependencies) {
+            $this->classList    = $classes;
+            $this->dependencies = $dependencies;
+        }
 
-      public function process() {
-         $this->level = 0;
-         foreach($this->classList as $class => $file) {
-            if (!in_array($class, $this->sorted)) {
-               $this->resolve($class);
+        public function process() {
+            $this->level = 0;
+            foreach($this->classList as $class => $file) {
+                if (!in_array($class, $this->sorted)) {
+                    $this->resolve($class);
+                }
             }
-         }
-         $res = array();
-         foreach($this->sorted as $class) {
-            if (!isset($this->classList[$class])) {
-               continue;
+            $res = array();
+            foreach($this->sorted as $class) {
+                if (!isset($this->classList[$class])) {
+                    continue;
+                }
+                $res[$class] = $this->classList[$class];
             }
-            $res[$class] = $this->classList[$class];
-         }
-         return $res;
-      }
+            return $res;
+        }
 
-      protected function resolve($class) {
-         $this->level++;
-         if ($this->level==50) {
-            throw new ClassDependencySorterException("Can't resolve more than 50 levels of dependencies",ClassDependencySorterException::TooManyDependencyLevels);
-         }
-         if (isset($this->dependencies[$class])) {
-            foreach($this->dependencies[$class] as $depclass) {
-               if (!in_array($depclass, $this->sorted)) {
-                  $this->resolve($depclass);
-               }
+        protected function resolve($class) {
+            $this->level++;
+            if ($this->level==50) {
+                throw new ClassDependencySorterException("Can't resolve more than 50 levels of dependencies",ClassDependencySorterException::TooManyDependencyLevels);
             }
-         }
-         $this->sorted[] = $class;
-         $this->level--;
-      }
-   }
+            if (isset($this->dependencies[$class])) {
+                foreach($this->dependencies[$class] as $depclass) {
+                    if (!in_array($depclass, $this->sorted)) {
+                        $this->resolve($depclass);
+                    }
+                }
+            }
+            $this->sorted[] = $class;
+            $this->level--;
+        }
+    }
 
-   class ClassDependencySorterException extends \Exception {
+    class ClassDependencySorterException extends \Exception {
 
-      const TooManyDependencyLevels = 1;
+        const TooManyDependencyLevels = 1;
 
-   }
+    }
 }
