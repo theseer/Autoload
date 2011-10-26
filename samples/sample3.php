@@ -1,20 +1,15 @@
 <?php
 
-  require '../src/classfinder.php';
-  require '../src/phpfilter.php';
-  require '../src/autoloadbuilder.php';
+  require __DIR__ . '/../autoload.php';
+  require 'TheSeer/DirectoryScanner/autoload.php';
 
-  require '../../scanner/src/directoryscanner.php';
-  require '../../scanner/src/includeexcludefilter.php';
-  require '../../scanner/src/filesonlyfilter.php';
-
-  $scanner = new \TheSeer\Autoload\DirectoryScanner;
+  $scanner = new \TheSeer\DirectoryScanner\DirectoryScanner;
   $scanner->addInclude('*.php');
 
   $finder = new \TheSeer\Autoload\ClassFinder;
 
-  $found = $finder->parseMulti($scanner('../'));
+  $found = $finder->parseMulti($scanner('../src'));
 
-  $ab = new \TheSeer\Autoload\AutoloadBuilder($found);
+  $ab = new \TheSeer\Autoload\AutoloadBuilder($finder->getClasses());
 
   echo $ab->render();
