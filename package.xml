@@ -19,8 +19,8 @@
  </lead>
  <date>2011-09-18</date>
  <version>
-  <release>1.4.1</release>
-  <api>1.4.0</api>
+  <release>1.5.0</release>
+  <api>1.5.0</api>
  </version>
  <stability>
   <release>stable</release>
@@ -69,7 +69,7 @@
    <package>
     <name>DirectoryScanner</name>
     <channel>pear.netpirates.net</channel>
-    <min>1.0.2</min>
+    <min>1.1.0</min>
    </package>
    <package>
     <name>ConsoleTools</name>
