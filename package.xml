@@ -17,7 +17,7 @@
   <email>arne@blankerts.de</email>
   <active>yes</active>
  </lead>
- <date>2011-09-18</date>
+ <date>2011-11-01</date>
  <version>
   <release>1.5.0</release>
   <api>1.5.0</api>
@@ -33,11 +33,18 @@
    <dir name="TheSeer">
     <dir name="Autoload">
      <dir name="templates">
+      <dir name="cs">
        <file baseinstalldir="/" name="default.php.tpl" role="php" />
        <file baseinstalldir="/" name="php52.php.tpl" role="php" />
        <file baseinstalldir="/" name="phar.php.tpl" role="php" />
-       <file baseinstalldir="/" name="staticphar.php.tpl" role="php" />
-       <file baseinstalldir="/" name="static.php.tpl" role="php" />
+      </dir>
+      <dir name="ci">
+       <file baseinstalldir="/" name="default.php.tpl" role="php" />
+       <file baseinstalldir="/" name="php52.php.tpl" role="php" />
+       <file baseinstalldir="/" name="phar.php.tpl" role="php" />
+      </dir>
+      <file baseinstalldir="/" name="staticphar.php.tpl" role="php" />
+      <file baseinstalldir="/" name="static.php.tpl" role="php" />
      </dir>
      <file baseinstalldir="/" name="cli.php" role="php">
         <tasks:replace from="%version%" to="version" type="package-info" />
