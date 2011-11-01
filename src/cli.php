@@ -213,7 +213,7 @@ namespace TheSeer\Autoload {
          * @return Theseer\Autoload\IncludeExcludeFilterIterator
          */
         protected function getScanner(\ezcConsoleInput $input) {
-            $scanner = new DirectoryScanner;
+            $scanner = new \TheSeer\DirectoryScanner\DirectoryScanner;
 
             $include = $input->getOption('include');
             if (is_array($include->value)) {
