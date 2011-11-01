@@ -60,6 +60,13 @@ namespace TheSeer\Autoload\Tests {
             $this->assertArrayHasKey('demo', $finder->getClasses());
         }
 
+        public function testOneClassCaseSensitive() {
+            $finder = new \TheSeer\Autoload\ClassFinder(false,false,true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
+            $this->assertEquals(1,$rc);
+            $this->assertArrayHasKey('Demo', $finder->getClasses());
+        }
+
         /**
          *
          * @expectedException  \TheSeer\Autoload\ClassFinderException

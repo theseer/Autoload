@@ -118,15 +118,12 @@ namespace TheSeer\Autoload {
          *
          * @return void
          */
-        public function __construct(array $classlist, $baseDir = '', $tpl = null, $indent = '            ') {
+        public function __construct(array $classlist, $baseDir = '', $caseSensitive = false, $indent = '            ') {
             $this->classes = $classlist;
             ksort($this->classes);
             $this->baseDir = $baseDir;
             $this->indent  = $indent;
-            if ($tpl === null) {
-                $tpl = __DIR__ . '/templates/default.php.tpl';
-            }
-            $this->setTemplateFile($tpl);
+            $this->setTemplateFile( __DIR__ . '/templates/' . ($caseSensitive ? 'cs' : 'ci')  . '/default.php.tpl' );
         }
 
         /**

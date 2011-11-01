@@ -1,5 +1,5 @@
 <?php
 
-class demo {}
+class Demo {}
 
 ?>

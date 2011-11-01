@@ -71,68 +71,73 @@ namespace TheSeer\Autoload {
             $helpOption->shorthelp    = 'Prints this usage information';
 
             $outputOption = $input->registerOption( new \ezcConsoleOption(
-            'o', 'output', \ezcConsoleInput::TYPE_STRING, 'STDOUT', false,
-            'Output file for generated code (default: STDOUT)'
-            ));
+                'o', 'output', \ezcConsoleInput::TYPE_STRING, 'STDOUT', false,
+                'Output file for generated code (default: STDOUT)'
+                ));
 
             $pharOption = $input->registerOption( new \ezcConsoleOption(
-            'p', 'phar', \ezcConsoleInput::TYPE_NONE, null, false,
-            'Build a phar archive of directory contents',
-            null,
-            array( new \ezcConsoleOptionRule( $input->getOption( 'o' ) ) )
-            ));
+                'p', 'phar', \ezcConsoleInput::TYPE_NONE, null, false,
+                'Build a phar archive of directory contents',
+                null,
+                array( new \ezcConsoleOptionRule( $input->getOption( 'o' ) ) )
+                ));
 
             $input->registerOption( new \ezcConsoleOption(
-            'i', 'include', \ezcConsoleInput::TYPE_STRING, '*.php', true,
-            'File pattern to include (default: *.php)'
-            ));
+                'i', 'include', \ezcConsoleInput::TYPE_STRING, '*.php', true,
+                'File pattern to include (default: *.php)'
+                ));
             $input->registerOption( new \ezcConsoleOption(
-            'e', 'exclude', \ezcConsoleInput::TYPE_STRING, null, true,
-            'File pattern to exclude'
-            ));
+                'e', 'exclude', \ezcConsoleInput::TYPE_STRING, null, true,
+                'File pattern to exclude'
+                ));
             $input->registerOption( new \ezcConsoleOption(
-            'b', 'basedir', \ezcConsoleInput::TYPE_STRING, null, false,
-            'Basedir for filepaths'
-            ));
+                'b', 'basedir', \ezcConsoleInput::TYPE_STRING, null, false,
+                'Basedir for filepaths'
+                ));
             $input->registerOption( new \ezcConsoleOption(
-            't', 'template', \ezcConsoleInput::TYPE_STRING, null, false,
-            'Path to code template to use'
-            ));
+                't', 'template', \ezcConsoleInput::TYPE_STRING, null, false,
+                'Path to code template to use'
+                ));
             $input->registerOption( new \ezcConsoleOption(
-            '', 'format', \ezcConsoleInput::TYPE_STRING, null, false,
-            'Dateformat string for timestamp'
-            ));
+                '', 'format', \ezcConsoleInput::TYPE_STRING, null, false,
+                'Dateformat string for timestamp'
+                ));
             $input->registerOption( new \ezcConsoleOption(
-            '', 'linebreak', \ezcConsoleInput::TYPE_STRING, null, false,
-            'Linebreak style (CR, CR/LF or LF)'
-            ));
+                '', 'linebreak', \ezcConsoleInput::TYPE_STRING, null, false,
+                'Linebreak style (CR, CR/LF or LF)'
+                ));
             $input->registerOption( new \ezcConsoleOption(
-            '', 'indent', \ezcConsoleInput::TYPE_STRING, null, false,
-            'String used for indenting (default: 3 spaces)'
-            ));
+                '', 'indent', \ezcConsoleInput::TYPE_STRING, null, false,
+                'String used for indenting (default: 3 spaces)'
+                ));
             $lintOption = $input->registerOption( new \ezcConsoleOption(
-            '', 'lint', \ezcConsoleInput::TYPE_NONE, null, false,
-            'Run lint on generated code'
-            ));
+                '', 'lint', \ezcConsoleInput::TYPE_NONE, null, false,
+                'Run lint on generated code'
+                ));
             $input->registerOption( new \ezcConsoleOption(
-            '', 'lint-php', \ezcConsoleInput::TYPE_STRING, null, false,
-            'PHP binary path for linting (default: /usr/bin/php or c:\\php\\php.exe)'
-            ));
+                '', 'lint-php', \ezcConsoleInput::TYPE_STRING, null, false,
+                'PHP binary path for linting (default: /usr/bin/php or c:\\php\\php.exe)'
+                ));
 
             $input->registerOption( new \ezcConsoleOption(
-            'c', 'compat', \ezcConsoleInput::TYPE_NONE, null, false,
-            'Generate PHP 5.2 compliant code'
-            ));
+                'c', 'compat', \ezcConsoleInput::TYPE_NONE, null, false,
+                'Generate PHP 5.2 compliant code'
+                ));
 
             $staticOption = $input->registerOption( new \ezcConsoleOption(
-            's', 'static', \ezcConsoleInput::TYPE_NONE, null, false,
-            'Build a static require file'
-            ));
+                's', 'static', \ezcConsoleInput::TYPE_NONE, null, false,
+                'Build a static require file'
+                ));
 
             $staticOption = $input->registerOption( new \ezcConsoleOption(
-            '', 'tolerant', \ezcConsoleInput::TYPE_NONE, null, false,
-            'Ignore Class Redeclarations in the same file'
-            ));
+                '', 'tolerant', \ezcConsoleInput::TYPE_NONE, null, false,
+                'Ignore Class Redeclarations in the same file'
+                ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                'n', 'nolower', \ezcConsoleInput::TYPE_NONE, null, false,
+                'Do not lowercase classnames for case insensitivity'
+                ));
 
             $input->argumentDefinition = new \ezcConsoleArguments();
             $input->argumentDefinition[0] = new \ezcConsoleArgument( "directory" );
@@ -166,7 +171,8 @@ namespace TheSeer\Autoload {
                 }
                 $finder = new ClassFinder(
                 $input->getOption('static')->value,
-                $input->getOption('tolerant')->value
+                $input->getOption('tolerant')->value,
+                $input->getOption('nolower')->value
                 );
                 $found  = $finder->parseMulti($scanner);
                 // this unset is needed to "fix" a segfault on shutdown
@@ -245,6 +251,8 @@ namespace TheSeer\Autoload {
             $isStatic = $input->getOption('static')->value;
             $isPhar   = $input->getOption('phar')->value;
             $isCompat = $input->getOption('compat')->value;
+            $noLower  = $input->getOption('nolower')->value;
+            $tplType  = $noLower ? 'cs' : 'ci';
 
             if ($isStatic === true) {
                 $ab = new StaticBuilder($finder->getClasses());
@@ -271,7 +279,7 @@ namespace TheSeer\Autoload {
             $template = $input->getOption('template');
             if ($template->value) {
                 if (!file_exists($template->value)) {
-                    $alternative = __DIR__.'/templates/'.$template->value;
+                    $alternative = __DIR__.'/templates/'.$tplType.'/'.$template->value;
                     if (file_exists($alternative)) {
                         $template->value = $alternative;
                     }
@@ -295,7 +303,7 @@ namespace TheSeer\Autoload {
                     $tplFile = 'static.php.tpl';
                 }
 
-                $ab->setTemplateFile(__DIR__.'/templates/'.$tplFile);
+                $ab->setTemplateFile(__DIR__.'/templates/'.$tplType.'/'.$tplFile);
             }
 
             $format = $input->getOption('format');
@@ -419,6 +427,8 @@ Usage: phpab [switches] <directory>
 
   -c, --compat     Generate PHP 5.2 compatible code
   -s, --static     Generate a static require file
+
+  -n, --nolower    Do not lowercase classnames for case insensitivity
 
       --format     Dateformat string for timestamp
       --linebreak  Linebreak style (CR, CRLF or LF, default: LF)

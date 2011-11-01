@@ -53,9 +53,10 @@ namespace TheSeer\Autoload {
         protected $foundClasses = array();
         protected $dependencies = array();
 
-        public function __construct($doDeps = false, $tolerantMode = false) {
+        public function __construct($doDeps = false, $tolerantMode = false, $disableLower = false) {
             $this->withDeps = $doDeps;
             $this->isInTolerantMode = $tolerantMode;
+            $this->disableLowercase = $disableLower;
         }
 
         public function getClasses() {
@@ -186,20 +187,21 @@ namespace TheSeer\Autoload {
 
                     case T_STRING: {
                         if ($nsFound) {
-                            $inNamespace .= strtolower($tok[1]);
+                            $inNamespace .= $this->disableLowercase ? $tok[1] : strtolower($tok[1]);
                             $nsFound = false;
                         } elseif ($classFound) {
-                            $lastClass = ($inNamespace ? $inNamespace .'\\\\' : '') . strtolower($tok[1]);
+                            $lastClass = $inNamespace ? $inNamespace .'\\\\' : '';
+                            $lastClass .= $this->disableLowercase ? $tok[1] : strtolower($tok[1]);
                             if (isset($this->foundClasses[$lastClass])) {
                                 if ($this->canTolerateRedeclaration($lastClass, $file)) {
                                     continue;
                                 }
                                 throw new ClassFinderException(sprintf(
-                           "Redeclaration of class '%s' detected\n   Original:  %s\n   Secondary: %s\n\n",
-                                $lastClass,
-                                $this->foundClasses[$lastClass],
-                                $file
-                                ), ClassFinderException::ClassRedeclaration
+                                    "Redeclaration of class '%s' detected\n   Original:  %s\n   Secondary: %s\n\n",
+                                    $lastClass,
+                                    $this->foundClasses[$lastClass],
+                                    $file
+                                    ), ClassFinderException::ClassRedeclaration
                                 );
                             }
                             $this->foundClasses[$lastClass] = $file;
@@ -210,7 +212,7 @@ namespace TheSeer\Autoload {
                                 $dependsClass   = $inNamespace . '\\\\';
                                 $classNameStart = false;
                             }
-                            $dependsClass .= strtolower($tok[1]);
+                            $dependsClass .= $this->disableLowercase ? $tok[1] : strtolower($tok[1]);
                         }
                         continue;
                     }
