@@ -86,34 +86,42 @@ namespace TheSeer\Autoload {
                 'i', 'include', \ezcConsoleInput::TYPE_STRING, '*.php', true,
                 'File pattern to include (default: *.php)'
                 ));
+
             $input->registerOption( new \ezcConsoleOption(
                 'e', 'exclude', \ezcConsoleInput::TYPE_STRING, null, true,
                 'File pattern to exclude'
                 ));
+
             $input->registerOption( new \ezcConsoleOption(
                 'b', 'basedir', \ezcConsoleInput::TYPE_STRING, null, false,
                 'Basedir for filepaths'
                 ));
+
             $input->registerOption( new \ezcConsoleOption(
                 't', 'template', \ezcConsoleInput::TYPE_STRING, null, false,
                 'Path to code template to use'
                 ));
+
             $input->registerOption( new \ezcConsoleOption(
                 '', 'format', \ezcConsoleInput::TYPE_STRING, null, false,
                 'Dateformat string for timestamp'
                 ));
+
             $input->registerOption( new \ezcConsoleOption(
                 '', 'linebreak', \ezcConsoleInput::TYPE_STRING, null, false,
                 'Linebreak style (CR, CR/LF or LF)'
                 ));
+
             $input->registerOption( new \ezcConsoleOption(
                 '', 'indent', \ezcConsoleInput::TYPE_STRING, null, false,
                 'String used for indenting (default: 3 spaces)'
                 ));
+
             $lintOption = $input->registerOption( new \ezcConsoleOption(
                 '', 'lint', \ezcConsoleInput::TYPE_NONE, null, false,
                 'Run lint on generated code'
                 ));
+
             $input->registerOption( new \ezcConsoleOption(
                 '', 'lint-php', \ezcConsoleInput::TYPE_STRING, null, false,
                 'PHP binary path for linting (default: /usr/bin/php or c:\\php\\php.exe)'
@@ -137,6 +145,16 @@ namespace TheSeer\Autoload {
             $input->registerOption( new \ezcConsoleOption(
                 'n', 'nolower', \ezcConsoleInput::TYPE_NONE, null, false,
                 'Do not lowercase classnames for case insensitivity'
+                ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                    'q', 'quiet', \ezcConsoleInput::TYPE_NONE, null, false,
+                    'Run in quiet mode, no output'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                null, 'var', \ezcConsoleInput::TYPE_STRING, array(), true,
+                'Assign variable'
                 ));
 
             $input->argumentDefinition = new \ezcConsoleArguments();
@@ -163,9 +181,12 @@ namespace TheSeer\Autoload {
                 exit(0);
             }
 
+            $this->beQuiet = $input->getOption('quiet')->value;
+
             try {
                 $scanner = $this->getScanner($input);
                 if ($pharOption->value !== false) {
+                    unlink($outputOption->value);
                     $phar = $this->buildPhar($scanner, $input);
                     $scanner->rewind();
                 }
@@ -178,7 +199,7 @@ namespace TheSeer\Autoload {
                 // this unset is needed to "fix" a segfault on shutdown
                 unset($scanner);
                 if ($found==0) {
-                    fwrite(STDERR, "No classes were found - process aborted.\n\n");
+                    $this->message("No classes were found - process aborted.\n\n", STDERR);
                     exit(1);
                 }
 
@@ -193,22 +214,33 @@ namespace TheSeer\Autoload {
                 } else {
                     if ($pharOption->value !== false) {
                         $builder->setVariable('PHAR', basename($outputOption->value));
-                        $phar->setStub($builder->render());
+                        $stub = $builder->render();
+                        if (strpos($stub, '__HALT_COMPILER();')===false) {
+                            $this->message(
+                                "Warning: Template used in phar mode did not contain required __HALT_COMPILER() call\n" .
+                                "which has been added automatically. The used stub code may not work as intended.\n\n", STDERR);
+                            $stub .= $builder->getLineBreak() . '__HALT_COMPILER();';
+                        }
+                        $phar->setStub($stub);
                         $phar->stopBuffering();
-                        echo "phar archive '{$outputOption->value}' generated.\n\n";
+                        $this->message( "phar archive '{$outputOption->value}' generated.\n\n");
                     } else {
                         $builder->save($outputOption->value);
-                        echo "Autoload file '{$outputOption->value}' generated.\n\n";
+                        $this->message( "Autoload file '{$outputOption->value}' generated.\n\n");
                     }
                 }
                 exit(0);
 
             } catch (\Exception $e) {
                 $this->showVersion();
-                fwrite(STDERR, "Error while processing request:\n");
-                fwrite(STDERR, ' - ' . $e->getMessage()."\n");
+                $this->message("Error while processing request:\n - " . $e->getMessage()."\n", STDERR);
                 exit(1);
             }
+        }
+
+        protected function message($msg, $target = STDOUT) {
+            if ($this->beQuiet) return;
+            fwrite($target, $msg);
         }
 
         /**
@@ -320,6 +352,8 @@ namespace TheSeer\Autoload {
                 }
             } elseif ($isStatic) {
                 $ab->setIndent('');
+            } else {
+                $ab->setIndent(str_repeat(' ', $isCompat ? 12 : 16));
             }
 
             $linebreak = $input->getOption('linebreak');
@@ -332,6 +366,16 @@ namespace TheSeer\Autoload {
                 }
             } else {
                 $ab->setLineBreak("\n");
+            }
+
+            if ($vars = $input->getOption('var')->value) {
+                foreach($vars as $var) {
+                    if (strpos($var,'=')===false) {
+                       throw new \RuntimeException("Variable defintion '$var' is invalid and cannot be processed.");
+                    }
+                    list($name, $value) = explode('=',$var,2);
+                    $ab->setVariable($name, $value);
+                }
             }
 
             return $ab;
@@ -376,7 +420,7 @@ namespace TheSeer\Autoload {
             $process = proc_open($binary . ' -l', $dsp, $pipes);
 
             if (!is_resource($process)) {
-                fwrite(STDERR, "Opening php binary for linting failed.\n");
+                $this->message("Opening php binary for linting failed.\n", STDERR);
                 exit(1);
             }
 
@@ -392,13 +436,13 @@ namespace TheSeer\Autoload {
             $rc = proc_close($process);
 
             if ($rc == 255) {
-                fwrite(STDERR, "Syntax errors during lint:\n" .
-                str_replace('in - on line', 'in generated code on line', $stderr) .
-                           "\n");
+                $this->message("Syntax errors during lint:\n" .
+                    str_replace('in - on line', 'in generated code on line', $stderr) .
+                    "\n", STDERR);
                 return false;
             }
 
-            echo "Lint check of geneated code okay\n\n";
+            $this->message( "Lint check of geneated code okay\n\n");
             return true;
         }
 
@@ -416,31 +460,35 @@ namespace TheSeer\Autoload {
             print <<<EOF
 Usage: phpab [switches] <directory>
 
-  -i, --include    File pattern to include (default: *.php)
-  -e, --exclude    File pattern to exclude
+  -i, --include       File pattern to include (default: *.php)
+  -e, --exclude       File pattern to exclude
 
-  -b, --basedir    Basedir for filepaths
-  -t, --template   Path to code template to use
+  -b, --basedir       Basedir for filepaths
+  -t, --template      Path to code template to use
 
-  -o, --output     Output file for generated code (default: STDOUT)
-  -p, --phar       Create a phar archive (requires -o )
+  -o, --output        Output file for generated code (default: STDOUT)
+  -p, --phar          Create a phar archive (requires -o )
 
-  -c, --compat     Generate PHP 5.2 compatible code
-  -s, --static     Generate a static require file
+  -c, --compat        Generate PHP 5.2 compatible code
+  -s, --static        Generate a static require file
 
-  -n, --nolower    Do not lowercase classnames for case insensitivity
+  -n, --nolower       Do not lowercase classnames for case insensitivity
 
-      --format     Dateformat string for timestamp
-      --linebreak  Linebreak style (CR, CRLF or LF, default: LF)
-      --indent     String used for indenting or number of spaces (default: 12 spaces)
+  -q, --quiet         Quiet mode, do not output any processing errors or information
 
-      --tolerant   Ignore Class Redeclarations in the same file
+      --format        Dateformat string for timestamp
+      --linebreak     Linebreak style (CR, CRLF or LF, default: LF)
+      --indent        String used for indenting or number of spaces (default: 16 (compat 12) spaces)
 
-      --lint       Run lint on generated code and exit
-      --lint-php   PHP binary to use for linting (default: /usr/bin/php or c:\php\php.exe)
+      --tolerant      Ignore Class Redeclarations in the same file
 
-  -h, --help       Prints this usage information
-  -v, --version    Prints the version and exits
+      --var name=foo  Assign value 'foo' to variable 'name' to be used in (custom) templates
+
+      --lint          Run lint on generated code and exit
+      --lint-php      PHP binary to use for linting (default: /usr/bin/php or c:\php\php.exe)
+
+  -h, --help          Prints this usage information
+  -v, --version       Prints the version and exits
 
 
 EOF;
