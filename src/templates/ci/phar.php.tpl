@@ -1,16 +1,16 @@
 <?php
 spl_autoload_register(
-   function($class) {
-      static $classes = null;
-      if ($classes === null) {
-         $classes = array(
-            ___CLASSLIST___
-         );
-      }
-      $cn = strtolower($class);
-      if (isset($classes[$cn])) {
-         require 'phar://___PHAR___' . $classes[$cn];
-      }
-   }
+    function($class) {
+        static $classes = null;
+        if ($classes === null) {
+            $classes = array(
+                ___CLASSLIST___
+            );
+        }
+        $cn = strtolower($class);
+        if (isset($classes[$cn])) {
+            require 'phar://___PHAR___' . $classes[$cn];
+        }
+    }
 );
 __HALT_COMPILER();

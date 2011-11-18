@@ -63,7 +63,7 @@ namespace TheSeer\Autoload\Tests {
          */
         public function testDefaultRendering() {
             $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
-            $expected = "         \$classes = array(\n            'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
+            $expected = "         \$classes = array(\n                'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
             $this->assertContains($expected, $ab->render());
             $expected = "require \$classes[\$cn]";
             $this->assertContains($expected, $ab->render());
@@ -151,7 +151,7 @@ namespace TheSeer\Autoload\Tests {
             $expected = "require __DIR__ . \$classes[\$cn];";
             $this->assertContains($expected, $result);
 
-            $expected = "         \$classes = array(\n            'demo1' => '/tests/_data/classfinder/class.php',\n";
+            $expected = "         \$classes = array(\n                'demo1' => '/tests/_data/classfinder/class.php',\n";
             $this->assertContains($expected, $result);
         }
 
