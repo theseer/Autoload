@@ -118,7 +118,7 @@ namespace TheSeer\Autoload {
          *
          * @return void
          */
-        public function __construct(array $classlist, $baseDir = '', $caseSensitive = false, $indent = '            ') {
+        public function __construct(array $classlist, $baseDir = '', $caseSensitive = false, $indent = '                ') {
             $this->classes = $classlist;
             ksort($this->classes);
             $this->baseDir = $baseDir;
@@ -191,6 +191,15 @@ namespace TheSeer\Autoload {
          */
         public function setLineBreak($lbs) {
             $this->linebreak = $lbs;
+        }
+
+        /**
+         * Accessor for current linebreak setting
+         *
+         * @return string
+         */
+        public function getLineBreak() {
+            return $this->linebreak;
         }
 
         /**
