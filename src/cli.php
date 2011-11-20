@@ -333,6 +333,7 @@ namespace TheSeer\Autoload {
                     }
                 } elseif ($isStatic) {
                     $tplFile = 'static.php.tpl';
+                    $tplType = '.';
                 }
 
                 $ab->setTemplateFile(__DIR__.'/templates/'.$tplType.'/'.$tplFile);
