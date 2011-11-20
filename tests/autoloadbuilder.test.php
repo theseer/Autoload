@@ -127,6 +127,17 @@ namespace TheSeer\Autoload\Tests {
 
         /**
          *
+         * @covers \TheSeer\Autoload\AutoloadBuilder::setLinebreak
+         * @covers \TheSeer\Autoload\AutoloadBuilder::getLinebreak
+         */
+        public function testSettingAndGettingLinebreakWorks() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setLineBreak('foo');
+            $this->assertEquals('foo', $ab->getLineBreak());
+        }
+
+        /**
+         *
          * @covers \TheSeer\Autoload\AutoloadBuilder::setIndent
          * @covers \TheSeer\Autoload\AutoloadBuilder::render
          */

@@ -39,6 +39,11 @@ namespace TheSeer\Autoload {
 
     use \TheSeer\DirectoryScanner\PHPFilterIterator;
 
+    // PHP 5.3 compat
+    if (!defined('T_TRAIT')) {
+        define('T_TRAIT', 355);
+    }
+
     /**
      * Namespace aware parser to find and extract defined classes within php source files
      *
@@ -80,15 +85,20 @@ namespace TheSeer\Autoload {
         public function parseFile($file) {
             $entries         = 0;
             $classFound      = false;
+            $interfaceFound  = false;
             $nsFound         = false;
             $nsProc          = false;
             $inNamespace     = null;
+            $inClass         = false;
             $bracketCount    = 0;
+            $classBracket    = 0;
             $bracketNS       = false;
             $extendsFound    = false;
             $implementsFound = false;
+            $useFound        = false;
             $lastClass       = '';
             $dependsClass    = '';
+            $classNameStart  = false;
 
             $token = token_get_all(file_get_contents($file));
             foreach($token as $pos => $tok) {
@@ -110,12 +120,16 @@ namespace TheSeer\Autoload {
                             $nsProc = false;
                             $implementsFound = false;
                             $extendsFound    = false;
+                            $useFound        = false;
                             break;
                         }
                         case '}': {
                             $bracketCount--;
                             if ($bracketCount==0 && $inNamespace && $bracketNS) {
                                 $inNamespace = null;
+                            }
+                            if ($bracketCount == $classBracket) {
+                                $inClass = false;
                             }
                             break;
                         }
@@ -124,10 +138,18 @@ namespace TheSeer\Autoload {
                                 $nsProc    = false;
                                 $bracketNS = false;
                             }
+                            if ($useFound) {
+                                $useFound = false;
+                                if (!isset($this->dependencies[$lastClass])) {
+                                    $this->dependencies[$lastClass] = array();
+                                }
+                                $this->dependencies[$lastClass][] = $dependsClass;
+                                $dependsClass   = '';
+                            }
                             break;
                         }
                         case ',': {
-                            if ($this->withDeps && $implementsFound) {
+                            if ($this->withDeps && $implementsFound || $useFound) {
                                 if (!isset($this->dependencies[$lastClass])) {
                                     $this->dependencies[$lastClass] = array();
                                 }
@@ -158,9 +180,15 @@ namespace TheSeer\Autoload {
                         $classNameStart  = true;
                         continue;
                     }
-                    case T_CLASS:
-                    case T_INTERFACE: {
+                    case T_TRAIT:
+                    case T_CLASS: {
                         $classFound = true;
+                        $inClass = true;
+                        $classBracket = $bracketCount + 1;
+                        continue;
+                    }
+                    case T_INTERFACE: {
+                        $interfaceFound = true;
                         continue;
                     }
                     case T_NAMESPACE: {
@@ -184,12 +212,17 @@ namespace TheSeer\Autoload {
                         }
                         continue;
                     }
-
+                    case T_USE: {
+                        if ($inClass && ($bracketCount == $classBracket)) {
+                            $useFound = true;
+                        }
+                        continue;
+                    }
                     case T_STRING: {
                         if ($nsFound) {
                             $inNamespace .= $this->disableLowercase ? $tok[1] : strtolower($tok[1]);
                             $nsFound = false;
-                        } elseif ($classFound) {
+                        } elseif ($classFound || $interfaceFound) {
                             $lastClass = $inNamespace ? $inNamespace .'\\\\' : '';
                             $lastClass .= $this->disableLowercase ? $tok[1] : strtolower($tok[1]);
                             if (isset($this->foundClasses[$lastClass])) {
@@ -207,7 +240,8 @@ namespace TheSeer\Autoload {
                             $this->foundClasses[$lastClass] = $file;
                             $entries++;
                             $classFound = false;
-                        } elseif ($extendsFound || $implementsFound) {
+                            $interfaceFound = false;
+                        } elseif ($extendsFound || $implementsFound || $useFound) {
                             if ($classNameStart && $inNamespace) {
                                 $dependsClass   = $inNamespace . '\\\\';
                                 $classNameStart = false;

@@ -262,6 +262,75 @@ namespace TheSeer\Autoload\Tests {
             $this->assertEquals($expect, $dep['foo\\\\demo3']);
         }
 
+        /**
+         * @requires PHP 5.4.0beta1
+         */
+        public function testParseTraitWorks() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait0.php');
+
+            $classes = $finder->getClasses();
+            $this->assertArrayHasKey('test', $classes);
+        }
+
+        /**
+         * @requires PHP 5.4.0beta1
+         */
+        public function testParseUseTraitWorks() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait1.php');
+
+            $classes = $finder->getClasses();
+            $dep = $finder->getDependencies();
+
+            $this->assertArrayHasKey('test', $classes);
+            $this->assertArrayHasKey('bar', $classes);
+
+            $expect = array('test');
+
+            $this->assertArrayHasKey('bar', $dep);
+            $this->assertEquals($expect, $dep['bar']);
+        }
+
+        /**
+         * @requires PHP 5.4.0beta1
+         */
+        public function testParseUseMultipleTraitWorks() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait2.php');
+
+            $classes = $finder->getClasses();
+            $dep = $finder->getDependencies();
+
+            $this->assertArrayHasKey('test', $classes);
+            $this->assertArrayHasKey('trait1', $classes);
+            $this->assertArrayHasKey('trait2', $classes);
+
+            $expect = array('trait1', 'trait2');
+
+            $this->assertArrayHasKey('test', $dep);
+            $this->assertEquals($expect, $dep['test']);
+        }
+
+        /**
+         * @requires PHP 5.4.0beta1
+         */
+        public function testParseUseTraitWorksEvenWithUseStatementInMethodForClosure() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait3.php');
+
+            $classes = $finder->getClasses();
+            $dep = $finder->getDependencies();
+
+            $this->assertArrayHasKey('test', $classes);
+            $this->assertArrayHasKey('trait1', $classes);
+
+            $expect = array('trait1');
+
+            $this->assertArrayHasKey('test', $dep);
+            $this->assertEquals($expect, $dep['test']);
+        }
+
     }
 
 }
