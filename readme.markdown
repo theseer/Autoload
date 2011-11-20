@@ -90,9 +90,13 @@ phpab [switches] <directory>
     -c, --compat     Generate PHP 5.2 compatible code
     -s, --static     Generate a static require file
 
+    -n, --nolower    Do not lowercase classnames for case insensitivity
+
 	--format     Dateformat string for timestamp
 	--linebreak  Linebreak style (CR, CR/LF or LF)
 	--indent     String used for indenting (default: 3 spaces)
+
+	--tolerant   Ignore Class Redeclarations in the same file
 
 	--lint       Run lint on generated code and exit
 	--lint-php   PHP binary to use for linting (default: /usr/bin/php or c:\php\php.exe)
