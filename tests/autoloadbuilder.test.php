@@ -242,10 +242,27 @@ namespace TheSeer\Autoload\Tests {
          * @depends testSettingTemplateCode
          * @covers \TheSeer\Autoload\AutoloadBuilder::render
          */
+        public function testGetUniqueReproducibleValueForAutoloadName() {
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
+            $ab->setTemplateCode('___AUTOLOAD___');
+            $first = $ab->render();
+            $this->assertEquals($first, $ab->render());
+        }
+
+        /**
+         *
+         * @depends testSettingTemplateCode
+         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         */
         public function testGetUniqueValueForAutoloadName() {
             $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
             $ab->setTemplateCode('___AUTOLOAD___');
             $first = $ab->render();
+
+            $aSecond = $this->classlist;
+            array_pop($aSecond);
+            $ab = new \TheSeer\Autoload\AutoloadBuilder($aSecond);
+            $ab->setTemplateCode('___AUTOLOAD___');
             $this->assertNotEquals($first, $ab->render());
         }
 
