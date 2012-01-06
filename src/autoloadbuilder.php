@@ -285,7 +285,7 @@ namespace TheSeer\Autoload {
             '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
             '___CLASSLIST___' => join( ',' . $this->linebreak . $this->indent, $entries),
             '___BASEDIR___'   => $baseDir,
-            '___AUTOLOAD___'  => uniqid('autoload')
+            '___AUTOLOAD___'  => 'autoload' . md5(serialize($entries))
             ));
             return str_replace(array_keys($replace), array_values($replace), $this->template);
         }
