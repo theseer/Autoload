@@ -83,6 +83,13 @@ namespace TheSeer\Autoload {
                 ));
 
             $input->registerOption( new \ezcConsoleOption(
+                    '', 'all', \ezcConsoleInput::TYPE_NONE, null, false,
+                    'Add all files from src dir to phar',
+                    null,
+                    array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
                 'i', 'include', \ezcConsoleInput::TYPE_STRING, '*.php', true,
                 'File pattern to include (default: *.php)'
                 ));
@@ -186,8 +193,11 @@ namespace TheSeer\Autoload {
             try {
                 $scanner = $this->getScanner($input);
                 if ($pharOption->value !== false) {
-                    unlink($outputOption->value);
-                    $phar = $this->buildPhar($scanner, $input);
+                    if (file_exists($outputOption->value)) {
+                        unlink($outputOption->value);
+                    }
+                    $pharScanner = $input->getOption('all')->value ? $this->getScanner($input, false) : $scanner;
+                    $phar = $this->buildPhar($pharScanner, $input);
                     $scanner->rewind();
                 }
                 $finder = new ClassFinder(
@@ -250,22 +260,24 @@ namespace TheSeer\Autoload {
          *
          * @return Theseer\Autoload\IncludeExcludeFilterIterator
          */
-        protected function getScanner(\ezcConsoleInput $input) {
+        protected function getScanner(\ezcConsoleInput $input, $filter = true) {
             $scanner = new \TheSeer\DirectoryScanner\DirectoryScanner;
 
-            $include = $input->getOption('include');
-            if (is_array($include->value)) {
-                $scanner->setIncludes($include->value);
-            } else {
-                $scanner->addInclude($include->value);
-            }
-
-            $exclude = $input->getOption('exclude');
-            if ($exclude->value) {
-                if (is_array($exclude->value)) {
-                    $scanner->setExcludes($exclude->value);
+            if ($filter) {
+                $include = $input->getOption('include');
+                if (is_array($include->value)) {
+                    $scanner->setIncludes($include->value);
                 } else {
-                    $scanner->addExclude($exclude->value);
+                    $scanner->addInclude($include->value);
+                }
+
+                $exclude = $input->getOption('exclude');
+                if ($exclude->value) {
+                    if (is_array($exclude->value)) {
+                        $scanner->setExcludes($exclude->value);
+                    } else {
+                        $scanner->addExclude($exclude->value);
+                    }
                 }
             }
 
@@ -482,6 +494,8 @@ Usage: phpab [switches] <directory>
       --indent        String used for indenting or number of spaces (default: 16 (compat 12) spaces)
 
       --tolerant      Ignore Class Redeclarations in the same file
+
+      --all           Include all files in given directory when creating a phar
 
       --var name=foo  Assign value 'foo' to variable 'name' to be used in (custom) templates
 
