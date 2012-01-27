@@ -263,7 +263,7 @@ namespace TheSeer\Autoload\Tests {
         }
 
         /**
-         * @requires PHP 5.4.0beta1
+         * @requires PHP 5.4.0
          */
         public function testParseTraitWorks() {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
@@ -274,7 +274,7 @@ namespace TheSeer\Autoload\Tests {
         }
 
         /**
-         * @requires PHP 5.4.0beta1
+         * @requires PHP 5.4.0
          */
         public function testParseUseTraitWorks() {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
@@ -293,7 +293,7 @@ namespace TheSeer\Autoload\Tests {
         }
 
         /**
-         * @requires PHP 5.4.0beta1
+         * @requires PHP 5.4.0
          */
         public function testParseUseMultipleTraitWorks() {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
@@ -313,7 +313,7 @@ namespace TheSeer\Autoload\Tests {
         }
 
         /**
-         * @requires PHP 5.4.0beta1
+         * @requires PHP 5.4.0
          */
         public function testParseUseTraitWorksEvenWithUseStatementInMethodForClosure() {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
