@@ -236,7 +236,7 @@ namespace TheSeer\Tools {
        */
       public function parseMulti(\Iterator $sources) {
          $count = 0;
-         $worker  = new PHPFilterIterator($sources);
+         $worker  = new \TheSeer\DirectoryScanner\PHPFilterIterator($sources);
          foreach($worker as $file) {
             $count += $this->parseFile($file->getPathname());
          }
