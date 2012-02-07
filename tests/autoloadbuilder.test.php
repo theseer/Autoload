@@ -64,6 +64,7 @@ namespace TheSeer\Autoload\Tests {
         public function testDefaultRendering() {
             $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
             $expected = "         \$classes = array(\n                'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
+            $expected = strtr($expected, '\\', '/');
             $this->assertContains($expected, $ab->render());
             $expected = "require \$classes[\$cn]";
             $this->assertContains($expected, $ab->render());
@@ -99,6 +100,7 @@ namespace TheSeer\Autoload\Tests {
             $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
             $ab->setTemplateFile(__DIR__ . '/_data/templates/simple.php');
             $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
+            $expected = strtr($expected, '\\', '/');
             $this->assertContains($expected, $ab->render());
         }
 
@@ -110,6 +112,7 @@ namespace TheSeer\Autoload\Tests {
             $ab = new \TheSeer\Autoload\AutoloadBuilder($this->classlist);
             $ab->setTemplateCode('___CLASSLIST___');
             $expected = "'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
+            $expected = strtr($expected, '\\', '/');
             $this->assertContains($expected, $ab->render());
         }
 
@@ -160,6 +163,7 @@ namespace TheSeer\Autoload\Tests {
             $result = $ab->render();
 
             $expected = "require __DIR__ . \$classes[\$cn];";
+            $expected = strtr($expected, '\\', '/');
             $this->assertContains($expected, $result);
 
             $expected = "         \$classes = array(\n                'demo1' => '/tests/_data/classfinder/class.php',\n";
