@@ -25,7 +25,7 @@ PHP: 5.3.0
 Extensions: tokenizer, phar
 
 The PHP tokenizer needs to be enabled for this code to work. Due to the use of Namespaces and closures, PHP 5.3 is required for running phpab
-by default. Because the code has template support, it is possible to alternativly generate autoload code for older versions of PHP 5.
+by default. Because the code has template support, it is possible to alternatively generate autoload code for older versions of PHP 5.
 
 To generate phar archives, the phar writing support needs to be enabled within php. Details can be found in the [php manual](http://php.net/manual/en/phar.configuration.php)
 
