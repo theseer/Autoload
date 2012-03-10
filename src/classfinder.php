@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2009-2011 Arne Blankerts <arne@blankerts.de>
+ * Copyright (c) 2009-2012 Arne Blankerts <arne@blankerts.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -231,7 +231,7 @@ namespace TheSeer\Autoload {
                                 }
                                 throw new ClassFinderException(sprintf(
                                     "Redeclaration of class '%s' detected\n   Original:  %s\n   Secondary: %s\n\n",
-                                    $lastClass,
+                                    stripslashes($lastClass),
                                     $this->foundClasses[$lastClass],
                                     $file
                                     ), ClassFinderException::ClassRedeclaration
