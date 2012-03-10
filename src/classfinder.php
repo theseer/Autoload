@@ -231,7 +231,7 @@ namespace TheSeer\Autoload {
                                 }
                                 throw new ClassFinderException(sprintf(
                                     "Redeclaration of class '%s' detected\n   Original:  %s\n   Secondary: %s\n\n",
-                                    $lastClass,
+                                    stripslashes($lastClass),
                                     $this->foundClasses[$lastClass],
                                     $file
                                     ), ClassFinderException::ClassRedeclaration
