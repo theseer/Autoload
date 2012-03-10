@@ -78,14 +78,49 @@ namespace TheSeer\Autoload\Tests {
             $finder->parseFile(__DIR__.'/_data/classfinder/redeclaration.php');
         }
 
+        /**
+         * @expectedException  \TheSeer\Autoload\ClassFinderException
+         * @expectedExceptionCode  \TheSeer\Autoload\ClassFinderException::ParseError
+         */
+        public function testInvalidClassnameThrowsException() {
+            $finder = new \TheSeer\Autoload\ClassFinder;
+            $finder->parseFile(__DIR__.'/_data/classfinder/parseerror1.php');
+        }
+
+        /**
+         * @expectedException  \TheSeer\Autoload\ClassFinderException
+         * @expectedExceptionCode  \TheSeer\Autoload\ClassFinderException::ParseError
+         */
+        public function testInvalidClassnameWithExtendsThrowsException() {
+            $finder = new \TheSeer\Autoload\ClassFinder;
+            $finder->parseFile(__DIR__.'/_data/classfinder/parseerror2.php');
+        }
+
+        /**
+         * @expectedException  \TheSeer\Autoload\ClassFinderException
+         * @expectedExceptionCode  \TheSeer\Autoload\ClassFinderException::ParseError
+         */
+        public function testInvalidClassnameForExtendsThrowsException() {
+            $finder = new \TheSeer\Autoload\ClassFinder;
+            $finder->parseFile(__DIR__.'/_data/classfinder/parseerror3.php');
+        }
+
+        /**
+         * @expectedException  \TheSeer\Autoload\ClassFinderException
+         * @expectedExceptionCode  \TheSeer\Autoload\ClassFinderException::ParseError
+         */
+        public function testInvalidClassnameForImplementsThrowsException() {
+            $finder = new \TheSeer\Autoload\ClassFinder;
+            $finder->parseFile(__DIR__.'/_data/classfinder/parseerror4.php');
+        }
+
         public function testRedeclaringClassInSameFileDoesNotThrowExceptionInTolerantMode()
         {
             $finder = new \TheSeer\Autoload\ClassFinder(false, true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/redeclaration.php');
-            $this->assertEquals(2, $rc);
+            $this->assertEquals(1, $rc);
             $classes = $finder->getClasses();
             $this->assertArrayHasKey('demo', $classes);
-            $this->assertArrayHasKey('exception', $classes);
         }
 
         public function testFullPathToClass() {

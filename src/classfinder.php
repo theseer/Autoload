@@ -105,6 +105,14 @@ namespace TheSeer\Autoload {
                 if (!is_array($tok)) {
                     switch ($tok) {
                         case '{': {
+                            if (($extendsFound || $implementsFound || $classFound) && ($lastClass == '' || $dependsClass == '')) {
+                                throw new ClassFinderException(sprintf(
+                                    "Parse error in file '%s' while trying to process class definition.\n\n",
+                                    $file
+                                    ), ClassFinderException::ParseError
+                                );
+
+                            }
                             $bracketCount++;
                             if ($nsProc) {
                                 $bracketNS = true;
@@ -171,12 +179,15 @@ namespace TheSeer\Autoload {
                     }
                     case T_IMPLEMENTS: {
                         $implementsFound = true;
+                        $classFound      = false;
+                        $extendsFound    = false;
                         $classNameStart  = true;
                         continue;
                     }
                     case T_EXTENDS: {
                         $extendsFound    = true;
                         $implementsFound = false;
+                        $classFound      = false;
                         $classNameStart  = true;
                         continue;
                     }
@@ -287,6 +298,7 @@ namespace TheSeer\Autoload {
 
         const NoDependencies = 1;
         const ClassRedeclaration = 2;
+        const ParseError = 3;
 
     }
 }
