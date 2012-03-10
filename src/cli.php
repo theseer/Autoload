@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2009-2011 Arne Blankerts <arne@blankerts.de>
+ * Copyright (c) 2009-2012 Arne Blankerts <arne@blankerts.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -463,7 +463,7 @@ namespace TheSeer\Autoload {
          * Helper to output version information
          */
         protected function showVersion() {
-            printf("phpab %s - Copyright (C) 2009 - 2011 by Arne Blankerts\n\n", self::VERSION);
+            printf("phpab %s - Copyright (C) 2009 - 2012 by Arne Blankerts\n\n", self::VERSION);
         }
 
         /**
