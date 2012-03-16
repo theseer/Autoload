@@ -213,25 +213,33 @@ namespace TheSeer\Autoload {
             $stackSize = count($stack);
             $name = $this->inNamespace != '' ? $this->inNamespace . '\\' : '';
             $extends = '';
+            $extendsList = array();
             $mode = 'name';
             foreach(array_slice($stack,1,-1) as $tok) {
-                if (is_array($tok)) {
-                    switch ($tok[0]) {
-                        case T_NS_SEPARATOR:
-                        case T_STRING: {
-                            $$mode .= $tok[1];
-                            continue;
-                        }
-                        case T_EXTENDS: {
-                            $mode = 'extends';
-                            continue;
+                switch ($tok[0]) {
+                    case T_NS_SEPARATOR:
+                    case T_STRING: {
+                        $$mode .= $tok[1];
+                        continue;
+                    }
+                    case T_EXTENDS: {
+                        $mode = 'extends';
+                        continue;
+                    }
+                    case ',': {
+                        if ($mode == 'extends') {
+                            $extendsList[] = $this->resolveDepdencyName($extends);
+                            $extends = '';
                         }
                     }
                 }
             }
             $name = $this->registerClass($name);
-            if ($this->withDeps && $extends != '') {
-                $this->dependencies[$name] = array($this->resolveDepdencyName($extends));
+            if ($this->withDeps) {
+                if ($extends != '') {
+                    $extendsList[] = $this->resolveDepdencyName($extends);
+                }
+                $this->dependencies[$name] = $extendsList;
             }
             return $pos + $stackSize - 1;
         }
@@ -296,6 +304,7 @@ namespace TheSeer\Autoload {
             $newpos = $pos + count($stack);
             if ($stackSize < 3) { // empty namespace defintion == root namespace
                 $this->inNamespace = '';
+                $this->aliases = array();
                 return $newpos - 1;
             }
             $next = $stack[1];
@@ -306,6 +315,7 @@ namespace TheSeer\Autoload {
             foreach(array_slice($stack, 1, -1) as $tok) {
                 $this->inNamespace .= $tok[1];
             }
+            $this->aliases = array();
 
             if (!$this->disableLowercase) {
                 $this->inNamespace = strtolower($this->inNamespace);
@@ -362,16 +372,26 @@ namespace TheSeer\Autoload {
                 $alias = '';
                 $mode = 'use';
                 foreach($stack as $tok) {
-                    $current = (array)$tok;
+                    $current = $tok;
                     switch($current[0]) {
                         case ';':
                         case ',': {
+                            if (!$this->disableLowercase) {
+                                $use = strtolower($use);
+                                $alias = strtolower($alias);
+                            }
                             if ($alias == '') {
-                                $alias = substr($use, strrpos($use, '\\')+1);
+                                $nss = strrpos($use, '\\');
+                                if ($nss !== false) {
+                                    $alias = substr($use, $nss+1);
+                                } else {
+                                    $alias = $use;
+                                }
                             }
                             $this->aliases[$use] = $alias;
                             $alias = '';
                             $use = '';
+                            $mode = 'use';
                             continue;
                         }
                         case T_NS_SEPARATOR:
