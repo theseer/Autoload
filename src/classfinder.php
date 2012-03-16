@@ -306,6 +306,11 @@ namespace TheSeer\Autoload {
             foreach(array_slice($stack, 1, -1) as $tok) {
                 $this->inNamespace .= $tok[1];
             }
+
+            if (!$this->disableLowercase) {
+                $this->inNamespace = strtolower($this->inNamespace);
+            }
+
             return $pos + $stackSize - 1;
         }
 
