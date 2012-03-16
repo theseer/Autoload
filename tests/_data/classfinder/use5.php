@@ -1,8 +1,8 @@
 <?php
 
-   class demo2 { }
-   
-   use demo2 as foo;
+   class demo { }
+
+   use demo as foo;
 
  $x = new foo();
  var_dump($x);

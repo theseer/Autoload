@@ -149,20 +149,64 @@ namespace TheSeer\Autoload\Tests {
             $this->assertArrayHasKey('demo2', $classes);
         }
 
+        public function testExtendsWithDependency() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/extends.php');
+            $dep = $finder->getDependencies();
+            $this->assertArrayHasKey('demo2', $dep);
+            $this->assertEquals(array('demo1'), $dep['demo2']);
+        }
+
         public function testInterface() {
-            $finder = new \TheSeer\Autoload\ClassFinder;
+            $finder = new \TheSeer\Autoload\ClassFinder();
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/interface.php');
             $this->assertEquals(1,$rc);
             $this->assertArrayHasKey('demo', $finder->getClasses());
         }
 
-        public function testImplements() {
+        public function testInterfaceExtendsWithDependency() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/interfaceextends.php');
+            $dep = $finder->getDependencies();
+            $this->assertArrayHasKey('demo2', $dep);
+            $this->assertEquals(array('demo1'), $dep['demo2']);
+        }
+
+        public function testSingleImplements() {
             $finder = new \TheSeer\Autoload\ClassFinder;
-            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/implements.php');
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/implements1.php');
             $this->assertEquals(2,$rc);
             $classes = $finder->getClasses();
             $this->assertArrayHasKey('demo1', $classes);
             $this->assertArrayHasKey('demo2', $classes);
+        }
+
+        public function testMultiImplements() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/implements2.php');
+            $this->assertEquals(3,$rc);
+            $classes = $finder->getClasses();
+            $this->assertArrayHasKey('demo1', $classes);
+            $this->assertArrayHasKey('demo2', $classes);
+            $this->assertArrayHasKey('demo3', $classes);
+        }
+
+        public function testMultiImplementsDepdencies() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $finder->parseFile(__DIR__.'/_data/classfinder/implements2.php');
+            $dep = $finder->getDependencies();
+            $expect = array('demo1','demo2');
+            $this->assertArrayHasKey('demo3', $dep);
+            $this->assertEquals($expect, $dep['demo3']);
+        }
+
+        public function testMultiImplementsDepdenciesWithNamespace() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $finder->parseFile(__DIR__.'/_data/classfinder/implements3.php');
+            $dep = $finder->getDependencies();
+            $expect = array('a\\\\demo1','b\\\\demo2');
+            $this->assertArrayHasKey('b\\\\demo3', $dep);
+            $this->assertEquals($expect, $dep['b\\\\demo3']);
         }
 
         public function testImplementsExtends() {
@@ -236,6 +280,14 @@ namespace TheSeer\Autoload\Tests {
             $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $classes);
         }
 
+        public function testEmptyNamespaceNameParsingWorks() {
+            $finder = new \TheSeer\Autoload\ClassFinder;
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace8.php');
+            $this->assertEquals(1,$rc);
+            $classes = $finder->getClasses();
+            $this->assertArrayHasKey('demo', $classes);
+        }
+
         public function testBracketParsingBugTest1() {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/brackettest1.php');
@@ -292,7 +344,6 @@ namespace TheSeer\Autoload\Tests {
 
             $dep = $finder->getDependencies();
             $expect = array('test\\\\demo1','test\\\\demo2');
-
             $this->assertArrayHasKey('foo\\\\demo3', $dep);
             $this->assertEquals($expect, $dep['foo\\\\demo3']);
         }
@@ -319,6 +370,16 @@ namespace TheSeer\Autoload\Tests {
 
             $this->assertArrayHasKey('bar', $dep);
             $this->assertEquals($expect, $dep['bar']);
+        }
+
+        public function testParseUseTraitWorksWhenDependencyIsDisabled() {
+            $finder = new \TheSeer\Autoload\ClassFinder();
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait1.php');
+
+            $classes = $finder->getClasses();
+            $this->assertArrayHasKey('test', $classes);
+            $this->assertArrayHasKey('bar', $classes);
+
         }
 
         public function testParseUseMultipleTraitWorks() {
@@ -352,6 +413,119 @@ namespace TheSeer\Autoload\Tests {
 
             $this->assertArrayHasKey('test', $dep);
             $this->assertEquals($expect, $dep['test']);
+        }
+
+        public function testParseUseTraitsWithOverwriteSkipsBracketContent() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait4.php');
+
+            $classes = $finder->getClasses();
+            $dep = $finder->getDependencies();
+
+            $this->assertArrayHasKey('test', $classes);
+            $this->assertArrayHasKey('trait1', $classes);
+
+            $expect = array('trait1', 'trait2');
+
+            $this->assertArrayHasKey('test', $dep);
+            $this->assertEquals($expect, $dep['test']);
+        }
+
+        public function testNamespaceImportViaUse() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use1.php');
+
+            $classes = $finder->getClasses();
+            $dep = $finder->getDependencies();
+
+            $this->assertArrayHasKey('demo\\\\a\\\\demo1', $classes);
+            $this->assertArrayHasKey('demo\\\\b\\\\demo2', $classes);
+
+            $this->assertArrayHasKey('demo\\\\b\\\\demo2', $dep);
+            $expect = array('demo\\\\a\\\\demo1');
+            $this->assertEquals($expect, $dep['demo\\\\b\\\\demo2']);
+        }
+
+        public function testNamespaceMultiImportViaUse() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use2.php');
+
+            $classes = $finder->getClasses();
+            $dep = $finder->getDependencies();
+
+            $this->assertArrayHasKey('demo\\\\a\\\\demo1', $classes);
+            $this->assertArrayHasKey('demo\\\\b\\\\demo2', $classes);
+            $this->assertArrayHasKey('demo\\\\c\\\\demo3', $classes);
+
+            $this->assertArrayHasKey('demo\\\\c\\\\demo3', $dep);
+            $expect = array('demo\\\\a\\\\demo1');
+            $this->assertEquals($expect, $dep['demo\\\\c\\\\demo3']);
+        }
+
+        public function testNamespaceImportWithAlias() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use3.php');
+
+            $classes = $finder->getClasses();
+            $dep = $finder->getDependencies();
+
+            $this->assertArrayHasKey('demo\\\\a\\\\demo1', $classes);
+            $this->assertArrayHasKey('demo\\\\b\\\\demo2', $classes);
+
+            $this->assertArrayHasKey('demo\\\\b\\\\demo2', $dep);
+            $expect = array('demo\\\\a\\\\demo1');
+            $this->assertEquals($expect, $dep['demo\\\\b\\\\demo2']);
+        }
+
+        public function testNamespaceImportWithRelativeAlias() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use4.php');
+
+            $classes = $finder->getClasses();
+            $dep = $finder->getDependencies();
+
+            $this->assertArrayHasKey('demo\\\\a\\\\demo1', $classes);
+            $this->assertArrayHasKey('demo\\\\b\\\\demo2', $classes);
+
+            $this->assertArrayHasKey('demo\\\\b\\\\demo2', $dep);
+            $expect = array('demo\\\\a\\\\demo1');
+            $this->assertEquals($expect, $dep['demo\\\\b\\\\demo2']);
+        }
+
+        public function testAliasViaUseGetsIgnoredIfNotNeeded() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use5.php');
+
+            $classes = $finder->getClasses();
+            $dep = $finder->getDependencies();
+
+            $this->assertArrayHasKey('demo', $classes);
+            $this->assertArrayHasKey('demo', $dep);
+            $this->assertEquals(array(), $dep['demo']);
+        }
+
+        public function testUseInClosurewithinAClassGetsIgnored() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use6.php');
+
+            $classes = $finder->getClasses();
+            $dep = $finder->getDependencies();
+
+            $this->assertArrayHasKey('demo\\\\a\\\\demo2', $classes);
+            $this->assertArrayHasKey('demo\\\\a\\\\demo2', $dep);
+            $this->assertEquals(array(), $dep['demo\\\\a\\\\demo2']);
+        }
+
+        public function testGlobalUseInClosureGetsIgnored() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use7.php');
+
+            $classes = $finder->getClasses();
+            $dep = $finder->getDependencies();
+
+            $this->assertArrayHasKey('demo\\\\a\\\\demo2', $classes);
+            $this->assertArrayHasKey('demo\\\\a\\\\demo2', $dep);
+            $this->assertEquals(array(), $dep['demo\\\\a\\\\demo2']);
         }
 
     }

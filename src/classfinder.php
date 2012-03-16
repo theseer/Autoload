@@ -146,7 +146,7 @@ namespace TheSeer\Autoload {
         }
 
         protected function processClass($pos) {
-            $list = array('{', T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES);
+            $list = array('{');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
             $classname = $this->inNamespace != '' ? $this->inNamespace . '\\' : '';
@@ -208,7 +208,7 @@ namespace TheSeer\Autoload {
         }
 
         protected function processInterface($pos) {
-            $list = array('{', T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES);
+            $list = array('{');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
             $name = $this->inNamespace != '' ? $this->inNamespace . '\\' : '';
@@ -249,6 +249,17 @@ namespace TheSeer\Autoload {
             }
             if ($name[0] == '\\') {
                 $name = substr($name, 1);
+            } else {
+                $parts = explode('\\',$name,2);
+                $key = array_search($parts[0], $this->aliases);
+                if (!$key) {
+                    $name = ($this->inNamespace != '' ? $this->inNamespace . '\\' : ''). $name;
+                } else {
+                    $name = $key;
+                    if (isset($parts[1])) {
+                        $name .= '\\' . $parts[1];
+                    }
+                }
             }
             return addslashes($name);
         }
@@ -279,12 +290,13 @@ namespace TheSeer\Autoload {
         }
 
         protected function processNamespace($pos) {
-            $list = array(';', '{', T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES);
+            $list = array(';', '{');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
             $newpos = $pos + count($stack);
-            if ($stackSize < 3) { // can't be a valid ns definition
-                return $newpos;
+            if ($stackSize < 3) { // empty namespace defintion == root namespace
+                $this->inNamespace = '';
+                return $newpos - 1;
             }
             $next = $stack[1];
             if (is_array($next) && $next[0] == T_NS_SEPARATOR) { // inline use - ignore
@@ -301,7 +313,7 @@ namespace TheSeer\Autoload {
             $list = array(';','(');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
-            if ($stack[$stackSize-1] == '(') {
+            if ($stack[$stackSize-1][0] == '(') {
                 // ignore closure use
                 return $pos + $stackSize - 1;
             }
@@ -317,14 +329,14 @@ namespace TheSeer\Autoload {
                     switch($current[0]) {
                         case '{': {
                             // find closing bracket to skip contents
-                            for($x=$t+1; $x<$t; $x++) {
-                                $tok = (array)$stack[$x];
+                            for($x=$t+1; $x<$stackSize; $x++) {
+                                $tok = $stack[$x];
                                 if ($tok[0]=='}') {
                                     $t = $x;
                                     break;
                                 }
                             }
-                            // no break!
+                            continue;
                         }
                         case ';':
                         case ',': {

@@ -1,7 +1,7 @@
 <?php
 
 class demo1 { }
-class demo2 extends demo3 { }
+class demo2 extends demo1 { }
 
 
 ?>
