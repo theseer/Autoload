@@ -101,7 +101,7 @@ namespace TheSeer\Autoload\Tests {
          * @expectedExceptionCode  \TheSeer\Autoload\ClassFinderException::ParseError
          */
         public function testInvalidClassnameForExtendsThrowsException() {
-            $finder = new \TheSeer\Autoload\ClassFinder;
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
             $finder->parseFile(__DIR__.'/_data/classfinder/parseerror3.php');
         }
 
@@ -110,7 +110,7 @@ namespace TheSeer\Autoload\Tests {
          * @expectedExceptionCode  \TheSeer\Autoload\ClassFinderException::ParseError
          */
         public function testInvalidClassnameForImplementsThrowsException() {
-            $finder = new \TheSeer\Autoload\ClassFinder;
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
             $finder->parseFile(__DIR__.'/_data/classfinder/parseerror4.php');
         }
 
@@ -297,9 +297,6 @@ namespace TheSeer\Autoload\Tests {
             $this->assertEquals($expect, $dep['foo\\\\demo3']);
         }
 
-        /**
-         * @requires PHP 5.4.0
-         */
         public function testParseTraitWorks() {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait0.php');
@@ -308,9 +305,6 @@ namespace TheSeer\Autoload\Tests {
             $this->assertArrayHasKey('test', $classes);
         }
 
-        /**
-         * @requires PHP 5.4.0
-         */
         public function testParseUseTraitWorks() {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait1.php');
@@ -327,9 +321,6 @@ namespace TheSeer\Autoload\Tests {
             $this->assertEquals($expect, $dep['bar']);
         }
 
-        /**
-         * @requires PHP 5.4.0
-         */
         public function testParseUseMultipleTraitWorks() {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait2.php');
@@ -347,9 +338,6 @@ namespace TheSeer\Autoload\Tests {
             $this->assertEquals($expect, $dep['test']);
         }
 
-        /**
-         * @requires PHP 5.4.0
-         */
         public function testParseUseTraitWorksEvenWithUseStatementInMethodForClosure() {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait3.php');
