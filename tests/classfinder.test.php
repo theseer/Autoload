@@ -166,10 +166,18 @@ namespace TheSeer\Autoload\Tests {
 
         public function testInterfaceExtendsWithDependency() {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
-            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/interfaceextends.php');
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/interfaceextends1.php');
             $dep = $finder->getDependencies();
             $this->assertArrayHasKey('demo2', $dep);
             $this->assertEquals(array('demo1'), $dep['demo2']);
+        }
+
+        public function testInterfaceExtendsWithDependencyAndNamespaceChange() {
+            $finder = new \TheSeer\Autoload\ClassFinder(true);
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/interfaceextends2.php');
+            $dep = $finder->getDependencies();
+            $this->assertArrayHasKey('a\\\\demo2', $dep);
+            $this->assertEquals(array('a\\\\demo1','iterator'), $dep['a\\\\demo2']);
         }
 
         public function testSingleImplements() {
