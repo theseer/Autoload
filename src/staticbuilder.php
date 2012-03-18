@@ -47,6 +47,7 @@ namespace TheSeer\Autoload {
 
         protected $dependencies;
         protected $phar;
+        protected $require = 'require';
 
         public function setDependencies(Array $dep) {
             $this->dependencies = $dep;
@@ -54,6 +55,13 @@ namespace TheSeer\Autoload {
 
         public function setPharMode($phar) {
             $this->phar = $phar;
+        }
+
+        /**
+         * @param boolean $mode
+         */
+        public function setRequireOnce($mode) {
+            $this->require = $mode=='once' ? 'require_once' : 'require';
         }
 
         public function render() {
@@ -85,7 +93,7 @@ namespace TheSeer\Autoload {
                 if (!empty($this->baseDir) && strpos($fname, $this->baseDir)===0) {
                     $fname = str_replace($this->baseDir, '', $fname);
                 }
-                $entries[] = "require ___BASEDIR___'$fname';";
+                $entries[] = $this->require . " ___BASEDIR___'$fname';";
             }
             return $entries;
         }

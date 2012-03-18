@@ -131,7 +131,9 @@ namespace TheSeer\Autoload {
 
             $input->registerOption( new \ezcConsoleOption(
                 '', 'lint-php', \ezcConsoleInput::TYPE_STRING, null, false,
-                'PHP binary path for linting (default: /usr/bin/php or c:\\php\\php.exe)'
+                'PHP binary path for linting (default: /usr/bin/php or c:\\php\\php.exe)',
+                null,
+                array( new \ezcConsoleOptionRule( $input->getOption( 'lint' ) ) )
                 ));
 
             $input->registerOption( new \ezcConsoleOption(
@@ -144,10 +146,17 @@ namespace TheSeer\Autoload {
                 'Build a static require file'
                 ));
 
-            $staticOption = $input->registerOption( new \ezcConsoleOption(
+            $input->registerOption( new \ezcConsoleOption(
                 '', 'tolerant', \ezcConsoleInput::TYPE_NONE, null, false,
                 'Ignore Class Redeclarations in the same file'
                 ));
+
+            $onceOption = $input->registerOption( new \ezcConsoleOption(
+                    '', 'once', \ezcConsoleInput::TYPE_NONE, null, false,
+                    'Use require_once in static require mode',
+                    null,
+                    array( new \ezcConsoleOptionRule( $input->getOption( 's' ) ) )
+            ));
 
             $input->registerOption( new \ezcConsoleOption(
                 'n', 'nolower', \ezcConsoleInput::TYPE_NONE, null, false,
@@ -296,12 +305,14 @@ namespace TheSeer\Autoload {
             $isPhar   = $input->getOption('phar')->value;
             $isCompat = $input->getOption('compat')->value;
             $noLower  = $input->getOption('nolower')->value;
+            $isOnce   = $input->getOption('once')->value;
             $tplType  = $noLower ? 'cs' : 'ci';
 
             if ($isStatic === true) {
                 $ab = new StaticBuilder($finder->getMerged());
                 $ab->setDependencies($finder->getDependencies());
                 $ab->setPharMode($isPhar);
+                $ab->setRequireOnce($isOnce);
             } else {
                 $ab = new AutoloadBuilder($finder->getMerged());
             }
@@ -494,6 +505,7 @@ Usage: phpab [switches] <directory>
       --indent        String used for indenting or number of spaces (default: 16 (compat 12) spaces)
 
       --tolerant      Ignore Class Redeclarations in the same file
+      --once          Use require_once instead of require when creating a static require file
 
       --all           Include all files in given directory when creating a phar
 
