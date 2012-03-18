@@ -317,7 +317,7 @@ namespace TheSeer\Autoload {
             $name = addslashes($name);
             if (isset($this->found['all'][$name]) && !$this->canTolerateRedeclaration($name, $this->filename)) {
                 throw new ClassFinderException(sprintf(
-                        "Redeclaration of class, interface or trait'%s' detected\n Original: %s\n Secondary: %s\n\n",
+                        "Redeclaration of class, interface or trait '%s' detected\n Original: %s\n Secondary: %s\n\n",
                         stripslashes($name),
                         $this->found['all'][$name],
                         $this->filename
