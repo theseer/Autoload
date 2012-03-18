@@ -56,8 +56,8 @@ Furthermore, a component that phpab depends upon is hosted on the eZ Components 
 This has to be done only once. Now the PEAR Installer can be used to install packages from the netpirates channel:
 
     [theseer@rikka ~]$ sudo pear install theseer/Autoload
-    downloading Autoload-1.1.0.tgz ...
-    Starting to download Autoload-1.1.0.tgz (7,596 bytes)
+    downloading Autoload-1.8.0.tgz ...
+    Starting to download Autoload-1.8.0.tgz (7,596 bytes)
     .....done: 7,596 bytes
     downloading DirectoryScanner-1.0.1.tgz ...
     Starting to download DirectoryScanner-1.0.1.tgz (3,400 bytes)
@@ -97,6 +97,11 @@ phpab [switches] <directory>
 	--indent     String used for indenting (default: 3 spaces)
 
 	--tolerant   Ignore Class Redeclarations in the same file
+    --once       Use require_once instead of require when creating a static require file
+
+    --all        Include all files in given directory when creating a phar
+
+    --var name=foo  Assign value 'foo' to variable 'name' to be used in (custom) templates
 
 	--lint       Run lint on generated code and exit
 	--lint-php   PHP binary to use for linting (default: /usr/bin/php or c:\php\php.exe)
@@ -116,4 +121,5 @@ Usage Samples
 
     [theseer@rikka ~]$ phpab -p -o framework.phar framework/src
 
+    [theseer@rikka ~]$ phpab -b . --tolerant -o zf1_autoload.php -e '*/Test/*' Zend
 
