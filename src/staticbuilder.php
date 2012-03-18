@@ -49,21 +49,36 @@ namespace TheSeer\Autoload {
         protected $phar;
         protected $require = 'require';
 
+        /**
+         * Setter for Dependency Array
+         * @param array $dep Dependency Array from classfinder
+         */
         public function setDependencies(Array $dep) {
             $this->dependencies = $dep;
         }
 
+        /**
+         * Toggle phar outut mode
+         *
+         * @param boolean $phar
+         */
         public function setPharMode($phar) {
-            $this->phar = $phar;
+            $this->phar = (boolean)$phar;
         }
 
         /**
+         * Toggle wether or not to use require_once over require
+         *
          * @param boolean $mode
          */
         public function setRequireOnce($mode) {
-            $this->require = $mode=='once' ? 'require_once' : 'require';
+            $this->require = (boolean)$mode ? 'require_once' : 'require';
         }
 
+        /**
+         * (non-PHPdoc)
+         * @see TheSeer\Autoload.AutoloadBuilder::render()
+         */
         public function render() {
             $baseDir = '';
             if ($this->phar) {
@@ -84,6 +99,11 @@ namespace TheSeer\Autoload {
             return str_replace(array_keys($replace), array_values($replace), $this->template);
         }
 
+        /**
+         * Helper to sort classes/interfaces and traits based on their depdendency info
+         *
+         * @return array
+         */
         protected function sortByDependency() {
             $sorter  = new ClassDependencySorter($this->classes, $this->dependencies);
             $list    = $sorter->process();
