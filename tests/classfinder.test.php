@@ -58,13 +58,14 @@ namespace TheSeer\Autoload\Tests {
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
             $this->assertEquals(1,$rc);
             $this->assertArrayHasKey('demo', $finder->getClasses());
+            $this->assertArrayHasKey('demo', $finder->getMerged());
         }
 
         public function testOneClassCaseSensitive() {
             $finder = new \TheSeer\Autoload\ClassFinder(false,false,true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
             $this->assertEquals(1,$rc);
-            $this->assertArrayHasKey('Demo', $finder->getClasses());
+            $this->assertArrayHasKey('Demo', $finder->getMerged());
         }
 
         /**
@@ -119,14 +120,14 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(false, true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/redeclaration.php');
             $this->assertEquals(1, $rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('demo', $classes);
         }
 
         public function testFullPathToClass() {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/class.php');
-            $demo = $finder->getClasses();
+            $demo = $finder->getMerged();
             $this->assertEquals(__DIR__.'/_data/classfinder/class.php', $demo['demo']);
         }
 
@@ -134,7 +135,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/multiclass.php');
             $this->assertEquals(3,$rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('demo1', $classes);
             $this->assertArrayHasKey('demo2', $classes);
             $this->assertArrayHasKey('demo3', $classes);
@@ -144,7 +145,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/extends.php');
             $this->assertEquals(2,$rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('demo1', $classes);
             $this->assertArrayHasKey('demo2', $classes);
         }
@@ -161,7 +162,8 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder();
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/interface.php');
             $this->assertEquals(1,$rc);
-            $this->assertArrayHasKey('demo', $finder->getClasses());
+            $this->assertArrayHasKey('demo', $finder->getInterfaces());
+            $this->assertArrayHasKey('demo', $finder->getMerged());
         }
 
         public function testInterfaceExtendsWithDependency() {
@@ -184,7 +186,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/implements1.php');
             $this->assertEquals(2,$rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('demo1', $classes);
             $this->assertArrayHasKey('demo2', $classes);
         }
@@ -193,7 +195,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/implements2.php');
             $this->assertEquals(3,$rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('demo1', $classes);
             $this->assertArrayHasKey('demo2', $classes);
             $this->assertArrayHasKey('demo3', $classes);
@@ -221,7 +223,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/implementsextends.php');
             $this->assertEquals(3,$rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('test', $classes);
             $this->assertArrayHasKey('demo1', $classes);
             $this->assertArrayHasKey('demo2', $classes);
@@ -231,42 +233,42 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace1.php');
             $this->assertEquals(1,$rc);
-            $this->assertArrayHasKey('demo\\\\demo1', $finder->getClasses());
+            $this->assertArrayHasKey('demo\\\\demo1', $finder->getMerged());
         }
 
         public function testNamespaceBracketSyntaxMultiLevel() {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace2.php');
             $this->assertEquals(1,$rc);
-            $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $finder->getClasses());
+            $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $finder->getMerged());
         }
 
         public function testNamespaceSemicolonSyntax() {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace3.php');
             $this->assertEquals(1,$rc);
-            $this->assertArrayHasKey('demo\\\\demo1', $finder->getClasses());
+            $this->assertArrayHasKey('demo\\\\demo1', $finder->getMerged());
         }
 
         public function testNamespaceSemicolonSyntaxMultiLevel() {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace4.php');
             $this->assertEquals(1,$rc);
-            $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $finder->getClasses());
+            $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $finder->getMerged());
         }
 
         public function testNamespaceBracketCounting() {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace5.php');
             $this->assertEquals(1,$rc);
-            $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $finder->getClasses());
+            $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $finder->getMerged());
         }
 
         public function testNamespaceSemicolonSyntaxMultiNS() {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace6.php');
             $this->assertEquals(2,$rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $classes);
             $this->assertArrayHasKey('demo\\\\level2\\\\level3\\\\demo2', $classes);
         }
@@ -275,7 +277,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace7.php');
             $this->assertEquals(2,$rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $classes);
             $this->assertArrayHasKey('demo\\\\level2\\\\level3\\\\demo2', $classes);
         }
@@ -284,7 +286,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespaceconstant.php');
             $this->assertEquals(1,$rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('demo\\\\level2\\\\demo1', $classes);
         }
 
@@ -292,7 +294,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/namespace8.php');
             $this->assertEquals(1,$rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('demo', $classes);
         }
 
@@ -300,7 +302,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/brackettest1.php');
             $this->assertEquals(2,$rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('x\\\\foo', $classes);
             $this->assertArrayHasKey('x\\\\baz', $classes);
         }
@@ -309,7 +311,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/brackettest2.php');
             $this->assertEquals(2,$rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('x\\\\foo', $classes);
             $this->assertArrayHasKey('x\\\\baz', $classes);
         }
@@ -327,7 +329,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder;
             $rc = $finder->parseMulti(new \ArrayIterator($list));
             $this->assertEquals(3,$rc);
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('demo1', $classes);
             $this->assertArrayHasKey('demo2', $classes);
             $this->assertArrayHasKey('demo\\\\demo1', $classes);
@@ -360,15 +362,15 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait0.php');
 
-            $classes = $finder->getClasses();
-            $this->assertArrayHasKey('test', $classes);
+            $this->assertArrayHasKey('test', $finder->getTraits());
+            $this->assertArrayHasKey('test', $finder->getMerged());
         }
 
         public function testParseUseTraitWorks() {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait1.php');
 
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $dep = $finder->getDependencies();
 
             $this->assertArrayHasKey('test', $classes);
@@ -384,7 +386,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder();
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait1.php');
 
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $this->assertArrayHasKey('test', $classes);
             $this->assertArrayHasKey('bar', $classes);
 
@@ -394,7 +396,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait2.php');
 
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $dep = $finder->getDependencies();
 
             $this->assertArrayHasKey('test', $classes);
@@ -411,7 +413,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait3.php');
 
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $dep = $finder->getDependencies();
 
             $this->assertArrayHasKey('test', $classes);
@@ -427,7 +429,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/trait4.php');
 
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $dep = $finder->getDependencies();
 
             $this->assertArrayHasKey('test', $classes);
@@ -443,7 +445,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use1.php');
 
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $dep = $finder->getDependencies();
 
             $this->assertArrayHasKey('demo\\\\a\\\\demo1', $classes);
@@ -458,7 +460,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use2.php');
 
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $dep = $finder->getDependencies();
 
             $this->assertArrayHasKey('demo\\\\a\\\\demo1', $classes);
@@ -474,7 +476,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use3.php');
 
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $dep = $finder->getDependencies();
 
             $this->assertArrayHasKey('demo\\\\a\\\\demo1', $classes);
@@ -489,7 +491,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use4.php');
 
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $dep = $finder->getDependencies();
 
             $this->assertArrayHasKey('demo\\\\a\\\\demo1', $classes);
@@ -504,7 +506,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use5.php');
 
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $dep = $finder->getDependencies();
 
             $this->assertArrayHasKey('demo', $classes);
@@ -516,7 +518,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use6.php');
 
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $dep = $finder->getDependencies();
 
             $this->assertArrayHasKey('demo\\\\a\\\\demo2', $classes);
@@ -528,7 +530,7 @@ namespace TheSeer\Autoload\Tests {
             $finder = new \TheSeer\Autoload\ClassFinder(true);
             $rc = $finder->parseFile(__DIR__.'/_data/classfinder/use7.php');
 
-            $classes = $finder->getClasses();
+            $classes = $finder->getMerged();
             $dep = $finder->getDependencies();
 
             $this->assertArrayHasKey('demo\\\\a\\\\demo2', $classes);

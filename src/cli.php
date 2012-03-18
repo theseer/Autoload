@@ -201,9 +201,9 @@ namespace TheSeer\Autoload {
                     $scanner->rewind();
                 }
                 $finder = new ClassFinder(
-                $input->getOption('static')->value,
-                $input->getOption('tolerant')->value,
-                $input->getOption('nolower')->value
+                    $input->getOption('static')->value,
+                    $input->getOption('tolerant')->value,
+                    $input->getOption('nolower')->value
                 );
                 $found  = $finder->parseMulti($scanner);
                 // this unset is needed to "fix" a segfault on shutdown
@@ -299,11 +299,11 @@ namespace TheSeer\Autoload {
             $tplType  = $noLower ? 'cs' : 'ci';
 
             if ($isStatic === true) {
-                $ab = new StaticBuilder($finder->getClasses());
+                $ab = new StaticBuilder($finder->getMerged());
                 $ab->setDependencies($finder->getDependencies());
                 $ab->setPharMode($isPhar);
             } else {
-                $ab = new AutoloadBuilder($finder->getClasses());
+                $ab = new AutoloadBuilder($finder->getMerged());
             }
 
             $ab->setCompat($isCompat);
