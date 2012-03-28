@@ -42,16 +42,19 @@
  *   4 - Lint Error
  */
 
-require __DIR__ . '/../DirectoryScanner/autoload.php';
-require __DIR__ . '/../ezc/current/Base/src/base.php';
+define('PHPAB_VERSION', '%development%');
+
+require 'TheSeer/DirectoryScanner/autoload.php';
+require 'ezc/Base/base.php';
+require 'PHP/Timer.php';
+
+if (strpos(PHPAB_VERSION, '%development') === 0) {
+    require __DIR__ . '/src/autoload.php';
+} else {
+    require 'TheSeer/Autoload/autoload.php';
+}
 spl_autoload_register(array('\ezcBase','autoload'));
 
-require __DIR__ . '/src/classfinder.php';
-require __DIR__ . '/src/autoloadbuilder.php';
-require __DIR__ . '/src/staticbuilder.php';
-require __DIR__ . '/src/dependencysorter.php';
-
-require __DIR__ . '/src/cli.php';
 
 $exec = new \TheSeer\Autoload\CLI();
 $exec->run();
