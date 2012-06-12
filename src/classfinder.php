@@ -478,13 +478,14 @@ namespace TheSeer\Autoload {
         /**
          * Process multiple files and parse them for classes and interfaces
          *
-         * @param Iterator $sources Iterator based list of files (SplFileObject) to parse
+         * @param \TheSeer\Autoload\Iterator $sources Iterator based list of files (SplFileObject) to parse
+         * @param bool $mimeCheck Enable or disable mimetype check on files
          *
          * @return integer
          */
-        public function parseMulti(\Iterator $sources) {
+        public function parseMulti(\Iterator $sources, $mimeCheck = true) {
             $count = 0;
-            $worker  = new PHPFilterIterator($sources);
+            $worker = $mimeCheck ? new PHPFilterIterator($sources) : $sources;
             foreach($worker as $file) {
                 $this->parseFile($file->getPathname());
             }

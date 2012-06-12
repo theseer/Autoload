@@ -327,7 +327,7 @@ namespace TheSeer\Autoload\Tests {
             new \SplFileObject(__DIR__.'/_data/classfinder/namespace1.php')
             );
             $finder = new \TheSeer\Autoload\ClassFinder;
-            $rc = $finder->parseMulti(new \ArrayIterator($list));
+            $rc = $finder->parseMulti(new \ArrayIterator($list), false);
             $this->assertEquals(3,$rc);
             $classes = $finder->getMerged();
             $this->assertArrayHasKey('demo1', $classes);

@@ -144,6 +144,11 @@ namespace TheSeer\Autoload {
                 'Ignore Class Redeclarations in the same file'
                 ));
 
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'trusting', \ezcConsoleInput::TYPE_NONE, null, false,
+                'Do not check mimetype of files prior to parsing'
+            ));
+
             $onceOption = $input->registerOption( new \ezcConsoleOption(
                     '', 'once', \ezcConsoleInput::TYPE_NONE, null, false,
                     'Use require_once in static require mode',
@@ -207,7 +212,7 @@ namespace TheSeer\Autoload {
                     $input->getOption('tolerant')->value,
                     $input->getOption('nolower')->value
                 );
-                $found  = $finder->parseMulti($scanner);
+                $found  = $finder->parseMulti($scanner, !$input->getOption('trusting')->value);
                 // this unset is needed to "fix" a segfault on shutdown
                 unset($scanner);
                 if ($found==0) {
@@ -501,6 +506,8 @@ Usage: phpab [switches] <directory>
       --once          Use require_once instead of require when creating a static require file
 
       --all           Include all files in given directory when creating a phar
+
+      --trusting      Do not check mimetype of files prior to parsing
 
       --var name=foo  Assign value 'foo' to variable 'name' to be used in (custom) templates
 

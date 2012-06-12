@@ -17,10 +17,10 @@
   <email>arne@blankerts.de</email>
   <active>yes</active>
  </lead>
- <date>2012-03-18</date>
+ <date>2012-06-12</date>
  <version>
-  <release>1.8.0</release>
-  <api>1.8.0</api>
+  <release>1.9.0</release>
+  <api>1.9.0</api>
  </version>
  <stability>
   <release>stable</release>
@@ -46,18 +46,18 @@
       <file baseinstalldir="/" name="staticphar.php.tpl" role="php" />
       <file baseinstalldir="/" name="static.php.tpl" role="php" />
      </dir>
-     <file baseinstalldir="/" name="cli.php" role="php">
-        <tasks:replace from="%version%" to="version" type="package-info" />
-     </file>
+     <file baseinstalldir="/" name="cli.php" role="php" />
      <file baseinstalldir="/" name="autoloadbuilder.php" role="php" />
      <file baseinstalldir="/" name="classfinder.php" role="php" />
      <file baseinstalldir="/" name="dependencysorter.php" role="php" />
      <file baseinstalldir="/" name="staticbuilder.php" role="php" />
+     <file baseinstalldir="/" name="autoload.php" role="php" />
     </dir>
    </dir>
    <file baseinstalldir="/" name="phpab.php" role="script">
     <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config"/>
     <tasks:replace from="@php_bin@" to="php_bin" type="pear-config" />
+    <tasks:replace from="%development%" to="version" type="package-info" />
    </file>
    <file baseinstalldir="/" name="phpab.bat" role="script">
     <tasks:replace from="@php_bin@" to="php_bin" type="pear-config" />
@@ -71,7 +71,7 @@
     <min>5.3.0</min>
    </php>
    <pearinstaller>
-    <min>1.8.1</min>
+    <min>1.8.0</min>
    </pearinstaller>
    <package>
     <name>DirectoryScanner</name>
