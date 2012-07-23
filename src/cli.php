@@ -149,7 +149,7 @@ namespace TheSeer\Autoload {
                 'Do not check mimetype of files prior to parsing'
             ));
             $paranoid = $input->registerOption( new \ezcConsoleOption(
-                '', 'paranoid', \ezcConsoleInput::TYPE_NONE, true, false,
+                '', 'paranoid', \ezcConsoleInput::TYPE_NONE, false, false,
                 'Do check mimetype of files prior to parsing',
                 null,
                 array(),
@@ -221,7 +221,8 @@ namespace TheSeer\Autoload {
                     $input->getOption('nolower')->value
                 );
 
-                $withMimeCheck = !($input->getOption('paranoid')->value || !$input->getOption('trusting')->value);
+                $withMimeCheck = $input->getOption('paranoid')->value || !$input->getOption('trusting')->value;
+
                 $found  = $finder->parseMulti($scanner, $withMimeCheck);
                 // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
                 unset($scanner);
