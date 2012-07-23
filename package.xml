@@ -1,113 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package packagerversion="1.4.10" version="2.0"
-  xmlns="http://pear.php.net/dtd/package-2.0"
-  xmlns:tasks="http://pear.php.net/dtd/tasks-1.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+         xmlns="http://pear.php.net/dtd/package-2.0"
+         xmlns:tasks="http://pear.php.net/dtd/tasks-1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
                       http://pear.php.net/dtd/tasks-1.0.xsd
                       http://pear.php.net/dtd/package-2.0
                       http://pear.php.net/dtd/package-2.0.xsd">
- <name>Autoload</name>
- <channel>pear.netpirates.net</channel>
- <summary>A tool and library to generate autoload code.</summary>
- <description>A tool and library to generate autoload code.</description>
- <lead>
-  <name>Arne Blankerts</name>
-  <user>theseer</user>
-  <email>arne@blankerts.de</email>
-  <active>yes</active>
- </lead>
- <date>2012-06-12</date>
- <version>
-  <release>1.9.0</release>
-  <api>1.9.0</api>
- </version>
- <stability>
-  <release>stable</release>
-  <api>stable</api>
- </stability>
- <license>BSD License</license>
- <notes>http://github.com/theseer/Autoload/tree</notes>
- <contents>
-  <dir name="/">
-   <dir name="TheSeer">
-    <dir name="Autoload">
-     <dir name="templates">
-      <dir name="cs">
-       <file baseinstalldir="/" name="default.php.tpl" role="php" />
-       <file baseinstalldir="/" name="php52.php.tpl" role="php" />
-       <file baseinstalldir="/" name="phar.php.tpl" role="php" />
-      </dir>
-      <dir name="ci">
-       <file baseinstalldir="/" name="default.php.tpl" role="php" />
-       <file baseinstalldir="/" name="php52.php.tpl" role="php" />
-       <file baseinstalldir="/" name="phar.php.tpl" role="php" />
-      </dir>
-      <file baseinstalldir="/" name="staticphar.php.tpl" role="php" />
-      <file baseinstalldir="/" name="static.php.tpl" role="php" />
-     </dir>
-     <file baseinstalldir="/" name="cli.php" role="php" />
-     <file baseinstalldir="/" name="autoloadbuilder.php" role="php" />
-     <file baseinstalldir="/" name="classfinder.php" role="php" />
-     <file baseinstalldir="/" name="dependencysorter.php" role="php" />
-     <file baseinstalldir="/" name="staticbuilder.php" role="php" />
-     <file baseinstalldir="/" name="autoload.php" role="php" />
-    </dir>
-   </dir>
-   <file baseinstalldir="/" name="phpab.php" role="script">
-    <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config"/>
-    <tasks:replace from="@php_bin@" to="php_bin" type="pear-config" />
-    <tasks:replace from="%development%" to="version" type="package-info" />
-   </file>
-   <file baseinstalldir="/" name="phpab.bat" role="script">
-    <tasks:replace from="@php_bin@" to="php_bin" type="pear-config" />
-    <tasks:replace from="@bin_dir@" to="bin_dir" type="pear-config" />
-   </file>
-  </dir>
- </contents>
- <dependencies>
-  <required>
-   <php>
-    <min>5.3.0</min>
-   </php>
-   <pearinstaller>
-    <min>1.8.0</min>
-   </pearinstaller>
-   <package>
-    <name>DirectoryScanner</name>
+    <name>Autoload</name>
     <channel>pear.netpirates.net</channel>
-    <min>1.1.0</min>
-   </package>
-   <package>
-    <name>ConsoleTools</name>
-    <channel>components.ez.no</channel>
-    <min>1.6</min>
-   </package>
-   <extension>
-    <name>tokenizer</name>
-   </extension>
-  </required>
-  <optional>
-   <extension>
-    <name>phar</name>
-   </extension>
-  </optional>
- </dependencies>
- <phprelease>
-  <installconditions>
-   <os>
-    <name>windows</name>
-   </os>
-  </installconditions>
-  <filelist>
-   <install as="phpab" name="phpab.php" />
-   <install as="phpab.bat" name="phpab.bat" />
-  </filelist>
- </phprelease>
- <phprelease>
-  <filelist>
-   <install as="phpab" name="phpab.php" />
-   <ignore name="phpab.bat" />
-  </filelist>
- </phprelease>
+    <summary>A tool and library to generate autoload code.</summary>
+    <description>A tool and library to generate autoload code.</description>
+    <lead>
+        <name>Arne Blankerts</name>
+        <user>theseer</user>
+        <email>arne@blankerts.de</email>
+        <active>yes</active>
+    </lead>
+    <date>2012-06-12</date>
+    <version>
+        <release>1.9.0</release>
+        <api>1.9.0</api>
+    </version>
+    <stability>
+        <release>stable</release>
+        <api>stable</api>
+    </stability>
+    <license>BSD License</license>
+    <notes>http://github.com/theseer/Autoload/tree</notes>
+    <contents>
+        <dir name="/">
+            <dir name="TheSeer">
+                <dir name="Autoload">
+                    <dir name="templates">
+                        <dir name="cs">
+                            <file baseinstalldir="/" name="default.php.tpl" role="php"/>
+                            <file baseinstalldir="/" name="php52.php.tpl" role="php"/>
+                            <file baseinstalldir="/" name="phar.php.tpl" role="php"/>
+                        </dir>
+                        <dir name="ci">
+                            <file baseinstalldir="/" name="default.php.tpl" role="php"/>
+                            <file baseinstalldir="/" name="php52.php.tpl" role="php"/>
+                            <file baseinstalldir="/" name="phar.php.tpl" role="php"/>
+                        </dir>
+                        <file baseinstalldir="/" name="staticphar.php.tpl" role="php"/>
+                        <file baseinstalldir="/" name="static.php.tpl" role="php"/>
+                    </dir>
+                    <file baseinstalldir="/" name="cli.php" role="php"/>
+                    <file baseinstalldir="/" name="autoloadbuilder.php" role="php"/>
+                    <file baseinstalldir="/" name="classfinder.php" role="php"/>
+                    <file baseinstalldir="/" name="dependencysorter.php" role="php"/>
+                    <file baseinstalldir="/" name="staticbuilder.php" role="php"/>
+                    <file baseinstalldir="/" name="autoload.php" role="php"/>
+                </dir>
+            </dir>
+            <file baseinstalldir="/" name="phpab.php" role="script">
+                <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config"/>
+                <tasks:replace from="@php_bin@" to="php_bin" type="pear-config"/>
+                <tasks:replace from="%development%" to="version" type="package-info"/>
+            </file>
+            <file baseinstalldir="/" name="phpab.bat" role="script">
+                <tasks:replace from="@php_bin@" to="php_bin" type="pear-config"/>
+                <tasks:replace from="@bin_dir@" to="bin_dir" type="pear-config"/>
+            </file>
+        </dir>
+    </contents>
+    <dependencies>
+        <required>
+            <php>
+                <min>5.3.0</min>
+            </php>
+            <pearinstaller>
+                <min>1.8.0</min>
+            </pearinstaller>
+            <package>
+                <name>DirectoryScanner</name>
+                <channel>pear.netpirates.net</channel>
+                <min>1.1.0</min>
+            </package>
+            <package>
+                <name>ConsoleTools</name>
+                <channel>components.ez.no</channel>
+                <min>1.6</min>
+            </package>
+            <package>
+                <name>PHP_Timer</name>
+                <channel>pear.phpunit.de</channel>
+                <min>1.0.2</min>
+            </package>
+            <extension>
+                <name>tokenizer</name>
+            </extension>
+        </required>
+        <optional>
+            <extension>
+                <name>phar</name>
+            </extension>
+        </optional>
+    </dependencies>
+    <phprelease>
+        <installconditions>
+            <os>
+                <name>windows</name>
+            </os>
+        </installconditions>
+        <filelist>
+            <install as="phpab" name="phpab.php"/>
+            <install as="phpab.bat" name="phpab.bat"/>
+        </filelist>
+    </phprelease>
+    <phprelease>
+        <filelist>
+            <install as="phpab" name="phpab.php"/>
+            <ignore name="phpab.bat"/>
+        </filelist>
+    </phprelease>
 </package>
