@@ -46,7 +46,6 @@ define('PHPAB_VERSION', '%development%');
 
 require 'TheSeer/DirectoryScanner/autoload.php';
 require 'ezc/Base/base.php';
-require 'PHP/Timer.php';
 
 if (strpos(PHPAB_VERSION, '%development') === 0) {
     require __DIR__ . '/src/autoload.php';
