@@ -144,10 +144,18 @@ namespace TheSeer\Autoload {
                 'Ignore Class Redeclarations in the same file'
                 ));
 
-            $input->registerOption( new \ezcConsoleOption(
-                '', 'trusting', \ezcConsoleInput::TYPE_NONE, null, false,
+            $trusting = $input->registerOption( new \ezcConsoleOption(
+                '', 'trusting', \ezcConsoleInput::TYPE_NONE, true, false,
                 'Do not check mimetype of files prior to parsing'
             ));
+            $paranoid = $input->registerOption( new \ezcConsoleOption(
+                '', 'paranoid', \ezcConsoleInput::TYPE_NONE, true, false,
+                'Do check mimetype of files prior to parsing',
+                null,
+                array(),
+                array( new \ezcConsoleOptionRule($trusting) )
+            ));
+            $trusting->addExclusion(new \ezcConsoleOptionRule($paranoid));
 
             $onceOption = $input->registerOption( new \ezcConsoleOption(
                     '', 'once', \ezcConsoleInput::TYPE_NONE, null, false,
@@ -212,8 +220,10 @@ namespace TheSeer\Autoload {
                     $input->getOption('tolerant')->value,
                     $input->getOption('nolower')->value
                 );
-                $found  = $finder->parseMulti($scanner, !$input->getOption('trusting')->value);
-                // this unset is needed to "fix" a segfault on shutdown
+
+                $withMimeCheck = !($input->getOption('paranoid')->value || !$input->getOption('trusting')->value);
+                $found  = $finder->parseMulti($scanner, $withMimeCheck);
+                // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
                 unset($scanner);
                 if ($found==0) {
                     $this->message("No classes were found - process aborted.\n\n", STDERR);
@@ -507,7 +517,8 @@ Usage: phpab [switches] <directory>
 
       --all           Include all files in given directory when creating a phar
 
-      --trusting      Do not check mimetype of files prior to parsing
+      --trusting      Do not check mimetype of files prior to parsing (default)
+      --paranoid      Do check mimetype of files prior to parsing
 
       --var name=foo  Assign value 'foo' to variable 'name' to be used in (custom) templates
 

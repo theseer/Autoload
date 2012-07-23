@@ -483,7 +483,7 @@ namespace TheSeer\Autoload {
          *
          * @return integer
          */
-        public function parseMulti(\Iterator $sources, $mimeCheck = true) {
+        public function parseMulti(\Iterator $sources, $mimeCheck = false) {
             $count = 0;
             $worker = $mimeCheck ? new PHPFilterIterator($sources) : $sources;
             foreach($worker as $file) {
