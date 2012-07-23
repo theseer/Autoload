@@ -101,6 +101,9 @@ phpab [switches] <directory>
 
     --all        Include all files in given directory when creating a phar
 
+        --trusting   Do not check mimetype of files prior to parsing (default)
+        --paranoid   Do check mimetype of files prior to parsing
+
     --var name=foo  Assign value 'foo' to variable 'name' to be used in (custom) templates
 
 	--lint       Run lint on generated code and exit
