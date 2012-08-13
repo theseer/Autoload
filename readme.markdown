@@ -126,3 +126,30 @@ Usage Samples
 
     [theseer@rikka ~]$ phpab -b . --tolerant -o zf1_autoload.php -e '*/Test/*' Zend
 
+
+Ease of use
+-----------
+
+When using `phpab` it is necessary to recreate the autoload file every time a new class is created. This usually also happens after pulling from a repo or when switchting branches.
+
+Using a git `post-checkout` hook placed in `.git/hooks/post-update` this can be automated for most cases.
+
+###Basic Sample:
+
+```bash
+#!/bin/bash
+phpab -c -o src/autoload.inc.php src
+```
+
+###Sample using an `ant build.xml` file.
+
+```bash
+#!/bin/bash
+if [ -f build.xml ]; then
+    ant -p | grep phpab > /dev/null
+
+    if [ $? -eq 0 ]; then
+        ant phpab > /dev/null &
+    fi
+fi
+```
