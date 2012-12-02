@@ -13,4 +13,5 @@ spl_autoload_register(
         }
     }
 );
+Phar::mapPhar('___PHAR___');
 __HALT_COMPILER();
