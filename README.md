@@ -76,7 +76,7 @@ usually is `/usr/share/pear/theseer`.
 Usage
 -----
 
-phpab [switches] <directory>
+phpab [switches] <directory> [... <directoryN>]
 
     -i, --include    File pattern to include (default: *.php)
     -e, --exclude    File pattern to exclude
@@ -86,6 +86,9 @@ phpab [switches] <directory>
 
     -o, --output     Output file for generated code (default: STDOUT)
     -p, --phar       Create a phar archive (requires -o )
+        --bzip2      Compress phar archive using bzip2 (bzip2 required)
+        --gz         Compress phar archive using gzip (gzip required)
+        --key        OpenSSL key file to use for signing phar archive (openssl required)
 
     -c, --compat     Generate PHP 5.2 compatible code
     -s, --static     Generate a static require file
