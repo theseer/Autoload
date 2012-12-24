@@ -150,6 +150,9 @@
             <extension>
                 <name>phar</name>
             </extension>
+            <extension>
+                <name>openssl</name>
+            </extension>
         </optional>
     </dependencies>
     <phprelease>

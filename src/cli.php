@@ -38,6 +38,8 @@
 
 namespace TheSeer\Autoload {
 
+    use TheSeer\DirectoryScanner\DirectoryScanner;
+
     /**
      * CLI interface to AutoloadBuilder / StaticBuilder
      *
@@ -46,6 +48,15 @@ namespace TheSeer\Autoload {
      */
     class CLI {
 
+
+        private $helpOption;
+        private $versionOption;
+        private $outputOption;
+        private $pharOption;
+        private $lintOption;
+        private $staticOption;
+        private $onceOption;
+
         /**
          * Main executor method
          *
@@ -53,152 +64,23 @@ namespace TheSeer\Autoload {
          */
         public function run() {
 
-            $input = new \ezcConsoleInput();
-
-            $versionOption = $input->registerOption( new \ezcConsoleOption( 'v', 'version' ) );
-            $versionOption->shorthelp    = 'Prints the version and exits';
-            $versionOption->isHelpOption = true;
-
-            $helpOption = $input->registerOption( new \ezcConsoleOption( 'h', 'help' ) );
-            $helpOption->isHelpOption = true;
-            $helpOption->shorthelp    = 'Prints this usage information';
-
-            $outputOption = $input->registerOption( new \ezcConsoleOption(
-                'o', 'output', \ezcConsoleInput::TYPE_STRING, 'STDOUT', false,
-                'Output file for generated code (default: STDOUT)'
-                ));
-
-            $pharOption = $input->registerOption( new \ezcConsoleOption(
-                'p', 'phar', \ezcConsoleInput::TYPE_NONE, null, false,
-                'Build a phar archive of directory contents',
-                null,
-                array( new \ezcConsoleOptionRule( $input->getOption( 'o' ) ) )
-                ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                    '', 'all', \ezcConsoleInput::TYPE_NONE, null, false,
-                    'Add all files from src dir to phar',
-                    null,
-                    array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
-            ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                'i', 'include', \ezcConsoleInput::TYPE_STRING, '*.php', true,
-                'File pattern to include (default: *.php)'
-                ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                'e', 'exclude', \ezcConsoleInput::TYPE_STRING, null, true,
-                'File pattern to exclude'
-                ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                'b', 'basedir', \ezcConsoleInput::TYPE_STRING, null, false,
-                'Basedir for filepaths'
-                ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                't', 'template', \ezcConsoleInput::TYPE_STRING, null, false,
-                'Path to code template to use'
-                ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                '', 'format', \ezcConsoleInput::TYPE_STRING, null, false,
-                'Dateformat string for timestamp'
-                ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                '', 'linebreak', \ezcConsoleInput::TYPE_STRING, null, false,
-                'Linebreak style (CR, CR/LF or LF)'
-                ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                '', 'indent', \ezcConsoleInput::TYPE_STRING, null, false,
-                'String used for indenting (default: 3 spaces)'
-                ));
-
-            $lintOption = $input->registerOption( new \ezcConsoleOption(
-                '', 'lint', \ezcConsoleInput::TYPE_NONE, null, false,
-                'Run lint on generated code'
-                ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                '', 'lint-php', \ezcConsoleInput::TYPE_STRING, null, false,
-                'PHP binary path for linting (default: /usr/bin/php or c:\\php\\php.exe)',
-                null,
-                array( new \ezcConsoleOptionRule( $input->getOption( 'lint' ) ) )
-                ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                'c', 'compat', \ezcConsoleInput::TYPE_NONE, null, false,
-                'Generate PHP 5.2 compliant code'
-                ));
-
-            $staticOption = $input->registerOption( new \ezcConsoleOption(
-                's', 'static', \ezcConsoleInput::TYPE_NONE, null, false,
-                'Build a static require file'
-                ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                '', 'tolerant', \ezcConsoleInput::TYPE_NONE, null, false,
-                'Ignore Class Redeclarations in the same file'
-                ));
-
-            $trusting = $input->registerOption( new \ezcConsoleOption(
-                '', 'trusting', \ezcConsoleInput::TYPE_NONE, true, false,
-                'Do not check mimetype of files prior to parsing'
-            ));
-            $paranoid = $input->registerOption( new \ezcConsoleOption(
-                '', 'paranoid', \ezcConsoleInput::TYPE_NONE, false, false,
-                'Do check mimetype of files prior to parsing',
-                null,
-                array(),
-                array( new \ezcConsoleOptionRule($trusting) )
-            ));
-            $trusting->addExclusion(new \ezcConsoleOptionRule($paranoid));
-
-            $onceOption = $input->registerOption( new \ezcConsoleOption(
-                    '', 'once', \ezcConsoleInput::TYPE_NONE, null, false,
-                    'Use require_once in static require mode',
-                    null,
-                    array( new \ezcConsoleOptionRule( $input->getOption( 's' ) ) )
-            ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                'n', 'nolower', \ezcConsoleInput::TYPE_NONE, null, false,
-                'Do not lowercase classnames for case insensitivity'
-                ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                    'q', 'quiet', \ezcConsoleInput::TYPE_NONE, null, false,
-                    'Run in quiet mode, no output'
-            ));
-
-            $input->registerOption( new \ezcConsoleOption(
-                null, 'var', \ezcConsoleInput::TYPE_STRING, array(), true,
-                'Assign variable'
-                ));
-
-            $input->argumentDefinition = new \ezcConsoleArguments();
-            $input->argumentDefinition[0] = new \ezcConsoleArgument( "directory" );
-            $input->argumentDefinition[0]->shorthelp = "The directory to process.";
-
             try {
+                $input = $this->setupInput();
                 $input->process();
             } catch (\ezcConsoleException $e) {
                 $this->showVersion();
-                echo $e->getMessage()."\n\n";
+                echo $e->getMessage() . "\n\n";
                 $this->showUsage();
                 exit(3);
             }
 
-            if ($helpOption->value === true) {
+            if ($this->helpOption->value === TRUE) {
                 $this->showVersion();
                 $this->showUsage();
                 exit(0);
             }
 
-            if ($versionOption->value === true ) {
+            if ($this->versionOption->value === TRUE ) {
                 $this->showVersion();
                 exit(0);
             }
@@ -206,55 +88,110 @@ namespace TheSeer\Autoload {
             $this->beQuiet = $input->getOption('quiet')->value;
 
             try {
-                $scanner = $this->getScanner($input);
-                if ($pharOption->value !== false) {
-                    if (file_exists($outputOption->value)) {
-                        unlink($outputOption->value);
+
+                if ($this->pharOption->value !== FALSE) {
+                    $keyfile = $input->getOption('key')->value;
+                    if ($keyfile != '') {
+                        if (!extension_loaded('openssl')) {
+                            $this->message("Extension for OpenSSL not loaded - cannot sign phar archive - process aborted.\n\n", STDERR);
+                            exit(1);
+                        }
+                        $keydata = file_get_contents($keyfile);
+                        if (strpos($keydata, 'ENCRYPTED')!==FALSE) {
+                            $this->beQuiet = false;
+                            $this->message("Passphrase for key '$keyfile': ");
+                            $g = shell_exec('stty -g');
+                            shell_exec('stty -echo');
+                            $passphrase = trim(fgets(STDIN));
+                            $this->message("\n");
+                            shell_exec('stty ' . $g);
+                            $private = openssl_pkey_get_private($keydata, $passphrase);
+                        } else {
+                            $private = openssl_pkey_get_private($keydata);
+                        }
+                        if (!$private) {
+                            $this->message("Opening private key '$keyfile' failed - process aborted.\n\n", STDERR);
+                            exit(1);
+                        }
+                        $keyDetails = openssl_pkey_get_details($private);
+                        $privateKey = '';
+                        openssl_pkey_export($private, $privateKey);
+                        file_put_contents($this->outputOption->value . '.pubkey', $keyDetails['key']);
                     }
-                    $pharScanner = $input->getOption('all')->value ? $this->getScanner($input, false) : $scanner;
-                    $phar = $this->buildPhar($pharScanner, $input);
-                    $scanner->rewind();
+                    if (file_exists($this->outputOption->value)) {
+                        unlink($this->outputOption->value);
+                    }
+                    $phar = new \Phar($input->getOption('output')->value, 0, basename($input->getOption('output')->value));
+                    $phar->startBuffering();
+                    if ($privateKey) {
+                        $phar->setSignatureAlgorithm(\Phar::OPENSSL, $privateKey);
+                    }
+
                 }
+
+                $found = 0;
+                $withMimeCheck = $input->getOption('paranoid')->value || !$input->getOption('trusting')->value;
+                $basedir = $input->getOption('basedir')->value;
+
                 $finder = new ClassFinder(
                     $input->getOption('static')->value,
                     $input->getOption('tolerant')->value,
                     $input->getOption('nolower')->value
                 );
 
-                $withMimeCheck = $input->getOption('paranoid')->value || !$input->getOption('trusting')->value;
+                $this->showVersion();
 
-                $found  = $finder->parseMulti($scanner, $withMimeCheck);
-                // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
-                unset($scanner);
-                if ($found==0) {
+                foreach($input->getArguments() as $directory) {
+                    $this->message('Scanning directory ' . $directory . "\n");
+                    if ($basedir == NULL) {
+                        $basedir = $directory;
+                    }
+                    $scanner = $this->getScanner($directory, $input);
+                    if ($this->pharOption->value !== FALSE) {
+                        $pharScanner = $input->getOption('all')->value ? $this->getScanner($directory, $input, FALSE) : $scanner;
+                        $phar->buildFromIterator($pharScanner, $basedir);
+                        $scanner->rewind();
+                    }
+
+                    $found  += $finder->parseMulti($scanner, $withMimeCheck);
+                    // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
+                    unset($scanner);
+                }
+
+                if ($found == 0) {
                     $this->message("No classes were found - process aborted.\n\n", STDERR);
                     exit(1);
                 }
 
                 $builder = $this->getBuilder($finder, $input);
 
-                if ($lintOption->value === true) {
+                if ($this->lintOption->value === TRUE) {
                     exit( $this->lintCode($builder->render(), $input) ? 0 : 4);
                 }
 
-                if ($outputOption->value == 'STDOUT') {
-                    echo $builder->render();
+                if ($this->outputOption->value == 'STDOUT') {
+                    echo "\n" . $builder->render() . "\n\n";
                 } else {
-                    if ($pharOption->value !== false) {
-                        $builder->setVariable('PHAR', basename($outputOption->value));
+                    if ($this->pharOption->value !== FALSE) {
+                        $builder->setVariable('PHAR', basename($this->outputOption->value));
                         $stub = $builder->render();
-                        if (strpos($stub, '__HALT_COMPILER();')===false) {
+                        if (strpos($stub, '__HALT_COMPILER();')===FALSE) {
                             $this->message(
                                 "Warning: Template used in phar mode did not contain required __HALT_COMPILER() call\n" .
                                 "which has been added automatically. The used stub code may not work as intended.\n\n", STDERR);
                             $stub .= $builder->getLineBreak() . '__HALT_COMPILER();';
                         }
                         $phar->setStub($stub);
+                        if ($input->getOption('gzip')->value) {
+                            $phar->compressFiles(\Phar::GZ);
+                        } elseif ($input->getOption('bzip2')->value) {
+                            $phar->compressFiles(\Phar::BZ2);
+                        }
                         $phar->stopBuffering();
-                        $this->message( "phar archive '{$outputOption->value}' generated.\n\n");
+                        $this->message( "\nphar archive '{$this->outputOption->value}' generated.\n\n");
                     } else {
-                        $builder->save($outputOption->value);
-                        $this->message( "Autoload file '{$outputOption->value}' generated.\n\n");
+                        $builder->save($this->outputOption->value);
+                        $this->message( "\nAutoload file '{$this->outputOption->value}' generated.\n\n");
                     }
                 }
                 exit(0);
@@ -274,11 +211,13 @@ namespace TheSeer\Autoload {
         /**
          * Helper to get instance of DirectoryScanner with cli options applied
          *
-         * @param ezcConsoleInput $input  CLI Options pased to app
+         * @param string           $directory
+         * @param \ezcConsoleInput $input CLI Options pased to app
          *
-         * @return Theseer\Autoload\IncludeExcludeFilterIterator
+         * @param bool                                               $filter
+         * @return \TheSeer\DirectoryScanner\IncludeExcludeFilterIterator
          */
-        protected function getScanner(\ezcConsoleInput $input, $filter = true) {
+        protected function getScanner($directory, \ezcConsoleInput $input, $filter = TRUE) {
             $scanner = new \TheSeer\DirectoryScanner\DirectoryScanner;
 
             if ($filter) {
@@ -298,9 +237,7 @@ namespace TheSeer\Autoload {
                     }
                 }
             }
-
-            $args = $input->getArguments();
-            return $scanner($args[0]);
+            return $scanner($directory);
         }
 
         /**
@@ -308,6 +245,9 @@ namespace TheSeer\Autoload {
          *
          * @param ClassFinder      $finder Instance of ClassFinder to get classes from
          * @param \ezcConsoleInput $input  CLI Options pased to app
+         *
+         * @throws \RuntimeException
+         * @return \TheSeer\Autoload\AutoloadBuilder|\TheSeer\Autoload\StaticBuilder
          */
         protected function getBuilder(ClassFinder $finder, \ezcConsoleInput $input) {
             $isStatic = $input->getOption('static')->value;
@@ -317,7 +257,7 @@ namespace TheSeer\Autoload {
             $isOnce   = $input->getOption('once')->value;
             $tplType  = $noLower ? 'cs' : 'ci';
 
-            if ($isStatic === true) {
+            if ($isStatic === TRUE) {
                 $ab = new StaticBuilder($finder->getMerged());
                 $ab->setDependencies($finder->getDependencies());
                 $ab->setPharMode($isPhar);
@@ -390,7 +330,7 @@ namespace TheSeer\Autoload {
             }
 
             $linebreak = $input->getOption('linebreak');
-            if ($linebreak->value !== false) {
+            if ($linebreak->value !== FALSE) {
                 $lbr = array('LF' => "\n", 'CR' => "\r", 'CRLF' => "\r\n" );
                 if (isset($lbr[$linebreak->value])) {
                     $ab->setLineBreak($lbr[$linebreak->value]);
@@ -403,7 +343,7 @@ namespace TheSeer\Autoload {
 
             if ($vars = $input->getOption('var')->value) {
                 foreach($vars as $var) {
-                    if (strpos($var,'=')===false) {
+                    if (strpos($var,'=')===FALSE) {
                        throw new \RuntimeException("Variable defintion '$var' is invalid and cannot be processed.");
                     }
                     list($name, $value) = explode('=',$var,2);
@@ -412,20 +352,6 @@ namespace TheSeer\Autoload {
             }
 
             return $ab;
-        }
-
-
-        protected function buildPhar(\Iterator $scanner, \ezcConsoleInput $input) {
-            $basedir = $input->getOption('basedir')->value;
-            $phar    = new \Phar($input->getOption('output')->value, 0, basename($input->getOption('output')->value));
-            $phar->startBuffering();
-            if ($basedir) {
-                $phar->buildFromIterator($scanner, $basedir);
-            } else {
-                $args = $input->getArguments();
-                $phar->buildFromIterator($scanner, $args[0]);
-            }
-            return $phar;
         }
 
         /**
@@ -438,13 +364,13 @@ namespace TheSeer\Autoload {
          */
         protected function lintCode($code, $input) {
             $dsp = array(
-            0 => array("pipe", "r"),
-            1 => array("pipe", "w"),
-            2 => array("pipe", "w")
+                0 => array("pipe", "r"),
+                1 => array("pipe", "w"),
+                2 => array("pipe", "w")
             );
 
             $php = $input->getOption('lint-php');
-            if ($php->value === false) {
+            if ($php->value === FALSE) {
                 $binary = PHP_OS === 'WIN' ? 'C:\php\php.exe' : '/usr/bin/php';
             } else {
                 $binary = $php->value;
@@ -459,8 +385,6 @@ namespace TheSeer\Autoload {
 
             fwrite($pipes[0], $code);
             fclose($pipes[0]);
-
-            $stdout = stream_get_contents($pipes[1]);
             fclose($pipes[1]);
 
             $stderr = stream_get_contents($pipes[2]);
@@ -472,11 +396,11 @@ namespace TheSeer\Autoload {
                 $this->message("Syntax errors during lint:\n" .
                     str_replace('in - on line', 'in generated code on line', $stderr) .
                     "\n", STDERR);
-                return false;
+                return FALSE;
             }
 
             $this->message( "Lint check of geneated code okay\n\n");
-            return true;
+            return TRUE;
         }
 
         /**
@@ -491,7 +415,7 @@ namespace TheSeer\Autoload {
          */
         protected function showUsage() {
             print <<<EOF
-Usage: phpab [switches] <directory>
+Usage: phpab [switches] <directory1> [...<directoryN>]
 
   -i, --include       File pattern to include (default: *.php)
   -e, --exclude       File pattern to exclude
@@ -501,6 +425,9 @@ Usage: phpab [switches] <directory>
 
   -o, --output        Output file for generated code (default: STDOUT)
   -p, --phar          Create a phar archive (requires -o )
+      --bzip2         Compress phar archive using bzip2 (requires -p) (bzip2 required)
+      --gz            Compress phar archive using gzip (requires -p) (gzip required)
+      --key           OpenSSL key file to use for signing phar archive (requires -p) (openssl required)
 
   -c, --compat        Generate PHP 5.2 compatible code
   -s, --static        Generate a static require file
@@ -529,8 +456,168 @@ Usage: phpab [switches] <directory>
   -h, --help          Prints this usage information
   -v, --version       Prints the version and exits
 
-
 EOF;
+        }
+
+        /**
+         * @return \ezcConsoleInput
+         */
+        protected function setupInput() {
+            $input = new \ezcConsoleInput();
+
+            $this->versionOption = $input->registerOption( new \ezcConsoleOption( 'v', 'version' ) );
+            $this->versionOption->shorthelp    = 'Prints the version and exits';
+            $this->versionOption->isHelpOption = TRUE;
+
+            $this->helpOption = $input->registerOption( new \ezcConsoleOption( 'h', 'help' ) );
+            $this->helpOption->isHelpOption = TRUE;
+            $this->helpOption->shorthelp    = 'Prints this usage information';
+
+            $this->outputOption = $input->registerOption( new \ezcConsoleOption(
+                'o', 'output', \ezcConsoleInput::TYPE_STRING, 'STDOUT', FALSE,
+                'Output file for generated code (default: STDOUT)'
+            ));
+
+            $this->pharOption = $input->registerOption( new \ezcConsoleOption(
+                'p', 'phar', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Build a phar archive of directory contents',
+                NULL,
+                array( new \ezcConsoleOptionRule( $input->getOption( 'o' ) ) )
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'all', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Add all files from src dir to phar',
+                NULL,
+                array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
+            ));
+
+            $bzip2 = $input->registerOption( new \ezcConsoleOption(
+                '', 'bzip2', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Compress files phar with bzip2',
+                NULL,
+                array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
+            ));
+
+            $gzip = $input->registerOption( new \ezcConsoleOption(
+                '', 'gzip', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Compress files phar with gzip',
+                NULL,
+                array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) ),
+                array( new \ezcConsoleOptionRule( $bzip2 ) )
+            ));
+            $bzip2->addExclusion(new \ezcConsoleOptionRule($gzip));
+
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'key', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                'Keyfile to use for signing phar archive',
+                NULL,
+                array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                'i', 'include', \ezcConsoleInput::TYPE_STRING, '*.php', TRUE,
+                'File pattern to include (default: *.php)'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                'e', 'exclude', \ezcConsoleInput::TYPE_STRING, NULL, TRUE,
+                'File pattern to exclude'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                'b', 'basedir', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                'Basedir for filepaths'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                't', 'template', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                'Path to code template to use'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'format', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                'Dateformat string for timestamp'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'linebreak', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                'Linebreak style (CR, CR/LF or LF)'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'indent', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                'String used for indenting (default: 3 spaces)'
+            ));
+
+            $this->lintOption = $input->registerOption( new \ezcConsoleOption(
+                '', 'lint', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Run lint on generated code'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'lint-php', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                'PHP binary path for linting (default: /usr/bin/php or c:\\php\\php.exe)',
+                NULL,
+                array( new \ezcConsoleOptionRule( $input->getOption( 'lint' ) ) )
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                'c', 'compat', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Generate PHP 5.2 compliant code'
+            ));
+
+            $this->staticOption = $input->registerOption( new \ezcConsoleOption(
+                's', 'static', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Build a static require file'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'tolerant', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Ignore Class Redeclarations in the same file'
+            ));
+
+            $trusting = $input->registerOption( new \ezcConsoleOption(
+                '', 'trusting', \ezcConsoleInput::TYPE_NONE, TRUE, FALSE,
+                'Do not check mimetype of files prior to parsing'
+            ));
+            $paranoid = $input->registerOption( new \ezcConsoleOption(
+                '', 'paranoid', \ezcConsoleInput::TYPE_NONE, FALSE, FALSE,
+                'Do check mimetype of files prior to parsing',
+                NULL,
+                array(),
+                array( new \ezcConsoleOptionRule($trusting) )
+            ));
+            $trusting->addExclusion(new \ezcConsoleOptionRule($paranoid));
+
+            $this->onceOption = $input->registerOption( new \ezcConsoleOption(
+                '', 'once', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Use require_once in static require mode',
+                NULL,
+                array( new \ezcConsoleOptionRule( $input->getOption( 's' ) ) )
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                'n', 'nolower', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Do not lowercase classnames for case insensitivity'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                'q', 'quiet', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Run in quiet mode, no output'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                NULL, 'var', \ezcConsoleInput::TYPE_STRING, array(), TRUE,
+                'Assign variable'
+            ));
+
+            $input->argumentDefinition = new \ezcConsoleArguments();
+            $input->argumentDefinition[0] = new \ezcConsoleArgument( "directory" );
+            $input->argumentDefinition[0]->shorthelp = "The directory to process.";
+            $input->argumentDefinition[0]->multiple = TRUE;
+
+            return $input;
         }
     }
 }
