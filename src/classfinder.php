@@ -469,8 +469,7 @@ namespace TheSeer\Autoload {
         /**
          * @return boolean
          */
-        protected function canTolerateRedeclaration($redeclaredClassName, $redeclaredInFilePath)
-        {
+        protected function canTolerateRedeclaration($redeclaredClassName, $redeclaredInFilePath) {
             return $this->found['all'][$redeclaredClassName] === $redeclaredInFilePath
             && $this->isInTolerantMode === true;
         }
@@ -484,7 +483,6 @@ namespace TheSeer\Autoload {
          * @return integer
          */
         public function parseMulti(\Iterator $sources, $mimeCheck = false) {
-            $count = 0;
             $worker = $mimeCheck ? new PHPFilterIterator($sources) : $sources;
             foreach($worker as $file) {
                 $this->parseFile($file->getPathname());
