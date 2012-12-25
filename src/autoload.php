@@ -7,14 +7,15 @@ spl_autoload_register(
         static $classes = null;
         if ($classes === null) {
             $classes = array(
-                'theseer\\autoload\\autoloadbuilder' => '/autoloadbuilder.php',
-                'theseer\\autoload\\autoloadbuilderexception' => '/autoloadbuilder.php',
-                'theseer\\autoload\\classdependencysorter' => '/dependencysorter.php',
-                'theseer\\autoload\\classdependencysorterexception' => '/dependencysorter.php',
-                'theseer\\autoload\\classfinder' => '/classfinder.php',
-                'theseer\\autoload\\classfinderexception' => '/classfinder.php',
-                'theseer\\autoload\\cli' => '/cli.php',
-                'theseer\\autoload\\staticbuilder' => '/staticbuilder.php'
+                'theseer\\autoload\\autoloadbuilder' => '/AutoloadBuilder.php',
+                'theseer\\autoload\\autoloadbuilderexception' => '/AutoloadBuilder.php',
+                'theseer\\autoload\\classdependencysorter' => '/DependencySorter.php',
+                'theseer\\autoload\\classdependencysorterexception' => '/DependencySorter.php',
+                'theseer\\autoload\\classfinder' => '/ClassFinder.php',
+                'theseer\\autoload\\classfinderexception' => '/ClassFinder.php',
+                'theseer\\autoload\\cli' => '/CLI.php',
+                'theseer\\autoload\\staticbuilder' => '/StaticBuilder.php',
+                'theseer\\autoload\\version' => '/Version.php'
             );
         }
         $cn = strtolower($class);

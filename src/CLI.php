@@ -407,7 +407,7 @@ namespace TheSeer\Autoload {
          * Helper to output version information
          */
         protected function showVersion() {
-            printf("phpab %s - Copyright (C) 2009 - 2012 by Arne Blankerts\n\n", PHPAB_VERSION);
+            echo Version::getInfoString() . "\n\n";
         }
 
         /**
