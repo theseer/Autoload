@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * Copyright (c) 2009-2012 Arne Blankerts <arne@blankerts.de>
@@ -35,26 +34,62 @@
  * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
  * @license    BSD License
  *
- * Exit codes:
- *   0 - No error
- *   1 - Execution Error
- *   3 - Parameter Error
- *   4 - Lint Error
  */
+namespace TheSeer\Autoload {
 
-define('PHPAB_VERSION', '%development%');
+    class Application {
 
-require 'TheSeer/DirectoryScanner/autoload.php';
-require 'ezc/Base/base.php';
+        /**
+         * Execute a lint check on generated code
+         *
+         * @param string           $code  Generated code to lint
+         * @param \ezcConsoleInput $input CLI Options pased to app
+         *
+         * @return boolean
+         */
+        protected function lintCode($code, $input) {
+            $dsp = array(
+                0 => array("pipe", "r"),
+                1 => array("pipe", "w"),
+                2 => array("pipe", "w")
+            );
 
-if (strpos(PHPAB_VERSION, '%development') === 0) {
-    require __DIR__ . '/src/autoload.php';
-} else {
-    require 'TheSeer/Autoload/autoload.php';
+            $php = $input->getOption('lint-php');
+            if ($php->value === FALSE) {
+                $binary = PHP_OS === 'WIN' ? 'C:\php\php.exe' : '/usr/bin/php';
+            } else {
+                $binary = $php->value;
+            }
+
+            $process = proc_open($binary . ' -l', $dsp, $pipes);
+
+            if (!is_resource($process)) {
+                $this->message("Opening php binary for linting failed.\n", STDERR);
+                exit(1);
+            }
+
+            fwrite($pipes[0], $code);
+            fclose($pipes[0]);
+            fclose($pipes[1]);
+
+            $stderr = stream_get_contents($pipes[2]);
+            fclose($pipes[2]);
+
+            $rc = proc_close($process);
+
+            if ($rc == 255) {
+                $this->message("Syntax errors during lint:\n" .
+                    str_replace('in - on line', 'in generated code on line', $stderr) .
+                    "\n", STDERR);
+                return FALSE;
+            }
+
+            $this->message( "Lint check of geneated code okay\n\n");
+            return TRUE;
+        }
+
+
+
+    }
+
 }
-spl_autoload_register(array('\ezcBase','autoload'));
-
-
-$factory = new \TheSeer\Autoload\Factory();
-$factory->getCLI()->run();
-exit(0);

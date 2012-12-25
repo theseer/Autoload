@@ -48,14 +48,14 @@ namespace TheSeer\Autoload {
      */
     class CLI {
 
+        /**
+         * @var Factory
+         */
+        private $factory;
 
-        private $helpOption;
-        private $versionOption;
-        private $outputOption;
-        private $pharOption;
-        private $lintOption;
-        private $staticOption;
-        private $onceOption;
+        public function __construct(Factory $factory) {
+            $this->factory = $factory;
+        }
 
         /**
          * Main executor method
@@ -98,7 +98,7 @@ namespace TheSeer\Autoload {
                         }
                         $keydata = file_get_contents($keyfile);
                         if (strpos($keydata, 'ENCRYPTED')!==FALSE) {
-                            $this->beQuiet = false;
+                            $this->beQuiet = FALSE;
                             $this->message("Passphrase for key '$keyfile': ");
                             $g = shell_exec('stty -g');
                             shell_exec('stty -echo');
@@ -139,16 +139,18 @@ namespace TheSeer\Autoload {
                     $input->getOption('nolower')->value
                 );
 
-                $this->showVersion();
+                if (!$this->beQuiet) {
+                    $this->showVersion();
+                }
 
                 foreach($input->getArguments() as $directory) {
                     $this->message('Scanning directory ' . $directory . "\n");
                     if ($basedir == NULL) {
                         $basedir = $directory;
                     }
-                    $scanner = $this->getScanner($directory, $input);
+                    $scanner = $this->factory->getScanner($directory, $input);
                     if ($this->pharOption->value !== FALSE) {
-                        $pharScanner = $input->getOption('all')->value ? $this->getScanner($directory, $input, FALSE) : $scanner;
+                        $pharScanner = $input->getOption('all')->value ? $this->factory->getScanner($directory, $input, FALSE) : $scanner;
                         $phar->buildFromIterator($pharScanner, $basedir);
                         $scanner->rewind();
                     }
@@ -163,7 +165,7 @@ namespace TheSeer\Autoload {
                     exit(1);
                 }
 
-                $builder = $this->getBuilder($finder, $input);
+                $builder = $this->factory->getBuilder($finder, $input);
 
                 if ($this->lintOption->value === TRUE) {
                     exit( $this->lintCode($builder->render(), $input) ? 0 : 4);
@@ -206,201 +208,6 @@ namespace TheSeer\Autoload {
         protected function message($msg, $target = STDOUT) {
             if ($this->beQuiet) return;
             fwrite($target, $msg);
-        }
-
-        /**
-         * Helper to get instance of DirectoryScanner with cli options applied
-         *
-         * @param string           $directory
-         * @param \ezcConsoleInput $input CLI Options pased to app
-         *
-         * @param bool                                               $filter
-         * @return \TheSeer\DirectoryScanner\IncludeExcludeFilterIterator
-         */
-        protected function getScanner($directory, \ezcConsoleInput $input, $filter = TRUE) {
-            $scanner = new \TheSeer\DirectoryScanner\DirectoryScanner;
-
-            if ($filter) {
-                $include = $input->getOption('include');
-                if (is_array($include->value)) {
-                    $scanner->setIncludes($include->value);
-                } else {
-                    $scanner->addInclude($include->value);
-                }
-
-                $exclude = $input->getOption('exclude');
-                if ($exclude->value) {
-                    if (is_array($exclude->value)) {
-                        $scanner->setExcludes($exclude->value);
-                    } else {
-                        $scanner->addExclude($exclude->value);
-                    }
-                }
-            }
-            return $scanner($directory);
-        }
-
-        /**
-         * Helper to get instance of AutoloadBuilder with cli options applied
-         *
-         * @param ClassFinder      $finder Instance of ClassFinder to get classes from
-         * @param \ezcConsoleInput $input  CLI Options pased to app
-         *
-         * @throws \RuntimeException
-         * @return \TheSeer\Autoload\AutoloadBuilder|\TheSeer\Autoload\StaticBuilder
-         */
-        protected function getBuilder(ClassFinder $finder, \ezcConsoleInput $input) {
-            $isStatic = $input->getOption('static')->value;
-            $isPhar   = $input->getOption('phar')->value;
-            $isCompat = $input->getOption('compat')->value;
-            $noLower  = $input->getOption('nolower')->value;
-            $isOnce   = $input->getOption('once')->value;
-            $tplType  = $noLower ? 'cs' : 'ci';
-
-            if ($isStatic === TRUE) {
-                $ab = new StaticBuilder($finder->getMerged());
-                $ab->setDependencies($finder->getDependencies());
-                $ab->setPharMode($isPhar);
-                $ab->setRequireOnce($isOnce);
-            } else {
-                $ab = new AutoloadBuilder($finder->getMerged());
-            }
-
-            $ab->setCompat($isCompat);
-
-            $basedir = $input->getOption('basedir');
-            if ($basedir->value) {
-                $bdir = realpath($basedir->value);
-                if (!$bdir || !is_dir($bdir)) {
-                    throw new \RuntimeException("Given basedir '{$basedir->value}' does not exist or is not a directory");
-                }
-                $ab->setBaseDir($bdir);
-            } else {
-                $args = $input->getArguments();
-                $ab->setBaseDir(realpath($args[0]));
-            }
-
-            $template = $input->getOption('template');
-            if ($template->value) {
-                if (!file_exists($template->value)) {
-                    $alternative = __DIR__.'/templates/'.$tplType.'/'.$template->value;
-                    if (file_exists($alternative)) {
-                        $template->value = $alternative;
-                    }
-                }
-                $ab->setTemplateFile($template->value);
-            } else {
-
-                // determine auto template to use
-                $tplFile = 'default.php.tpl';
-                if ($isCompat) {
-                    $tplFile = 'php52.php.tpl';
-                }
-
-                if ($isPhar) {
-                    if ($isStatic) {
-                        $tplFile = 'staticphar.php.tpl';
-                    } else {
-                        $tplFile = 'phar.php.tpl';
-                    }
-                } elseif ($isStatic) {
-                    $tplFile = 'static.php.tpl';
-                    $tplType = '.';
-                }
-
-                $ab->setTemplateFile(__DIR__.'/templates/'.$tplType.'/'.$tplFile);
-            }
-
-            $format = $input->getOption('format');
-            if ($format->value) {
-                $ab->setDateTimeFormat($format->value);
-            }
-
-            $indent = $input->getOption('indent');
-            if ($indent->value) {
-                if (is_numeric($indent->value)) {
-                    $ab->setIndent(str_repeat(' ', $indent->value));
-                } else {
-                    $ab->setIndent($indent->value);
-                }
-            } elseif ($isStatic) {
-                $ab->setIndent('');
-            } else {
-                $ab->setIndent(str_repeat(' ', $isCompat ? 12 : 16));
-            }
-
-            $linebreak = $input->getOption('linebreak');
-            if ($linebreak->value !== FALSE) {
-                $lbr = array('LF' => "\n", 'CR' => "\r", 'CRLF' => "\r\n" );
-                if (isset($lbr[$linebreak->value])) {
-                    $ab->setLineBreak($lbr[$linebreak->value]);
-                } else {
-                    $ab->setLineBreak($linebreak->value);
-                }
-            } else {
-                $ab->setLineBreak("\n");
-            }
-
-            if ($vars = $input->getOption('var')->value) {
-                foreach($vars as $var) {
-                    if (strpos($var,'=')===FALSE) {
-                       throw new \RuntimeException("Variable defintion '$var' is invalid and cannot be processed.");
-                    }
-                    list($name, $value) = explode('=',$var,2);
-                    $ab->setVariable($name, $value);
-                }
-            }
-
-            return $ab;
-        }
-
-        /**
-         * Helper to execute a lint check on generated code
-         *
-         * @param string           $code  Generated code to lint
-         * @param \ezcConsoleInput $input CLI Options pased to app
-         *
-         * @return boolean
-         */
-        protected function lintCode($code, $input) {
-            $dsp = array(
-                0 => array("pipe", "r"),
-                1 => array("pipe", "w"),
-                2 => array("pipe", "w")
-            );
-
-            $php = $input->getOption('lint-php');
-            if ($php->value === FALSE) {
-                $binary = PHP_OS === 'WIN' ? 'C:\php\php.exe' : '/usr/bin/php';
-            } else {
-                $binary = $php->value;
-            }
-
-            $process = proc_open($binary . ' -l', $dsp, $pipes);
-
-            if (!is_resource($process)) {
-                $this->message("Opening php binary for linting failed.\n", STDERR);
-                exit(1);
-            }
-
-            fwrite($pipes[0], $code);
-            fclose($pipes[0]);
-            fclose($pipes[1]);
-
-            $stderr = stream_get_contents($pipes[2]);
-            fclose($pipes[2]);
-
-            $rc = proc_close($process);
-
-            if ($rc == 255) {
-                $this->message("Syntax errors during lint:\n" .
-                    str_replace('in - on line', 'in generated code on line', $stderr) .
-                    "\n", STDERR);
-                return FALSE;
-            }
-
-            $this->message( "Lint check of geneated code okay\n\n");
-            return TRUE;
         }
 
         /**

@@ -7,6 +7,7 @@ spl_autoload_register(
         static $classes = null;
         if ($classes === null) {
             $classes = array(
+                'theseer\\autoload\\application' => '/Application.php',
                 'theseer\\autoload\\autoloadbuilder' => '/AutoloadBuilder.php',
                 'theseer\\autoload\\autoloadbuilderexception' => '/AutoloadBuilder.php',
                 'theseer\\autoload\\classdependencysorter' => '/DependencySorter.php',
@@ -14,6 +15,7 @@ spl_autoload_register(
                 'theseer\\autoload\\classfinder' => '/ClassFinder.php',
                 'theseer\\autoload\\classfinderexception' => '/ClassFinder.php',
                 'theseer\\autoload\\cli' => '/CLI.php',
+                'theseer\\autoload\\factory' => '/Factory.php',
                 'theseer\\autoload\\staticbuilder' => '/StaticBuilder.php',
                 'theseer\\autoload\\version' => '/Version.php'
             );
