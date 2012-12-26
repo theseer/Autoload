@@ -85,7 +85,7 @@ namespace TheSeer\Autoload {
                 }
                 $phar = new \Phar($input->getOption('output')->value, 0, basename($input->getOption('output')->value));
                 $phar->startBuffering();
-                if ($privateKey) {
+                if ($keyfile != '') {
                     $phar->setSignatureAlgorithm(\Phar::OPENSSL, $privateKey);
                 }
 
