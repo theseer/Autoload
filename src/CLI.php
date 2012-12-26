@@ -65,149 +65,40 @@ namespace TheSeer\Autoload {
         public function run() {
 
             try {
+
                 $input = $this->setupInput();
                 $input->process();
+
+                if ($input->getOption('help')->value === TRUE) {
+                    $this->showVersion();
+                    $this->showUsage();
+                    exit(0);
+                }
+
+                if ($input->getOption('version')->value === TRUE ) {
+                    $this->showVersion();
+                    exit(0);
+                }
+
+                $this->factory->setQuietMode($input->getOption('quiet')->value);
+                if (!$input->getOption('quiet')->value) {
+                    $this->showVersion();
+                }
+                $this->factory->getApplication()->run($input);
+
+                exit(0);
+
             } catch (\ezcConsoleException $e) {
                 $this->showVersion();
                 echo $e->getMessage() . "\n\n";
                 $this->showUsage();
                 exit(3);
-            }
-
-            if ($this->helpOption->value === TRUE) {
-                $this->showVersion();
-                $this->showUsage();
-                exit(0);
-            }
-
-            if ($this->versionOption->value === TRUE ) {
-                $this->showVersion();
-                exit(0);
-            }
-
-            $this->beQuiet = $input->getOption('quiet')->value;
-
-            try {
-
-                if ($this->pharOption->value !== FALSE) {
-                    $keyfile = $input->getOption('key')->value;
-                    if ($keyfile != '') {
-                        if (!extension_loaded('openssl')) {
-                            $this->message("Extension for OpenSSL not loaded - cannot sign phar archive - process aborted.\n\n", STDERR);
-                            exit(1);
-                        }
-                        $keydata = file_get_contents($keyfile);
-                        if (strpos($keydata, 'ENCRYPTED')!==FALSE) {
-                            $this->beQuiet = FALSE;
-                            $this->message("Passphrase for key '$keyfile': ");
-                            $g = shell_exec('stty -g');
-                            shell_exec('stty -echo');
-                            $passphrase = trim(fgets(STDIN));
-                            $this->message("\n");
-                            shell_exec('stty ' . $g);
-                            $private = openssl_pkey_get_private($keydata, $passphrase);
-                        } else {
-                            $private = openssl_pkey_get_private($keydata);
-                        }
-                        if (!$private) {
-                            $this->message("Opening private key '$keyfile' failed - process aborted.\n\n", STDERR);
-                            exit(1);
-                        }
-                        $keyDetails = openssl_pkey_get_details($private);
-                        $privateKey = '';
-                        openssl_pkey_export($private, $privateKey);
-                        file_put_contents($this->outputOption->value . '.pubkey', $keyDetails['key']);
-                    }
-                    if (file_exists($this->outputOption->value)) {
-                        unlink($this->outputOption->value);
-                    }
-                    $phar = new \Phar($input->getOption('output')->value, 0, basename($input->getOption('output')->value));
-                    $phar->startBuffering();
-                    if ($privateKey) {
-                        $phar->setSignatureAlgorithm(\Phar::OPENSSL, $privateKey);
-                    }
-
-                }
-
-                $found = 0;
-                $withMimeCheck = $input->getOption('paranoid')->value || !$input->getOption('trusting')->value;
-                $basedir = $input->getOption('basedir')->value;
-
-                $finder = new ClassFinder(
-                    $input->getOption('static')->value,
-                    $input->getOption('tolerant')->value,
-                    $input->getOption('nolower')->value
-                );
-
-                if (!$this->beQuiet) {
-                    $this->showVersion();
-                }
-
-                foreach($input->getArguments() as $directory) {
-                    $this->message('Scanning directory ' . $directory . "\n");
-                    if ($basedir == NULL) {
-                        $basedir = $directory;
-                    }
-                    $scanner = $this->factory->getScanner($directory, $input);
-                    if ($this->pharOption->value !== FALSE) {
-                        $pharScanner = $input->getOption('all')->value ? $this->factory->getScanner($directory, $input, FALSE) : $scanner;
-                        $phar->buildFromIterator($pharScanner, $basedir);
-                        $scanner->rewind();
-                    }
-
-                    $found  += $finder->parseMulti($scanner, $withMimeCheck);
-                    // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
-                    unset($scanner);
-                }
-
-                if ($found == 0) {
-                    $this->message("No classes were found - process aborted.\n\n", STDERR);
-                    exit(1);
-                }
-
-                $builder = $this->factory->getBuilder($finder, $input);
-
-                if ($this->lintOption->value === TRUE) {
-                    exit( $this->lintCode($builder->render(), $input) ? 0 : 4);
-                }
-
-                if ($this->outputOption->value == 'STDOUT') {
-                    echo "\n" . $builder->render() . "\n\n";
-                } else {
-                    if ($this->pharOption->value !== FALSE) {
-                        $builder->setVariable('PHAR', basename($this->outputOption->value));
-                        $stub = $builder->render();
-                        if (strpos($stub, '__HALT_COMPILER();')===FALSE) {
-                            $this->message(
-                                "Warning: Template used in phar mode did not contain required __HALT_COMPILER() call\n" .
-                                "which has been added automatically. The used stub code may not work as intended.\n\n", STDERR);
-                            $stub .= $builder->getLineBreak() . '__HALT_COMPILER();';
-                        }
-                        $phar->setStub($stub);
-                        if ($input->getOption('gzip')->value) {
-                            $phar->compressFiles(\Phar::GZ);
-                        } elseif ($input->getOption('bzip2')->value) {
-                            $phar->compressFiles(\Phar::BZ2);
-                        }
-                        $phar->stopBuffering();
-                        $this->message( "\nphar archive '{$this->outputOption->value}' generated.\n\n");
-                    } else {
-                        $builder->save($this->outputOption->value);
-                        $this->message( "\nAutoload file '{$this->outputOption->value}' generated.\n\n");
-                    }
-                }
-                exit(0);
-
             } catch (\Exception $e) {
                 $this->showVersion();
-                $this->message("Error while processing request:\n - " . $e->getMessage()."\n", STDERR);
+                fwrite("Error while processing request:\n - " . $e->getMessage()."\n", STDERR);
                 exit(1);
             }
-        }
 
-        protected function message($msg, $target = STDOUT) {
-            if ($this->beQuiet) return;
-            fwrite($target, $msg);
         }
 
         /**

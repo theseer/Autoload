@@ -16,6 +16,7 @@ spl_autoload_register(
                 'theseer\\autoload\\classfinderexception' => '/ClassFinder.php',
                 'theseer\\autoload\\cli' => '/CLI.php',
                 'theseer\\autoload\\factory' => '/Factory.php',
+                'theseer\\autoload\\logger' => '/Logger.php',
                 'theseer\\autoload\\staticbuilder' => '/StaticBuilder.php',
                 'theseer\\autoload\\version' => '/Version.php'
             );

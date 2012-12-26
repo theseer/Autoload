@@ -39,6 +39,123 @@ namespace TheSeer\Autoload {
 
     class Application {
 
+        private $logger;
+        private $factory;
+
+        public function __construct(Logger $logger, Factory $factory) {
+            $this->logger = $logger;
+            $this->factory = $factory;
+        }
+
+        public function run(\ezcConsoleInput $input) {
+            $outputFile = $input->getOption('output')->value;
+            $pharMode   = $input->getOption('phar')->value;
+
+            if ($input->getOption('phar')->value !== FALSE) {
+                $keyfile = $input->getOption('key')->value;
+                if ($keyfile != '') {
+                    if (!extension_loaded('openssl')) {
+                        $this->logger->log("Extension for OpenSSL not loaded - cannot sign phar archive - process aborted.\n\n", STDERR);
+                        exit(1);
+                    }
+                    $keydata = file_get_contents($keyfile);
+                    if (strpos($keydata, 'ENCRYPTED') !== FALSE) {
+                        $this->beQuiet = FALSE;
+                        $this->logger->log("Passphrase for key '$keyfile': ");
+                        $g = shell_exec('stty -g');
+                        shell_exec('stty -echo');
+                        $passphrase = trim(fgets(STDIN));
+                        $this->logger->log("\n");
+                        shell_exec('stty ' . $g);
+                        $private = openssl_pkey_get_private($keydata, $passphrase);
+                    } else {
+                        $private = openssl_pkey_get_private($keydata);
+                    }
+                    if (!$private) {
+                        $this->logger->log("Opening private key '$keyfile' failed - process aborted.\n\n", STDERR);
+                        exit(1);
+                    }
+                    $keyDetails = openssl_pkey_get_details($private);
+                    $privateKey = '';
+                    openssl_pkey_export($private, $privateKey);
+                    file_put_contents($outputFile . '.pubkey', $keyDetails['key']);
+                }
+                if (file_exists($outputFile)) {
+                    unlink($outputFile);
+                }
+                $phar = new \Phar($input->getOption('output')->value, 0, basename($input->getOption('output')->value));
+                $phar->startBuffering();
+                if ($privateKey) {
+                    $phar->setSignatureAlgorithm(\Phar::OPENSSL, $privateKey);
+                }
+
+            }
+
+            $found = 0;
+            $withMimeCheck = $input->getOption('paranoid')->value || !$input->getOption('trusting')->value;
+            $basedir = $input->getOption('basedir')->value;
+
+            $finder = new ClassFinder(
+                $input->getOption('static')->value,
+                $input->getOption('tolerant')->value,
+                $input->getOption('nolower')->value
+            );
+
+            foreach ($input->getArguments() as $directory) {
+                $this->logger->log('Scanning directory ' . $directory . "\n");
+                if ($basedir == NULL) {
+                    $basedir = $directory;
+                }
+                $scanner = $this->factory->getScanner($directory, $input);
+                if ($pharMode !== FALSE) {
+                    $pharScanner = $input->getOption('all')->value ? $this->factory->getScanner($directory, $input, FALSE) : $scanner;
+                    $phar->buildFromIterator($pharScanner, $basedir);
+                    $scanner->rewind();
+                }
+
+                $found += $finder->parseMulti($scanner, $withMimeCheck);
+                // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
+                unset($scanner);
+            }
+
+            if ($found == 0) {
+                $this->logger->log("No classes were found - process aborted.\n\n", STDERR);
+                exit(1);
+            }
+
+            $builder = $this->factory->getBuilder($finder, $input);
+
+            if ($input->getOption('lint')->value === TRUE) {
+                exit($this->lintCode($builder->render(), $input) ? 0 : 4);
+            }
+
+            if ($outputFile == 'STDOUT') {
+                echo "\n" . $builder->render() . "\n\n";
+            } else {
+                if ($pharMode !== FALSE) {
+                    $builder->setVariable('PHAR', basename($outputFile));
+                    $stub = $builder->render();
+                    if (strpos($stub, '__HALT_COMPILER();') === FALSE) {
+                        $this->logger->log(
+                            "Warning: Template used in phar mode did not contain required __HALT_COMPILER() call\n" .
+                                "which has been added automatically. The used stub code may not work as intended.\n\n", STDERR);
+                        $stub .= $builder->getLineBreak() . '__HALT_COMPILER();';
+                    }
+                    $phar->setStub($stub);
+                    if ($input->getOption('gzip')->value) {
+                        $phar->compressFiles(\Phar::GZ);
+                    } elseif ($input->getOption('bzip2')->value) {
+                        $phar->compressFiles(\Phar::BZ2);
+                    }
+                    $phar->stopBuffering();
+                    $this->logger->log("\nphar archive '{$outputFile}' generated.\n\n");
+                } else {
+                    $builder->save($outputFile);
+                    $this->logger->log("\nAutoload file '{$outputFile}' generated.\n\n");
+                }
+            }
+        }
+
         /**
          * Execute a lint check on generated code
          *
@@ -64,7 +181,7 @@ namespace TheSeer\Autoload {
             $process = proc_open($binary . ' -l', $dsp, $pipes);
 
             if (!is_resource($process)) {
-                $this->message("Opening php binary for linting failed.\n", STDERR);
+                $this->logger->log("Opening php binary for linting failed.\n", STDERR);
                 exit(1);
             }
 
@@ -78,17 +195,15 @@ namespace TheSeer\Autoload {
             $rc = proc_close($process);
 
             if ($rc == 255) {
-                $this->message("Syntax errors during lint:\n" .
+                $this->logger->log("Syntax errors during lint:\n" .
                     str_replace('in - on line', 'in generated code on line', $stderr) .
                     "\n", STDERR);
                 return FALSE;
             }
 
-            $this->message( "Lint check of geneated code okay\n\n");
+            $this->logger->log("Lint check of geneated code okay\n\n");
             return TRUE;
         }
-
-
 
     }
 

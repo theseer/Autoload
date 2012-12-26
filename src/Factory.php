@@ -39,9 +39,34 @@ namespace TheSeer\Autoload {
 
     class Factory {
 
+        /**
+         * @var bool
+         */
+        private $quietMode = FALSE;
 
+        /**
+         * @param bool $mode
+         */
+        public function setQuietMode($mode) {
+            $this->quietMode = $mode;
+        }
+
+        /**
+         * @return CLI
+         */
         public function getCLI() {
             return new CLI($this);
+        }
+
+        /**
+         * @return Application
+         */
+        public function getApplication() {
+            return new Application($this->getLogger(), $this);
+        }
+
+        public function getLogger() {
+            return new Logger($this->quietMode);
         }
 
         /**
