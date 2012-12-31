@@ -22,7 +22,17 @@
     <license>BSD License</license>
     <notes>http://github.com/theseer/Autoload/tree</notes>
     <contents>
-        <dir name="/" />
+        <dir name="/">
+            <file baseinstalldir="/" name="phpab.php" role="script">
+                <tasks:replace from="%development%" to="version" type="package-info" />
+                <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config"/>
+                <tasks:replace from="@php_bin@" to="php_bin" type="pear-config" />
+            </file>
+            <file baseinstalldir="/" name="phpab.bat" role="script">
+                <tasks:replace from="@php_bin@" to="php_bin" type="pear-config" />
+                <tasks:replace from="@bin_dir@" to="bin_dir" type="pear-config" />
+            </file>
+        </dir>
     </contents>
     <dependencies>
         <required>
