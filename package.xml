@@ -10,7 +10,7 @@
         <email>arne@blankerts.de</email>
         <active>yes</active>
     </lead>
-    <date>2012-12-31</date>
+    <date>2013-01-01</date>
     <version>
         <release>1.10.0</release>
         <api>1.10.0</api>
@@ -22,107 +22,7 @@
     <license>BSD License</license>
     <notes>http://github.com/theseer/Autoload/tree</notes>
     <contents>
-        <dir name="/">
-            <dir name="TheSeer">
-                <dir name="Autoload">
-                    <dir name="templates">
-                        <dir name="cs">
-                            <file baseinstalldir="/" name="default.php.tpl" role="php"/>
-                            <file baseinstalldir="/" name="php52.php.tpl" role="php"/>
-                            <file baseinstalldir="/" name="phar.php.tpl" role="php"/>
-                        </dir>
-                        <dir name="ci">
-                            <file baseinstalldir="/" name="default.php.tpl" role="php"/>
-                            <file baseinstalldir="/" name="php52.php.tpl" role="php"/>
-                            <file baseinstalldir="/" name="phar.php.tpl" role="php"/>
-                        </dir>
-                        <file baseinstalldir="/" name="staticphar.php.tpl" role="php"/>
-                        <file baseinstalldir="/" name="static.php.tpl" role="php"/>
-                    </dir>
-                    <file baseinstalldir="/" name="cli.php" role="php"/>
-                    <file baseinstalldir="/" name="autoloadbuilder.php" role="php"/>
-                    <file baseinstalldir="/" name="classfinder.php" role="php"/>
-                    <file baseinstalldir="/" name="dependencysorter.php" role="php"/>
-                    <file baseinstalldir="/" name="staticbuilder.php" role="php"/>
-                    <file baseinstalldir="/" name="autoload.php" role="php"/>
-                </dir>
-            </dir>
-            <file baseinstalldir="/" name="phpab.php" role="script">
-                <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config"/>
-                <tasks:replace from="@php_bin@" to="php_bin" type="pear-config"/>
-                <tasks:replace from="%development%" to="version" type="package-info"/>
-            </file>
-            <file baseinstalldir="/" name="phpab.bat" role="script">
-                <tasks:replace from="@php_bin@" to="php_bin" type="pear-config"/>
-                <tasks:replace from="@bin_dir@" to="bin_dir" type="pear-config"/>
-            </file>
-
-            <file baseinstalldir="/" name="phpunit.xml.dist" role="test" />
-            <dir name="tests">
-                <dir name="_data">
-                    <dir name="classfinder">
-                        <file baseinstalldir="/" role="test" name="brackettest1.php"/>
-                        <file baseinstalldir="/" role="test" name="brackettest2.php"/>
-                        <file baseinstalldir="/" role="test" name="implementsextends.php"/>
-                        <file baseinstalldir="/" role="test" name="interface.php"/>
-                        <file baseinstalldir="/" role="test" name="multiclass.php"/>
-                        <file baseinstalldir="/" role="test" name="namespace1.php"/>
-                        <file baseinstalldir="/" role="test" name="namespace2.php"/>
-                        <file baseinstalldir="/" role="test" name="namespace3.php"/>
-                        <file baseinstalldir="/" role="test" name="namespace4.php"/>
-                        <file baseinstalldir="/" role="test" name="namespace5.php"/>
-                        <file baseinstalldir="/" role="test" name="namespace6.php"/>
-                        <file baseinstalldir="/" role="test" name="namespace7.php"/>
-                        <file baseinstalldir="/" role="test" name="noclass.php"/>
-                        <file baseinstalldir="/" role="test" name="class.php"/>
-                        <file baseinstalldir="/" role="test" name="namespaceconstant.php"/>
-                        <file baseinstalldir="/" role="test" name="parseerror1.php"/>
-                        <file baseinstalldir="/" role="test" name="parseerror2.php"/>
-                        <file baseinstalldir="/" role="test" name="parseerror3.php"/>
-                        <file baseinstalldir="/" role="test" name="parseerror4.php"/>
-                        <file baseinstalldir="/" role="test" name="redeclaration.php"/>
-                        <file baseinstalldir="/" role="test" name="trait0.php"/>
-                        <file baseinstalldir="/" role="test" name="trait1.php"/>
-                        <file baseinstalldir="/" role="test" name="trait2.php"/>
-                        <file baseinstalldir="/" role="test" name="trait3.php"/>
-                        <file baseinstalldir="/" role="test" name="extends.php"/>
-                        <file baseinstalldir="/" role="test" name="implements1.php"/>
-                        <file baseinstalldir="/" role="test" name="implements2.php"/>
-                        <file baseinstalldir="/" role="test" name="implements3.php"/>
-                        <file baseinstalldir="/" role="test" name="interfaceextends1.php"/>
-                        <file baseinstalldir="/" role="test" name="interfaceextends2.php"/>
-                        <file baseinstalldir="/" role="test" name="namespace8.php"/>
-                        <file baseinstalldir="/" role="test" name="parseerror5.php"/>
-                        <file baseinstalldir="/" role="test" name="trait4.php"/>
-                        <file baseinstalldir="/" role="test" name="use1.php"/>
-                        <file baseinstalldir="/" role="test" name="use2.php"/>
-                        <file baseinstalldir="/" role="test" name="use3.php"/>
-                        <file baseinstalldir="/" role="test" name="use4.php"/>
-                        <file baseinstalldir="/" role="test" name="use5.php"/>
-                        <file baseinstalldir="/" role="test" name="use6.php"/>
-                        <file baseinstalldir="/" role="test" name="use7.php"/>
-                        <file baseinstalldir="/" role="test" name="use8.php"/>
-                    </dir>
-                    <dir name="templates">
-                        <file baseinstalldir="/" role="test" name="simple.php"/>
-                    </dir>
-                    <dir name="dependency">
-                        <file baseinstalldir="/" role="test" name="file1.php"/>
-                        <file baseinstalldir="/" role="test" name="file2.php"/>
-                        <file baseinstalldir="/" role="test" name="ns01.php"/>
-                        <file baseinstalldir="/" role="test" name="ns02.php"/>
-                        <file baseinstalldir="/" role="test" name="ns11.php"/>
-                        <file baseinstalldir="/" role="test" name="ns12.php"/>
-                    </dir>
-                </dir>
-                <file baseinstalldir="/" role="test" name="autoloadbuilder.test.php"/>
-                <file baseinstalldir="/" role="test" name="classdependencysorter.test.php"/>
-                <file baseinstalldir="/" role="test" name="init.php"/>
-                <file baseinstalldir="/" role="test" name="classfinder.test.php"/>
-            </dir>
-            <file baseinstalldir="/" name="README.md" role="doc" />
-            <file baseinstalldir="/" name="LICENSE" role="doc" />
-        </dir>
+        <dir name="/" />
     </contents>
     <dependencies>
         <required>
