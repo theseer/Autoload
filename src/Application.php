@@ -62,6 +62,27 @@ namespace TheSeer\Autoload {
             return $this->runSaver($code);
         }
 
+        /**
+         * @return Finder
+         */
+        private function runCollector() {
+            $finder = $this->factory->getFinder();
+            $basedir = $this->config->getBaseDirectory();
+            $trusting = $this->config->isTrustingMode();
+            foreach ($this->config->getDirectories() as $directory) {
+                $this->logger->log('Scanning directory ' . $directory . "\n");
+                if ($basedir == NULL) {
+                    $basedir = $directory;
+                }
+                $scanner = $this->factory->getScanner();
+                // the call to __invoke is here to make PHPStorm happy
+                $finder->parseMulti($scanner->__invoke($directory), !$trusting);
+                // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
+                unset($scanner);
+            }
+            return $finder;
+        }
+
         private function runSaver($code) {
             $output = $this->config->getOutputFile();
             if (!$this->config->isPharMode()) {
@@ -117,26 +138,6 @@ namespace TheSeer\Autoload {
             return $private;
         }
 
-        /**
-         * @return Finder
-         */
-        private function runCollector() {
-            $finder = $this->factory->getFinder();
-            $basedir = $this->config->getBaseDirectory();
-            $trusting = $this->config->isTrustingMode();
-            foreach ($this->config->getDirectories() as $directory) {
-                $this->logger->log('Scanning directory ' . $directory . "\n");
-                if ($basedir == NULL) {
-                    $basedir = $directory;
-                }
-                $scanner = $this->factory->getScanner();
-                // the call to __invoke is here to make PHPStorm happy
-                $finder->parseMulti($scanner->__invoke($directory), !$trusting);
-                // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
-                unset($scanner);
-            }
-            return $finder;
-        }
 
         /**
          * Execute a lint check on generated code

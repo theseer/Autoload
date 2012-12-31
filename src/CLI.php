@@ -116,6 +116,12 @@ namespace TheSeer\Autoload {
             if ($input->getOption('quiet')->value) {
                 $config->setQuietMode(TRUE);
             }
+            if ($input->getOption('compat')->value) {
+                $config->setCompatMode(TRUE);
+            }
+            if ($input->getOption('tolerant')->value) {
+                $config->setTolerantMode(TRUE);
+            }
             if ($output = $input->getOption('output')->value) {
                 $config->setOutputFile($output);
             }
@@ -134,6 +140,9 @@ namespace TheSeer\Autoload {
                 $config->setVariable('PHAR', basename($output));
             }
 
+            if ($basedir = $input->getOption('basedir')->value) {
+                $config->setBaseDirectory($basedir);
+            }
             $include = $input->getOption('include')->value;
             if (!is_array($include)) {
                 $include = array($include);
@@ -175,7 +184,9 @@ namespace TheSeer\Autoload {
                 }
             }
 
-
+            if ($input->getOption('paranoid')->value || !$input->getOption('trusting')->value) {
+                $config->setTrusting(FALSE);
+            }
 
             return $config;
         }
