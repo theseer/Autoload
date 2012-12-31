@@ -57,7 +57,7 @@ namespace TheSeer\Autoload {
          *
          * @var string
          */
-        protected $baseDir;
+        protected  $baseDir;
 
         /**
          * Indenting char(s)
@@ -242,7 +242,7 @@ namespace TheSeer\Autoload {
          *
          * @return string
          */
-        protected function resolvePath($fname) {
+        private function resolvePath($fname) {
             if (empty($this->baseDir)) {
                 return str_replace('\\', '/', $fname);
             }

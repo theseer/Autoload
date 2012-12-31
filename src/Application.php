@@ -41,148 +41,124 @@ namespace TheSeer\Autoload {
 
         private $logger;
         private $factory;
+        private $config;
 
-        public function __construct(Logger $logger, Factory $factory) {
+        public function __construct(Logger $logger, Config $config,  Factory $factory) {
             $this->logger = $logger;
+            $this->config = $config;
             $this->factory = $factory;
         }
 
-        public function run(\ezcConsoleInput $input) {
-            $outputFile = $input->getOption('output')->value;
-            $pharMode   = $input->getOption('phar')->value;
-
-            if ($input->getOption('phar')->value !== FALSE) {
-                $keyfile = $input->getOption('key')->value;
-                if ($keyfile != '') {
-                    if (!extension_loaded('openssl')) {
-                        $this->logger->log("Extension for OpenSSL not loaded - cannot sign phar archive - process aborted.\n\n", STDERR);
-                        exit(1);
-                    }
-                    $keydata = file_get_contents($keyfile);
-                    if (strpos($keydata, 'ENCRYPTED') !== FALSE) {
-                        $this->beQuiet = FALSE;
-                        $this->logger->log("Passphrase for key '$keyfile': ");
-                        $g = shell_exec('stty -g');
-                        shell_exec('stty -echo');
-                        $passphrase = trim(fgets(STDIN));
-                        $this->logger->log("\n");
-                        shell_exec('stty ' . $g);
-                        $private = openssl_pkey_get_private($keydata, $passphrase);
-                    } else {
-                        $private = openssl_pkey_get_private($keydata);
-                    }
-                    if (!$private) {
-                        $this->logger->log("Opening private key '$keyfile' failed - process aborted.\n\n", STDERR);
-                        exit(1);
-                    }
-                    $keyDetails = openssl_pkey_get_details($private);
-                    $privateKey = '';
-                    openssl_pkey_export($private, $privateKey);
-                    file_put_contents($outputFile . '.pubkey', $keyDetails['key']);
-                }
-                if (file_exists($outputFile)) {
-                    unlink($outputFile);
-                }
-                $phar = new \Phar($input->getOption('output')->value, 0, basename($input->getOption('output')->value));
-                $phar->startBuffering();
-                if ($keyfile != '') {
-                    $phar->setSignatureAlgorithm(\Phar::OPENSSL, $privateKey);
-                }
-
+        public function run() {
+            $finder = $this->runCollector();
+            if ($finder->getCount() == 0) {
+                throw new ApplicationException("No classes were found - process aborted.", ApplicationException::NoUnitsFound);
             }
+            $builder = $this->factory->getBuilder($finder);
+            $code = $builder->render();
+            if ($this->config->isLintMode()) {
+                return $this->runLint($code);
+            }
+            return $this->runSaver($code);
+        }
 
-            $found = 0;
-            $withMimeCheck = $input->getOption('paranoid')->value || !$input->getOption('trusting')->value;
-            $basedir = $input->getOption('basedir')->value;
+        private function runSaver($code) {
+            $output = $this->config->getOutputFile();
+            if (!$this->config->isPharMode()) {
+                if ($output === 'STDOUT') {
+                    $this->logger->log("\n");
+                    echo $code;
+                    $this->logger->log("\n\n");
+                    return CLI::RC_OK;
+                }
+                $written = @file_put_contents($output, $code);
+                if ($written != strlen($code)) {
+                    $this->logger->log("Writing to file '$output' failed.", STDERR);
+                    return CLI::RC_EXEC_ERROR;
+                }
+                $this->logger->log("\nAutoload file {$output} generated.\n\n");
+                return CLI::RC_OK;
+            }
+            if (strpos($code, '__HALT_COMPILER();') === FALSE) {
+                $this->logger->log(
+                    "Warning: Template used in phar mode did not contain required __HALT_COMPILER() call\n" .
+                        "which has been added automatically. The used stub code may not work as intended.\n\n", STDERR);
+                $code .= $this->config->getLineBreak() . '__HALT_COMPILER();';
+            }
+            $pharBuilder = $this->factory->getPharBuilder();
+            if ($keyfile = $this->config->getPharKey()) {
+                $pharBuilder->setSignatureKey($this->loadPharSignatureKey($keyfile));
+            }
+            $pharBuilder->build($code, $output);
+            $this->logger->log("\nphar archive '{$output}' generated.\n\n");
+            return CLI::RC_OK;
+        }
 
-            $finder = new ClassFinder(
-                $input->getOption('static')->value,
-                $input->getOption('tolerant')->value,
-                $input->getOption('nolower')->value
-            );
+        private function loadPharSignatureKey($keyfile) {
+            if (!extension_loaded('openssl')) {
+                throw new ApplicationException("Extension for OpenSSL not loaded - cannot sign phar archive - process aborted.",
+                    \ApplicationException::OpenSSLError);
+            }
+            $keydata = file_get_contents($keyfile);
+            if (strpos($keydata, 'ENCRYPTED') !== FALSE) {
+                $this->logger->log("Passphrase for key '$keyfile': ");
+                $g = shell_exec('stty -g');
+                shell_exec('stty -echo');
+                $passphrase = trim(fgets(STDIN));
+                $this->logger->log("\n");
+                shell_exec('stty ' . $g);
+                $private = openssl_pkey_get_private($keydata, $passphrase);
+            } else {
+                $private = openssl_pkey_get_private($keydata);
+            }
+            if (!$private) {
+                throw new ApplicationException("Opening private key '$keyfile' failed - process aborted.\n\n", \ApplicationException::OpenSSLError);
+            }
+            return $private;
+        }
 
-            foreach ($input->getArguments() as $directory) {
+        /**
+         * @return Finder
+         */
+        private function runCollector() {
+            $finder = $this->factory->getFinder();
+            $basedir = $this->config->getBaseDirectory();
+            $trusting = $this->config->isTrustingMode();
+            foreach ($this->config->getDirectories() as $directory) {
                 $this->logger->log('Scanning directory ' . $directory . "\n");
                 if ($basedir == NULL) {
                     $basedir = $directory;
                 }
-                $scanner = $this->factory->getScanner($directory, $input);
-                if ($pharMode !== FALSE) {
-                    $pharScanner = $input->getOption('all')->value ? $this->factory->getScanner($directory, $input, FALSE) : $scanner;
-                    $phar->buildFromIterator($pharScanner, $basedir);
-                    $scanner->rewind();
-                }
-
-                $found += $finder->parseMulti($scanner, $withMimeCheck);
+                $scanner = $this->factory->getScanner();
+                // the call to __invoke is here to make PHPStorm happy
+                $finder->parseMulti($scanner->__invoke($directory), !$trusting);
                 // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
                 unset($scanner);
             }
-
-            if ($found == 0) {
-                $this->logger->log("No classes were found - process aborted.\n\n", STDERR);
-                exit(1);
-            }
-
-            $builder = $this->factory->getBuilder($finder, $input);
-
-            if ($input->getOption('lint')->value === TRUE) {
-                exit($this->lintCode($builder->render(), $input) ? 0 : 4);
-            }
-
-            if ($outputFile == 'STDOUT') {
-                echo "\n" . $builder->render() . "\n\n";
-            } else {
-                if ($pharMode !== FALSE) {
-                    $builder->setVariable('PHAR', basename($outputFile));
-                    $stub = $builder->render();
-                    if (strpos($stub, '__HALT_COMPILER();') === FALSE) {
-                        $this->logger->log(
-                            "Warning: Template used in phar mode did not contain required __HALT_COMPILER() call\n" .
-                                "which has been added automatically. The used stub code may not work as intended.\n\n", STDERR);
-                        $stub .= $builder->getLineBreak() . '__HALT_COMPILER();';
-                    }
-                    $phar->setStub($stub);
-                    if ($input->getOption('gzip')->value) {
-                        $phar->compressFiles(\Phar::GZ);
-                    } elseif ($input->getOption('bzip2')->value) {
-                        $phar->compressFiles(\Phar::BZ2);
-                    }
-                    $phar->stopBuffering();
-                    $this->logger->log("\nphar archive '{$outputFile}' generated.\n\n");
-                } else {
-                    $builder->save($outputFile);
-                    $this->logger->log("\nAutoload file '{$outputFile}' generated.\n\n");
-                }
-            }
+            return $finder;
         }
 
         /**
          * Execute a lint check on generated code
          *
          * @param string           $code  Generated code to lint
-         * @param \ezcConsoleInput $input CLI Options pased to app
          *
          * @return boolean
          */
-        protected function lintCode($code, $input) {
+        protected function runLint($code) {
             $dsp = array(
                 0 => array("pipe", "r"),
                 1 => array("pipe", "w"),
                 2 => array("pipe", "w")
             );
 
-            $php = $input->getOption('lint-php');
-            if ($php->value === FALSE) {
-                $binary = PHP_OS === 'WIN' ? 'C:\php\php.exe' : '/usr/bin/php';
-            } else {
-                $binary = $php->value;
-            }
+            $binary = $this->config->getPhp();
 
             $process = proc_open($binary . ' -l', $dsp, $pipes);
 
             if (!is_resource($process)) {
                 $this->logger->log("Opening php binary for linting failed.\n", STDERR);
-                exit(1);
+                return 1;
             }
 
             fwrite($pipes[0], $code);
@@ -198,13 +174,18 @@ namespace TheSeer\Autoload {
                 $this->logger->log("Syntax errors during lint:\n" .
                     str_replace('in - on line', 'in generated code on line', $stderr) .
                     "\n", STDERR);
-                return FALSE;
+                return CLI::RC_LINT_ERROR;
             }
 
             $this->logger->log("Lint check of geneated code okay\n\n");
-            return TRUE;
+            return CLI::RC_OK;
         }
 
+    }
+
+    class ApplicationException extends \Exception {
+        const NoUnitsFound = 1;
+        const OpenSSLError = 2;
     }
 
 }

@@ -40,15 +40,15 @@ namespace TheSeer\Autoload {
     class Factory {
 
         /**
-         * @var bool
+         * @var Config
          */
-        private $quietMode = FALSE;
+        private $config;
 
         /**
-         * @param bool $mode
+         * @param \TheSeer\Autoload\Config $config
          */
-        public function setQuietMode($mode) {
-            $this->quietMode = $mode;
+        public function setConfig(Config $config) {
+            $this->config = $config;
         }
 
         /**
@@ -62,96 +62,92 @@ namespace TheSeer\Autoload {
          * @return Application
          */
         public function getApplication() {
-            return new Application($this->getLogger(), $this);
+            return new Application($this->getLogger(), $this->config, $this);
         }
 
         public function getLogger() {
-            return new Logger($this->quietMode);
+            return new Logger($this->config->isQuietMode());
         }
 
+        public function getFinder() {
+            return new ClassFinder(
+                $this->config->isStaticMode(),
+                $this->config->isTolerantMode(),
+                !$this->config->isLowercaseMode()
+            );
+        }
+
+
         /**
-         * Get instance of DirectoryScanner with cli options applied
-         *
-         * @param string           $directory
-         * @param \ezcConsoleInput $input CLI Options pased to app
+         * Get instance of DirectoryScanner with filter options applied
          *
          * @param bool                                               $filter
          * @return \TheSeer\DirectoryScanner\IncludeExcludeFilterIterator
          */
-        public function getScanner($directory, \ezcConsoleInput $input, $filter = TRUE) {
+        public function getScanner($filter = TRUE) {
             $scanner = new \TheSeer\DirectoryScanner\DirectoryScanner;
-
             if ($filter) {
-                $include = $input->getOption('include');
-                if (is_array($include->value)) {
-                    $scanner->setIncludes($include->value);
-                } else {
-                    $scanner->addInclude($include->value);
-                }
-
-                $exclude = $input->getOption('exclude');
-                if ($exclude->value) {
-                    if (is_array($exclude->value)) {
-                        $scanner->setExcludes($exclude->value);
-                    } else {
-                        $scanner->addExclude($exclude->value);
-                    }
-                }
+                $scanner->setIncludes($this->config->getInclude());
+                $scanner->setExcludes($this->config->getExclude());
             }
-            return $scanner($directory);
+            return $scanner;
+        }
+
+
+        public function getPharBuilder() {
+            $builder = new PharBuilder(
+                $this->getScanner($this->config->isPharAllMode()),
+                $this->config->getBaseDirectory()
+            );
+            $builder->setCompressionMode($this->config->getPharCompression());
+            foreach($this->config->getDirectories() as $directory) {
+                $builder->addDirectory($directory);
+            }
+
+            return $builder;
         }
 
         /**
          * Helper to get instance of AutoloadBuilder with cli options applied
          *
-         * @param ClassFinder      $finder Instance of ClassFinder to get classes from
-         * @param \ezcConsoleInput $input  CLI Options pased to app
-         *
          * @throws \RuntimeException
          * @return \TheSeer\Autoload\AutoloadBuilder|\TheSeer\Autoload\StaticBuilder
          */
-        public function getBuilder(ClassFinder $finder, \ezcConsoleInput $input) {
-            $isStatic = $input->getOption('static')->value;
-            $isPhar   = $input->getOption('phar')->value;
-            $isCompat = $input->getOption('compat')->value;
-            $noLower  = $input->getOption('nolower')->value;
-            $isOnce   = $input->getOption('once')->value;
+        public function getBuilder(ClassFinder $finder) {
+            $isStatic = $this->config->isStaticMode();
+            $isPhar   = $this->config->isPharMode();
+            $isCompat = $this->config->isCompatMode();
+            $noLower  = !$this->config->isLowercaseMode();
+            $isOnce   = $this->config->isOnceMode();
             $tplType  = $noLower ? 'cs' : 'ci';
 
             if ($isStatic === TRUE) {
-                $ab = new StaticBuilder($finder->getMerged());
-                $ab->setDependencies($finder->getDependencies());
-                $ab->setPharMode($isPhar);
-                $ab->setRequireOnce($isOnce);
+                $builder = new StaticBuilder($finder->getMerged());
+                $builder->setDependencies($finder->getDependencies());
+                $builder->setPharMode($isPhar);
+                $builder->setRequireOnce($isOnce);
             } else {
-                $ab = new AutoloadBuilder($finder->getMerged());
+                $builder = new AutoloadBuilder($finder->getMerged());
             }
 
-            $ab->setCompat($isCompat);
+            $builder->setCompat($isCompat);
 
-            $basedir = $input->getOption('basedir');
-            if ($basedir->value) {
-                $bdir = realpath($basedir->value);
-                if (!$bdir || !is_dir($bdir)) {
-                    throw new \RuntimeException("Given basedir '{$basedir->value}' does not exist or is not a directory");
-                }
-                $ab->setBaseDir($bdir);
-            } else {
-                $args = $input->getArguments();
-                $ab->setBaseDir(realpath($args[0]));
+            $basedir = $this->config->getBaseDirectory();
+            if (!$basedir || !is_dir($basedir)) {
+                throw new \RuntimeException("Given basedir '{$basedir}' does not exist or is not a directory");
             }
+            $builder->setBaseDir($basedir);
 
-            $template = $input->getOption('template');
-            if ($template->value) {
-                if (!file_exists($template->value)) {
-                    $alternative = __DIR__.'/templates/'.$tplType.'/'.$template->value;
+            $template = $this->config->getTemplate();
+            if ($template !== NULL) {
+                if (!file_exists($template)) {
+                    $alternative = __DIR__.'/templates/'.$tplType.'/'.$template;
                     if (file_exists($alternative)) {
-                        $template->value = $alternative;
+                        $template = $alternative;
                     }
                 }
-                $ab->setTemplateFile($template->value);
+                $builder->setTemplateFile($template);
             } else {
-
                 // determine auto template to use
                 $tplFile = 'default.php.tpl';
                 if ($isCompat) {
@@ -169,50 +165,23 @@ namespace TheSeer\Autoload {
                     $tplType = '.';
                 }
 
-                $ab->setTemplateFile(__DIR__.'/templates/'.$tplType.'/'.$tplFile);
+                $builder->setTemplateFile(__DIR__.'/templates/'.$tplType.'/'.$tplFile);
             }
 
-            $format = $input->getOption('format');
-            if ($format->value) {
-                $ab->setDateTimeFormat($format->value);
+
+            $format = $this->config->getDateFormat();
+            if ($format) {
+                $builder->setDateTimeFormat($format);
             }
 
-            $indent = $input->getOption('indent');
-            if ($indent->value) {
-                if (is_numeric($indent->value)) {
-                    $ab->setIndent(str_repeat(' ', $indent->value));
-                } else {
-                    $ab->setIndent($indent->value);
-                }
-            } elseif ($isStatic) {
-                $ab->setIndent('');
-            } else {
-                $ab->setIndent(str_repeat(' ', $isCompat ? 12 : 16));
+            $builder->setIndent($this->config->getIndent());
+            $builder->setLineBreak($this->config->getLinebreak());
+
+            foreach($this->config->getVariables() as $name => $value) {
+                $builder->setVariable($name, $value);
             }
 
-            $linebreak = $input->getOption('linebreak');
-            if ($linebreak->value !== FALSE) {
-                $lbr = array('LF' => "\n", 'CR' => "\r", 'CRLF' => "\r\n" );
-                if (isset($lbr[$linebreak->value])) {
-                    $ab->setLineBreak($lbr[$linebreak->value]);
-                } else {
-                    $ab->setLineBreak($linebreak->value);
-                }
-            } else {
-                $ab->setLineBreak("\n");
-            }
-
-            if ($vars = $input->getOption('var')->value) {
-                foreach($vars as $var) {
-                    if (strpos($var,'=')===FALSE) {
-                        throw new \RuntimeException("Variable defintion '$var' is invalid and cannot be processed.");
-                    }
-                    list($name, $value) = explode('=',$var,2);
-                    $ab->setVariable($name, $value);
-                }
-            }
-
-            return $ab;
+            return $builder;
         }
 
     }

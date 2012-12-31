@@ -48,6 +48,11 @@ namespace TheSeer\Autoload {
      */
     class CLI {
 
+        const RC_OK = 0;
+        const RC_EXEC_ERROR = 1;
+        const RC_PARAM_ERROR = 3;
+        const RC_LINT_ERROR = 4;
+
         /**
          * @var Factory
          */
@@ -72,40 +77,118 @@ namespace TheSeer\Autoload {
                 if ($input->getOption('help')->value === TRUE) {
                     $this->showVersion();
                     $this->showUsage();
-                    exit(0);
+                    exit(CLI::RC_OK);
                 }
 
                 if ($input->getOption('version')->value === TRUE ) {
                     $this->showVersion();
-                    exit(0);
+                    exit(CLI::RC_OK);
                 }
 
-                $this->factory->setQuietMode($input->getOption('quiet')->value);
-                if (!$input->getOption('quiet')->value) {
+                $config = $this->configure($input);
+                $this->factory->setConfig($config);
+                if (!$config->isQuietMode()) {
                     $this->showVersion();
                 }
-                $this->factory->getApplication()->run($input);
-
-                exit(0);
+                $rc = $this->factory->getApplication()->run();
+                exit($rc);
 
             } catch (\ezcConsoleException $e) {
                 $this->showVersion();
                 echo $e->getMessage() . "\n\n";
                 $this->showUsage();
-                exit(3);
+                exit(CLI::RC_PARAM_ERROR);
             } catch (\Exception $e) {
                 $this->showVersion();
-                fwrite("Error while processing request:\n - " . $e->getMessage()."\n", STDERR);
-                exit(1);
+                fwrite(STDERR, "\nError while processing request:\n - " . $e->getMessage()."\n");
+                exit(CLI::RC_EXEC_ERROR);
             }
 
+        }
+
+        /**
+         * @param \ezcConsoleInput $input
+         *
+         * @return \TheSeer\Autoload\Config
+         */
+        private function configure(\ezcConsoleInput $input) {
+            $config = new Config($input->getArguments());
+            if ($input->getOption('quiet')->value) {
+                $config->setQuietMode(TRUE);
+            }
+            if ($output = $input->getOption('output')->value) {
+                $config->setOutputFile($output);
+            }
+            if ($input->getOption('phar')->value) {
+                $compression = \Phar::NONE;
+                if ($input->getOption('bzip2')->value === TRUE) {
+                    $compression = \Phar::BZ2;
+                } else if ($input->getOption('gzip')->value === TRUE) {
+                    $compression = \Phar::GZ;
+                }
+                $config->enablePharMode(
+                    $compression,
+                    $input->getOption('all')->value,
+                    $input->getOption('key')->value
+                );
+                $config->setVariable('PHAR', basename($output));
+            }
+
+            $include = $input->getOption('include')->value;
+            if (!is_array($include)) {
+                $include = array($include);
+            }
+            $config->setInclude($include);
+
+            if ($exclude = $input->getOption('exclude')->value) {
+                if (!is_array($exclude)) {
+                    $exclude = array($exclude);
+                }
+                $config->setExclude($exclude);
+            }
+
+            if ($input->getOption('static')->value) {
+                $config->setStaticMode(TRUE);
+            }
+            if ($input->getOption('once')->value) {
+                $config->setOnceMode(TRUE);
+            }
+            if ($indent = $input->getOption('indent')->value) {
+                $config->setIndent($indent);
+            }
+            if ($template = $input->getOption('template')->value) {
+                $config->setTemplate($template);
+            }
+            if ($linebreak = $input->getOption('linebreak')->value) {
+                $config->setLinebreak($linebreak);
+            }
+            if ($input->getOption('nolower')->value) {
+                $config->setLowercaseMode(FALSE);
+            }
+            if ($variables = $input->getOption('var')->value) {
+                foreach($variables as $var) {
+                    if (strpos($var,'=')===FALSE) {
+                        throw new \RuntimeException("Variable defintion '$var' is invalid and cannot be processed.");
+                    }
+                    list($name, $value) = explode('=',$var,2);
+                    $config->setVariable($name, $value);
+                }
+            }
+
+
+
+            return $config;
         }
 
         /**
          * Helper to output version information
          */
         protected function showVersion() {
-            echo Version::getInfoString() . "\n\n";
+            static $shown = false;
+            if (!$shown) {
+                $shown = true;
+                echo Version::getInfoString() . "\n\n";
+            }
         }
 
         /**

@@ -98,6 +98,10 @@ namespace TheSeer\Autoload {
             return $this->found['all'];
         }
 
+        public function getCount() {
+            return count($this->found['all']);
+        }
+
         public function getDependencies() {
             if (!$this->withDeps) {
                 throw new ClassFinderException('Dependency collection disabled', ClassFinderException::NoDependencies);
