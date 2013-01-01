@@ -89,8 +89,9 @@
     </target>
 
     <target name="phar"
-            description="Create PHAR archive of Autoload Builder and its dependencies"
-            depends="clean">
+            description="Create PHAR archive of Autoload Builder and its dependencies">
+
+        <delete dir="${basedir}/build/phar/_tmp"/>
         <mkdir dir="${basedir}/build/phar/_tmp"/>
 
         <exec executable="bash" outputproperty="version">
