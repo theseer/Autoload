@@ -92,7 +92,9 @@ namespace TheSeer\Autoload {
                     $this->logger->log("\n\n");
                     return CLI::RC_OK;
                 }
+                // @codingStandardsIgnoreStart 
                 $written = @file_put_contents($output, $code);
+                // @codingStandardsIgnoreEnd
                 if ($written != strlen($code)) {
                     $this->logger->log("Writing to file '$output' failed.", STDERR);
                     return CLI::RC_EXEC_ERROR;

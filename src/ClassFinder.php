@@ -184,7 +184,7 @@ namespace TheSeer\Autoload {
             $implementsList = array();
             $implements = '';
             $mode = 'classname';
-            foreach(array_slice($stack,1,-1) as $tok) {
+            foreach(array_slice($stack, 1, -1) as $tok) {
                 switch ($tok[0]) {
                     case T_STRING: {
                         $$mode .= $tok[1];
@@ -243,7 +243,7 @@ namespace TheSeer\Autoload {
             $extends = '';
             $extendsList = array();
             $mode = 'name';
-            foreach(array_slice($stack,1,-1) as $tok) {
+            foreach(array_slice($stack, 1, -1) as $tok) {
                 switch ($tok[0]) {
                     case T_NS_SEPARATOR:
                     case T_STRING: {
@@ -287,7 +287,7 @@ namespace TheSeer\Autoload {
             if ($name[0] == '\\') {
                 $name = substr($name, 1);
             } else {
-                $parts = explode('\\',$name,2);
+                $parts = explode('\\', $name, 2);
                 $key = array_search($parts[0], $this->aliases);
                 if (!$key) {
                     $name = ($this->inNamespace != '' ? $this->inNamespace . '\\' : ''). $name;

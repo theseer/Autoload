@@ -168,7 +168,6 @@ namespace TheSeer\Autoload {
                 $builder->setTemplateFile(__DIR__.'/templates/'.$tplType.'/'.$tplFile);
             }
 
-
             $format = $this->config->getDateFormat();
             if ($format) {
                 $builder->setDateTimeFormat($format);

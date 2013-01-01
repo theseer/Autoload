@@ -176,10 +176,10 @@ namespace TheSeer\Autoload {
             }
             if ($variables = $input->getOption('var')->value) {
                 foreach($variables as $var) {
-                    if (strpos($var,'=')===FALSE) {
+                    if (strpos($var, '=')===FALSE) {
                         throw new \RuntimeException("Variable defintion '$var' is invalid and cannot be processed.");
                     }
-                    list($name, $value) = explode('=',$var,2);
+                    list($name, $value) = explode('=', $var, 2);
                     $config->setVariable($name, $value);
                 }
             }

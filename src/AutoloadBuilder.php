@@ -252,7 +252,9 @@ namespace TheSeer\Autoload {
             $max = count($basedir);
             while ($filedir[$pos] == $basedir[$pos]) {
                 $pos++;
-                if ($pos == $max) break;
+                if ($pos == $max) {
+                    break;
+                }
             }
             if ($pos == 0) {
                 return str_replace('\\', '/', $fname);
