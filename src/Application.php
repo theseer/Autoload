@@ -92,7 +92,7 @@ namespace TheSeer\Autoload {
                     $this->logger->log("\n\n");
                     return CLI::RC_OK;
                 }
-                // @codingStandardsIgnoreStart 
+                // @codingStandardsIgnoreStart
                 $written = @file_put_contents($output, $code);
                 // @codingStandardsIgnoreEnd
                 if ($written != strlen($code)) {
