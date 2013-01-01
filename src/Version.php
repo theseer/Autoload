@@ -44,12 +44,14 @@ namespace TheSeer\Autoload {
         public static function getVersion() {
             if (self::$version === NULL) {
                 self::$version = PHPAB_VERSION;
-                $cwd = getcwd();
-                chdir(__DIR__);
-                $git = exec('command -p git describe --always --dirty', $foo, $rc);
-                chdir($cwd);
-                if ($rc === 0) {
-                    self::$version = substr($git, 8);
+                if (PHPAB_VERSION == '%development%') {
+                    $cwd = getcwd();
+                    chdir(__DIR__);
+                    $git = exec('command -p git describe --always --dirty 2>/dev/null', $foo, $rc);
+                    chdir($cwd);
+                    if ($rc === 0) {
+                        self::$version = substr($git, 8);
+                    }
                 }
             }
             return self::$version;
