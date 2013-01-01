@@ -132,7 +132,7 @@
             <arg value="--phar" />
             <arg value="--gzip" />
             <arg value="--output" />
-            <arg path="${basedir}/build/phar/phpap-${version}.phar" />
+            <arg path="${basedir}/build/phar/phpab-${version}.phar" />
             <arg value="--template" />
             <arg path="${basedir}/build/phar/autoload.php.in" />
             <arg path="${basedir}/build/phar/_tmp" />
