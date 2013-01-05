@@ -35,16 +35,22 @@ with every release of PHP since version 4.3.0.
 The PEAR channel (`pear.netpirates.net`) that is used to distribute **phpab** needs to be registered with the
 local PEAR environment. This can be done automatically if PEAR is configured to auto-discover channels:
 
-`[theseer@rikka ~]$ sudo pear config-set auto_discover 1`
+```
+[theseer@rikka ~]$ sudo pear config-set auto_discover 1
+```
 
-You are now ready to install the PHP autoload builder (phpab):
+You are now ready to install the PHP Autoload Builder (phpab):
 
-`[theseer@rikka ~]$ sudo pear install pear.netpirates.net/Autoload`
+```
+[theseer@rikka ~]$ sudo pear install pear.netpirates.net/Autoload
+```
 
 This should install phpab along with its dependencies, once completed, you can verify the success as follows:
 
-`[theseer@rikka ~]$ phpab -v
-phpab 1.10.1 - Copyright (C) 2009 - 2013 by Arne Blankerts`
+```
+[theseer@rikka ~]$ phpab -v
+phpab 1.10.1 - Copyright (C) 2009 - 2013 by Arne Blankerts
+```
 
 ### Executable PHAR
 
@@ -54,7 +60,9 @@ Alternativly **phpab** can be downloaded as a fully self contained PHAR archive:
 
 _Please note:_
 On Linux/Unix based system the phar needs to be marked executable for direct execution:
-`[theseer@rikka ~]$ chmod +x phpab.phar`
+```
+[theseer@rikka ~]$ chmod +x phpab.phar
+```
 
 
 ## Other Downloads
@@ -84,22 +92,22 @@ phpab [switches] <directory> [... <directoryN>]
 
     -n, --nolower    Do not lowercase classnames for case insensitivity
 
-	--format     Dateformat string for timestamp
-	--linebreak  Linebreak style (CR, CR/LF or LF)
-	--indent     String used for indenting (default: 3 spaces)
+        --format     Dateformat string for timestamp
+        --linebreak  Linebreak style (CR, CR/LF or LF)
+        --indent     String used for indenting (default: 3 spaces)
 
-	--tolerant   Ignore Class Redeclarations in the same file
-    --once       Use require_once instead of require when creating a static require file
+        --tolerant   Ignore Class Redeclarations in the same file
+        --once       Use require_once instead of require when creating a static require file
 
-    --all        Include all files in given directory when creating a phar
+        --all        Include all files in given directory when creating a phar
 
         --trusting   Do not check mimetype of files prior to parsing (default)
         --paranoid   Do check mimetype of files prior to parsing
 
-    --var name=foo  Assign value 'foo' to variable 'name' to be used in (custom) templates
+        --var name=foo  Assign value 'foo' to variable 'name' to be used in (custom) templates
 
-	--lint       Run lint on generated code and exit
-	--lint-php   PHP binary to use for linting (default: /usr/bin/php or c:\php\php.exe)
+        --lint       Run lint on generated code and exit
+        --lint-php   PHP binary to use for linting (default: /usr/bin/php or c:\php\php.exe)
 
     -h, --help       Prints this usage information
     -v, --version    Prints the version and exits
