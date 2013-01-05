@@ -1,81 +1,70 @@
-PHP Autoload
-============
+# PHP Autoload Builder
 
-Template Variables
-------------------
+The PHP AutoloadBuilder CLI tool **phpab** is a command line application to automate the process of generating
+an autoload require file with the option of creating static require lists as well as phar archives.
 
-The generated code is based uppon templates provided by default in the templates subfolder. The template engine
-allows for simply replacing of name based placeholders. For now, only a few default variables are defined but API hooks exist
-to set custom variables.
+## Features
 
-Known variables are:
-    ___CREATED___     Set to a timestamp of creation, format can be adjusted
-    ___CLASSLIST___   The found list classes in form of a generated map
-    ___BASEDIR___     If a Basedir is set, the value will get removed from the file path and get replaced by __DIR__
+* scan multiple directories recursively in one run
+* Template based autoload code
+* Custom variables for templates
+* Compatibility mode for PHP 5.2 compliant autoloader
+* Case sensitive as well as case insensitive classname mapping
+* Phar generation, with or without compression and openssl key signing
+* Static require list generation
+* Linting of generated code
 
-In CLI Mode only:
+## Requirements
 
-    ___PHAR___         The filename of the generated phar (see src/templates/phar.php.tpl)
+* PHP 5.3+
+* Tokenizer (ext/tokenizer)
+* For PHAR generation support:
+    + ext/phar (write enabled: phar.readonly = Off)
+    + ext/gzip (optional)
+    + ext/bzip2 (optional)
+    + ext/openssl (optional, for phar signing only)
 
+## Installation
 
-Requirements
-------------
+### Using PEAR
 
-PHP: 5.3.0
-Extensions: tokenizer, phar
+**phpab** can be installed using the [PEAR Installer](http://pear.php.net/manual/en/guide.users.commandline.cli.php).
+This installer is the backbone of PEAR, which provides a distribution system for PHP packages, and is shipped
+with every release of PHP since version 4.3.0.
 
-The PHP tokenizer needs to be enabled for this code to work. Due to the use of Namespaces and closures, PHP 5.3 is required for running phpab
-by default. Because the code has template support, it is possible to alternatively generate autoload code for older versions of PHP 5.
+The PEAR channel (`pear.netpirates.net`) that is used to distribute **phpab** needs to be registered with the
+local PEAR environment. This can be done automatically if PEAR is configured to auto-discover channels:
 
-To generate phar archives, the phar writing support needs to be enabled within php. Details can be found in the [php manual](http://php.net/manual/en/phar.configuration.php)
+`[theseer@rikka ~]$ sudo pear config-set auto_discover 1`
 
+You are now ready to install the PHP autoload builder (phpab):
 
-PHP AutoloadBuilder CLI
-=======================
+`[theseer@rikka ~]$ sudo pear install pear.netpirates.net/Autoload`
 
-The PHP AutoloadBuilder CLI ist a command line application to automate the process of generating an autoload include file.
+This should install phpab along with its dependencies, once completed, you can verify the success as follows:
 
+`[theseer@rikka ~]$ phpab -v
+phpab 1.10.1 - Copyright (C) 2009 - 2013 by Arne Blankerts`
 
-Installation
-------------
+### Executable PHAR
 
-phpab should be installed using the [PEAR Installer](http://pear.php.net/). This installer is the backbone of PEAR, which provides a distribution
-system for PHP packages, and is shipped with every release of PHP since version 4.3.0.
+Alternativly **phpab** can be downloaded as a fully self contained PHAR archive:
 
-The PEAR channel (`pear.netpirates.net`) that is used to distribute phpab needs to be registered with the local PEAR environment.
-Furthermore, a component that phpab depends upon is hosted on the eZ Components PEAR channel (`components.ez.no`).
+* [Version 1.10.1](http://phpab.net/phpab-1.10.1.phar) - 184kb
 
-    [theseer@rikka ~]$ sudo pear channel-discover pear.netpirates.net
-    Adding Channel "pear.netpirates.net" succeeded
-    Discovery of channel "pear.netpirates.net" succeeded
-
-    [theseer@rikka ~]$ sudo pear channel-discover components.ez.no
-    Adding Channel "components.ez.no" succeeded
-    Discovery of channel "components.ez.no" succeeded
-
-This has to be done only once. Now the PEAR Installer can be used to install packages from the netpirates channel:
-
-    [theseer@rikka ~]$ sudo pear install theseer/Autoload
-    downloading Autoload-1.8.0.tgz ...
-    Starting to download Autoload-1.8.0.tgz (7,596 bytes)
-    .....done: 7,596 bytes
-    downloading DirectoryScanner-1.0.1.tgz ...
-    Starting to download DirectoryScanner-1.0.1.tgz (3,400 bytes)
-    ...done: 3,400 bytes
-    downloading ConsoleTools-1.6.tgz ...
-    Starting to download ConsoleTools-1.6.tgz (869,925 bytes)
-    ...done: 869,925 bytes
-    install ok: channel://pear.netpirates.net/DirectoryScanner-1.0.1
-    install ok: channel://components.ez.no/ConsoleTools-1.6
-    install ok: channel://pear.netpirates.net/Autoload-1.1.0
-
-After the installation you can find the phpab source files inside your local PEAR directory; the path in Fedora linux 
-usually is `/usr/share/pear/theseer`.
+_Please note:_
+On Linux/Unix based system the phar needs to be marked executable for direct execution:
+`[theseer@rikka ~]$ chmod +x phpab.phar`
 
 
-Usage
------
+## Other Downloads
 
+* [Latest development snapshot](https://github.com/theseer/Autoload/archive/master.zip)</a> (ZIP Archive)
+* [Releases (Source)](https://github.com/theseer/Autoload/tags)
+* [Pear Packages](http://pear.netpirates.net/)
+
+## Usage
+```
 phpab [switches] <directory> [... <directoryN>]
 
     -i, --include    File pattern to include (default: *.php)
@@ -114,10 +103,8 @@ phpab [switches] <directory> [... <directoryN>]
 
     -h, --help       Prints this usage information
     -v, --version    Prints the version and exits
-
-
-Usage Samples
---------------
+```
+### Usage Examples
 
     [theseer@rikka ~]$ phpab -o src/autoload.inc.php src
 
@@ -127,24 +114,25 @@ Usage Samples
 
     [theseer@rikka ~]$ phpab -p -o framework.phar framework/src
 
+    [theseer@rikka ~]$ phpab -p -o framework.phar --bzip2 --key sign.key framework/src
+
     [theseer@rikka ~]$ phpab -b . --tolerant -o zf1_autoload.php -e '*/Test/*' Zend
 
 
-Ease of use
------------
+### Automation
 
-When using `phpab` it is necessary to recreate the autoload file every time a new class is created. This usually also happens after pulling from a repo or when switchting branches.
-
+When using *phpab* it is necessary to recreate the autoload file every time a new class is created.
+This usually also happens after pulling from a repo or when switchting branches.
 Using a git `post-checkout` hook placed in `.git/hooks/post-update` this can be automated for most cases.
 
-###Basic Sample:
+####Basic Sample:
 
 ```bash
 #!/bin/bash
 phpab -c -o src/autoload.inc.php src
 ```
 
-###Sample using an `ant build.xml` file.
+####Sample using an `ant build.xml` file.
 
 ```bash
 #!/bin/bash
@@ -157,3 +145,19 @@ if [ -f build.xml ]; then
 fi
 ```
 
+## Template Variables
+
+The generated code is based uppon templates provided by default in the templates subfolder. The template engine
+allows for simply replacing of name based placeholders. For now, only a few default variables are defined
+but API hooks / CLI parameters exist to set custom variables.
+
+Known variables are:
+* ```___CREATED___```     Set to a timestamp of creation, format can be adjusted
+* ```___CLASSLIST___```   The found list classes in form of a generated map
+* ```___BASEDIR___```     If a Basedir is set, the value will get removed from the file path and get replaced by __DIR__
+
+Used in PHAR Mode only:
+* ```___PHAR___```         The filename of the generated phar (see src/templates/phar.php.tpl)
+
+Custom variables as defined by passing --var name=value via cli are accessed by pre- and appending ___ to it:
+* ```___name___```         Going to be replaced by the value provided via cli param
