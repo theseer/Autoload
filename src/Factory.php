@@ -96,7 +96,7 @@ namespace TheSeer\Autoload {
 
         public function getPharBuilder() {
             $builder = new PharBuilder(
-                $this->getScanner($this->config->isPharAllMode()),
+                $this->getScanner(!$this->config->isPharAllMode()),
                 $this->config->getBaseDirectory()
             );
             $builder->setCompressionMode($this->config->getPharCompression());
