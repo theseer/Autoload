@@ -122,6 +122,8 @@
                 <include name="**/Autoload.php.in" />
                 <include name="**/package.sig" />
                 <include name="**/package.xml" />
+                <include name="**/docs/**" />
+                <include name="**/design/**" />
             </fileset>
         </delete>
 
