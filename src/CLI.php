@@ -162,7 +162,9 @@ namespace TheSeer\Autoload {
             if ($input->getOption('once')->value) {
                 $config->setOnceMode(TRUE);
             }
-            if ($indent = $input->getOption('indent')->value) {
+
+            $indent = $input->getOption('indent')->value;
+            if ($indent !== FALSE) {
                 $config->setIndent($indent);
             }
             if ($template = $input->getOption('template')->value) {

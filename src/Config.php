@@ -114,6 +114,9 @@ namespace TheSeer\Autoload {
 
         public function getIndent() {
             if ($this->indent !== NULL) {
+                if (is_numeric($this->indent) && (int)$this->indent == $this->indent) {
+                    return str_repeat(' ', (int)$this->indent);
+                }
                 return $this->indent;
             }
             if ($this->isStaticMode()) {
