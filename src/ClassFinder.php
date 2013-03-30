@@ -40,9 +40,7 @@ namespace TheSeer\Autoload {
     use \TheSeer\DirectoryScanner\PHPFilterIterator;
 
     // PHP 5.3 compat
-    if (!defined('T_TRAIT')) {
-        define('T_TRAIT', 10355);
-    }
+    define('T_TRAIT_53', 10355);
 
     /**
      * Namespace aware parser to find and extract defined classes within php source files
@@ -120,6 +118,7 @@ namespace TheSeer\Autoload {
             $this->filename = $file;
             $map = array(
                 T_TRAIT      => 'processClass',
+                T_TRAIT_53   => 'processClass',
                 T_CLASS      => 'processClass',
                 T_INTERFACE  => 'processInterface',
                 T_NAMESPACE  => 'processNamespace',
@@ -141,9 +140,9 @@ namespace TheSeer\Autoload {
             $tokList = array_keys($map);
             for($t=0; $t<$tokenCount; $t++) {
                 $current = (array)$this->tokenArray[$t];
-                if ($current[0]==T_STRING && $current[1]=='trait') {
+                if ($current[0]==T_STRING && $current[1]=='trait' && !defined('T_TRAIT')) {
                     // PHP < 5.4 compat fix
-                    $current[0] = T_TRAIT;
+                    $current[0] = T_TRAIT_53;
                     $this->tokenArray[$t] = $current;
                 }
                 if (!in_array($current[0], $tokList)) {
