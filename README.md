@@ -56,13 +56,14 @@ phpab 1.10.1 - Copyright (C) 2009 - 2013 by Arne Blankerts
 
 Alternativly **phpab** can be downloaded as a fully self contained PHAR archive:
 
+* [Version 1.10.3](http://phpab.net/phpab-1.10.3.phar) - 170kb
 * [Version 1.10.2](http://phpab.net/phpab-1.10.2.phar) - 169kb
 * [Version 1.10.1](http://phpab.net/phpab-1.10.1.phar) - 185kb
 
 _Please note:_
 On Linux/Unix based system the phar needs to be marked executable for direct execution:
 ```
-[theseer@rikka ~]$ chmod +x phpab.phar
+[theseer@rikka ~]$ chmod +x phpab*.phar
 ```
 
 
@@ -153,6 +154,7 @@ if [ -f build.xml ]; then
     fi
 fi
 ```
+
 
 ## Template Variables
 
