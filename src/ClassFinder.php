@@ -41,6 +41,9 @@ namespace TheSeer\Autoload {
 
     // PHP 5.3 compat
     define('T_TRAIT_53', 10355);
+    if (!defined('T_TRAIT')) {
+        define('T_TRAIT', -1);
+    }
 
     /**
      * Namespace aware parser to find and extract defined classes within php source files
