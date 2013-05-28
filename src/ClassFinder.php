@@ -143,7 +143,7 @@ namespace TheSeer\Autoload {
             $tokList = array_keys($map);
             for($t=0; $t<$tokenCount; $t++) {
                 $current = (array)$this->tokenArray[$t];
-                if ($current[0]==T_STRING && $current[1]=='trait' && !defined('T_TRAIT')) {
+                if ($current[0]==T_STRING && $current[1]=='trait' && T_TRAIT==-1) {
                     // PHP < 5.4 compat fix
                     $current[0] = T_TRAIT_53;
                     $this->tokenArray[$t] = $current;
