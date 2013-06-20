@@ -162,6 +162,9 @@ namespace TheSeer\Autoload {
             if ($input->getOption('once')->value) {
                 $config->setOnceMode(TRUE);
             }
+            if ($input->getOption('followsymlinks')->value) {
+                $config->setFollowSymlinks(TRUE);
+            }
 
             $indent = $input->getOption('indent')->value;
             if ($indent !== FALSE) {
@@ -230,6 +233,7 @@ Usage: phpab [switches] <directory1> [...<directoryN>]
 
   -q, --quiet         Quiet mode, do not output any processing errors or information
 
+      --followsymlinks  Enables following symbolic links
       --format        Dateformat string for timestamp
       --linebreak     Linebreak style (CR, CRLF or LF, default: LF)
       --indent        String used for indenting or number of spaces (default: 16 (compat 12) spaces)
@@ -327,6 +331,11 @@ EOF;
             $input->registerOption( new \ezcConsoleOption(
                 't', 'template', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
                 'Path to code template to use'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'followsymlinks', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Enables following symbolic links'
             ));
 
             $input->registerOption( new \ezcConsoleOption(

@@ -69,6 +69,9 @@ namespace TheSeer\Autoload {
             $finder = $this->factory->getFinder();
             $basedir = $this->config->getBaseDirectory();
             $trusting = $this->config->isTrustingMode();
+            if ($this->config->isFollowSymlinks()) {
+                $this->logger->log('Following symbolic links is enabled.' . "\n\n");
+            }
             foreach ($this->config->getDirectories() as $directory) {
                 $this->logger->log('Scanning directory ' . $directory . "\n");
                 if ($basedir == NULL) {

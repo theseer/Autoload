@@ -473,6 +473,8 @@ namespace TheSeer\Autoload {
 
 
         /**
+         * @param string $redeclaredClassName
+         * @param string $redeclaredInFilePath
          * @return boolean
          */
         protected function canTolerateRedeclaration($redeclaredClassName, $redeclaredInFilePath) {
@@ -483,13 +485,14 @@ namespace TheSeer\Autoload {
         /**
          * Process multiple files and parse them for classes and interfaces
          *
-         * @param \TheSeer\Autoload\Iterator $sources Iterator based list of files (SplFileObject) to parse
+         * @param \Iterator $sources Iterator based list of files (SplFileObject) to parse
          * @param bool $mimeCheck Enable or disable mimetype check on files
          *
          * @return integer
          */
         public function parseMulti(\Iterator $sources, $mimeCheck = false) {
             $worker = $mimeCheck ? new PHPFilterIterator($sources) : $sources;
+            /** @var $file \DirectoryIterator */
             foreach($worker as $file) {
                 $this->parseFile($file->getPathname());
             }

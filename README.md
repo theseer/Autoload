@@ -94,6 +94,7 @@ phpab [switches] <directory> [... <directoryN>]
 
     -n, --nolower    Do not lowercase classnames for case insensitivity
 
+        --followsymlinks  Enables following symbolic links
         --format     Dateformat string for timestamp
         --linebreak  Linebreak style (CR, CR/LF or LF)
         --indent     String used for indenting (default: 3 spaces)

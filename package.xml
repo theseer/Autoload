@@ -12,7 +12,7 @@
     </lead>
     <date>2013-03-31</date>
     <version>
-        <release>1.10.3</release>
+        <release>1.10.4</release>
         <api>1.10.0</api>
     </version>
     <stability>
@@ -45,7 +45,7 @@
             <package>
                 <name>DirectoryScanner</name>
                 <channel>pear.netpirates.net</channel>
-                <min>1.1.0</min>
+                <min>1.1.1</min>
             </package>
             <package>
                 <name>ConsoleTools</name>
