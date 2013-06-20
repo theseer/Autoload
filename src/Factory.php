@@ -81,7 +81,7 @@ namespace TheSeer\Autoload {
         /**
          * Get instance of DirectoryScanner with filter options applied
          *
-         * @param bool                                               $filter
+         * @param bool $filter
          * @return \TheSeer\DirectoryScanner\IncludeExcludeFilterIterator
          */
         public function getScanner($filter = TRUE) {
@@ -89,6 +89,9 @@ namespace TheSeer\Autoload {
             if ($filter) {
                 $scanner->setIncludes($this->config->getInclude());
                 $scanner->setExcludes($this->config->getExclude());
+            }
+            if ($this->config->isFollowSymlinks()) {
+                $scanner->setFollowSymlinks(TRUE);
             }
             return $scanner;
         }

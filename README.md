@@ -56,6 +56,7 @@ phpab 1.10.1 - Copyright (C) 2009 - 2013 by Arne Blankerts
 
 Alternativly **phpab** can be downloaded as a fully self contained PHAR archive:
 
+* [Version 1.10.4](http://phpab.net/phpab-1.10.4.phar) - 170kb
 * [Version 1.10.3](http://phpab.net/phpab-1.10.3.phar) - 170kb
 * [Version 1.10.2](http://phpab.net/phpab-1.10.2.phar) - 169kb
 * [Version 1.10.1](http://phpab.net/phpab-1.10.1.phar) - 185kb
@@ -94,6 +95,7 @@ phpab [switches] <directory> [... <directoryN>]
 
     -n, --nolower    Do not lowercase classnames for case insensitivity
 
+        --followsymlinks  Enables following symbolic links
         --format     Dateformat string for timestamp
         --linebreak  Linebreak style (CR, CR/LF or LF)
         --indent     String used for indenting (default: 3 spaces)

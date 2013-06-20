@@ -62,6 +62,7 @@ namespace TheSeer\Autoload {
         private $pharCompression = 'NONE';
         private $pharKey;
         private $pharAll = false;
+        private $followSymlinks = false;
 
         public function __construct(Array $directories) {
             $this->directories = $directories;
@@ -231,6 +232,14 @@ namespace TheSeer\Autoload {
 
         public function setTrusting($trusting) {
             $this->trusting = (boolean)$trusting;
+        }
+
+        public function setFollowSymlinks($followSymlinks) {
+            $this->followSymlinks = (boolean)$followSymlinks;
+        }
+
+        public function isFollowSymlinks() {
+            return $this->followSymlinks;
         }
 
         public function isTrustingMode() {
