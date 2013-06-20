@@ -10,10 +10,10 @@
         <email>arne@blankerts.de</email>
         <active>yes</active>
     </lead>
-    <date>2013-03-31</date>
+    <date>2013-06-20</date>
     <version>
-        <release>1.10.4</release>
-        <api>1.10.0</api>
+        <release>1.11.0</release>
+        <api>1.11.0</api>
     </version>
     <stability>
         <release>stable</release>
@@ -37,7 +37,7 @@
     <dependencies>
         <required>
             <php>
-                <min>5.3.0</min>
+                <min>5.3.1</min>
             </php>
             <pearinstaller>
                 <min>1.8.0</min>
@@ -45,7 +45,7 @@
             <package>
                 <name>DirectoryScanner</name>
                 <channel>pear.netpirates.net</channel>
-                <min>1.1.1</min>
+                <min>1.2.0</min>
             </package>
             <package>
                 <name>ConsoleTools</name>

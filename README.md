@@ -5,7 +5,7 @@ an autoload require file with the option of creating static require lists as wel
 
 ## Features
 
-* scan multiple directories recursively in one run
+* scan multiple directories recursively in one run, optionally follow symlinks
 * Template based autoload code
 * Custom variables for templates
 * Compatibility mode for PHP 5.2 compliant autoloader
@@ -56,6 +56,7 @@ phpab 1.10.1 - Copyright (C) 2009 - 2013 by Arne Blankerts
 
 Alternativly **phpab** can be downloaded as a fully self contained PHAR archive:
 
+* [Version 1.11.0](http://phpab.net/phpab-1.11.0.phar) - 170kb
 * [Version 1.10.3](http://phpab.net/phpab-1.10.3.phar) - 170kb
 * [Version 1.10.2](http://phpab.net/phpab-1.10.2.phar) - 169kb
 * [Version 1.10.1](http://phpab.net/phpab-1.10.1.phar) - 185kb
@@ -94,7 +95,7 @@ phpab [switches] <directory> [... <directoryN>]
 
     -n, --nolower    Do not lowercase classnames for case insensitivity
 
-        --followsymlinks  Enables following symbolic links
+        --follow     Enables following symbolic links (not compatible with phar mode)
         --format     Dateformat string for timestamp
         --linebreak  Linebreak style (CR, CR/LF or LF)
         --indent     String used for indenting (default: 3 spaces)

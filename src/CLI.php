@@ -53,6 +53,10 @@ namespace TheSeer\Autoload {
         const RC_PARAM_ERROR = 3;
         const RC_LINT_ERROR = 4;
 
+        private $pharOption;
+        private $helpOption;
+        private $versionOption;
+
         /**
          * @var Factory
          */
@@ -162,7 +166,7 @@ namespace TheSeer\Autoload {
             if ($input->getOption('once')->value) {
                 $config->setOnceMode(TRUE);
             }
-            if ($input->getOption('followsymlinks')->value) {
+            if ($input->getOption('follow')->value) {
                 $config->setFollowSymlinks(TRUE);
             }
 
@@ -233,7 +237,7 @@ Usage: phpab [switches] <directory1> [...<directoryN>]
 
   -q, --quiet         Quiet mode, do not output any processing errors or information
 
-      --followsymlinks  Enables following symbolic links
+      --follow        Enables following symbolic links (not compatible with phar mode)
       --format        Dateformat string for timestamp
       --linebreak     Linebreak style (CR, CRLF or LF, default: LF)
       --indent        String used for indenting or number of spaces (default: 16 (compat 12) spaces)
@@ -334,8 +338,11 @@ EOF;
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                '', 'followsymlinks', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
-                'Enables following symbolic links'
+                '', 'follow', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Enables following symbolic links',
+                NULL,
+                array(),
+                array( new \ezcConsoleOptionRule($this->pharOption) )
             ));
 
             $input->registerOption( new \ezcConsoleOption(
