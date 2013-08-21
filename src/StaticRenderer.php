@@ -43,7 +43,7 @@ namespace TheSeer\Autoload {
      * @author     Arne Blankerts <arne@blankerts.de>
      * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
      */
-    class StaticBuilder extends AutoloadBuilder {
+    class StaticRenderer extends AutoloadRenderer {
 
         protected $dependencies;
         protected $phar;
@@ -77,9 +77,9 @@ namespace TheSeer\Autoload {
 
         /**
          * (non-PHPdoc)
-         * @see TheSeer\Autoload.AutoloadBuilder::render()
+         * @see TheSeer\Autoload.AutoloadRenderer::render()
          */
-        public function render() {
+        public function render($template) {
             $baseDir = '';
             if ($this->phar) {
                 $baseDir = "'phar://". $this->variables['___PHAR___']."' . ";
@@ -96,7 +96,7 @@ namespace TheSeer\Autoload {
             '___AUTOLOAD___'  => uniqid('autoload')
             ));
 
-            return str_replace(array_keys($replace), array_values($replace), $this->template);
+            return str_replace(array_keys($replace), array_values($replace), $template);
         }
 
         /**

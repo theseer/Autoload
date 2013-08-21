@@ -43,7 +43,7 @@ namespace TheSeer\Autoload {
      * @author     Arne Blankerts <arne@blankerts.de>
      * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
      */
-    class AutoloadBuilder {
+    class AutoloadRenderer {
 
         /**
          * Associative array of classes (key) and the files (value) they are in
@@ -74,13 +74,6 @@ namespace TheSeer\Autoload {
         protected $linebreak = "\n";
 
         /**
-         * PHP Template code to render autoload list
-         *
-         * @var string
-         */
-        protected $template;
-
-        /**
          * Timestamp of production start
          *
          * @var integer
@@ -109,7 +102,7 @@ namespace TheSeer\Autoload {
         protected $compat = false;
 
         /**
-         * Constructor of AutoloadBuilder class
+         * Constructor of AutoloadRenderer class
          *
          * @param array  $classlist Array of classes
          * @param string $baseDir   Base folder for class files
@@ -123,7 +116,6 @@ namespace TheSeer\Autoload {
             ksort($this->classes);
             $this->baseDir = $baseDir;
             $this->indent  = $indent;
-            $this->setTemplateFile( __DIR__ . '/templates/' . ($caseSensitive ? 'cs' : 'ci')  . '/default.php.tpl' );
         }
 
         /**
@@ -133,31 +125,6 @@ namespace TheSeer\Autoload {
          */
         public function setCompat($mode) {
             $this->compat = $mode;
-        }
-
-        /**
-         * Setter to load a new template from a file
-         *
-         * @param string $fname File to load as template
-         *
-         * @return void
-         */
-        public function setTemplateFile($fname) {
-            if (!file_exists($fname)) {
-                throw new AutoloadBuilderException("Template '$fname' not found.", AutoloadBuilderException::TemplateNotFound);
-            }
-            $this->template = file_get_contents($fname);
-        }
-
-        /**
-         * Setter for Template from string
-         *
-         * @param string $tpl Template code string
-         *
-         * @return void
-         */
-        public function setTemplateCode($tpl) {
-            $this->template = $tpl;
         }
 
         /**
@@ -271,7 +238,7 @@ namespace TheSeer\Autoload {
          *
          * @return string
          */
-        public function render() {
+        public function render($template) {
             $entries = array();
             foreach($this->classes as $class => $file) {
                 $fname = $this->resolvePath($file);
@@ -289,7 +256,7 @@ namespace TheSeer\Autoload {
             '___BASEDIR___'   => $baseDir,
             '___AUTOLOAD___'  => 'autoload' . md5(serialize($entries))
             ));
-            return str_replace(array_keys($replace), array_values($replace), $this->template);
+            return str_replace(array_keys($replace), array_values($replace), $template);
         }
 
         /**

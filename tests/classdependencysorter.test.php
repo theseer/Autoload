@@ -38,7 +38,7 @@
 namespace TheSeer\Autoload\Tests {
 
     use TheSeer\Autoload\ClassFinder;
-    use TheSeer\Autoload\AutoloadBuilder;
+    use TheSeer\Autoload\AutoloadRenderer;
     use TheSeer\Autoload\ClassDependencySorter;
 
     /**

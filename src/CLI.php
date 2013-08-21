@@ -41,7 +41,7 @@ namespace TheSeer\Autoload {
     use TheSeer\DirectoryScanner\DirectoryScanner;
 
     /**
-     * CLI interface to AutoloadBuilder / StaticBuilder
+     * CLI interface to AutoloadRenderer / StaticRenderer
      *
      * @author     Arne Blankerts <arne@blankerts.de>
      * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.

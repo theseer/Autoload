@@ -219,7 +219,37 @@ namespace TheSeer\Autoload {
         }
 
         public function getTemplate() {
-            return $this->template;
+            $tplType = $this->isLowercaseMode() ? 'ci' : 'cs';
+            $template = $this->template;
+            if ($template !== NULL) {
+                if (!file_exists($template)) {
+                    $alternative = __DIR__.'/templates/'. $tplType .'/'.$template;
+                    if (file_exists($alternative)) {
+                        $template = $alternative;
+                    }
+                }
+                return $template;
+            }
+
+            // determine auto template to use
+            $tplFile = 'default.php.tpl';
+            if ($this->isCompatMode()) {
+                $tplFile = 'php52.php.tpl';
+            }
+
+            if ($this->isPharMode()) {
+                if ($this->isStaticMode()) {
+                    $tplFile = 'staticphar.php.tpl';
+                } else {
+                    $tplFile = 'phar.php.tpl';
+                }
+            } elseif ($this->isStaticMode()) {
+                $tplFile = 'static.php.tpl';
+                $tplType = '.';
+            }
+
+            return __DIR__.'/templates/'.$tplType.'/'.$tplFile;
+
         }
 
         public function setTolerantMode($tolerant) {

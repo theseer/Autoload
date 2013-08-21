@@ -111,10 +111,10 @@ namespace TheSeer\Autoload {
         }
 
         /**
-         * Helper to get instance of AutoloadBuilder with cli options applied
+         * Helper to get instance of AutoloadRenderer with cli options applied
          *
          * @throws \RuntimeException
-         * @return \TheSeer\Autoload\AutoloadBuilder|\TheSeer\Autoload\StaticBuilder
+         * @return \TheSeer\Autoload\AutoloadRenderer|\TheSeer\Autoload\StaticBuilder
          */
         public function getBuilder(ClassFinder $finder) {
             $isStatic = $this->config->isStaticMode();
@@ -125,12 +125,12 @@ namespace TheSeer\Autoload {
             $tplType  = $noLower ? 'cs' : 'ci';
 
             if ($isStatic === TRUE) {
-                $builder = new StaticBuilder($finder->getMerged());
+                $builder = new StaticRenderer($finder->getMerged());
                 $builder->setDependencies($finder->getDependencies());
                 $builder->setPharMode($isPhar);
                 $builder->setRequireOnce($isOnce);
             } else {
-                $builder = new AutoloadBuilder($finder->getMerged());
+                $builder = new AutoloadRenderer($finder->getMerged());
             }
 
             $builder->setCompat($isCompat);
@@ -140,36 +140,6 @@ namespace TheSeer\Autoload {
                 throw new \RuntimeException("Given basedir '{$basedir}' does not exist or is not a directory");
             }
             $builder->setBaseDir($basedir);
-
-            $template = $this->config->getTemplate();
-            if ($template !== NULL) {
-                if (!file_exists($template)) {
-                    $alternative = __DIR__.'/templates/'.$tplType.'/'.$template;
-                    if (file_exists($alternative)) {
-                        $template = $alternative;
-                    }
-                }
-                $builder->setTemplateFile($template);
-            } else {
-                // determine auto template to use
-                $tplFile = 'default.php.tpl';
-                if ($isCompat) {
-                    $tplFile = 'php52.php.tpl';
-                }
-
-                if ($isPhar) {
-                    if ($isStatic) {
-                        $tplFile = 'staticphar.php.tpl';
-                    } else {
-                        $tplFile = 'phar.php.tpl';
-                    }
-                } elseif ($isStatic) {
-                    $tplFile = 'static.php.tpl';
-                    $tplType = '.';
-                }
-
-                $builder->setTemplateFile(__DIR__.'/templates/'.$tplType.'/'.$tplFile);
-            }
 
             $format = $this->config->getDateFormat();
             if ($format) {
