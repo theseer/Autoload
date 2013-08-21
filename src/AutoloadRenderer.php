@@ -259,16 +259,6 @@ namespace TheSeer\Autoload {
             return str_replace(array_keys($replace), array_values($replace), $template);
         }
 
-        /**
-         * Save autoload code to given filename
-         *
-         * @param string $filename Filename to store code in
-         *
-         * @return integer|boolean
-         */
-        public function save($filename) {
-            return file_put_contents($filename, $this->render());
-        }
     }
 
 
