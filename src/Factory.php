@@ -114,46 +114,44 @@ namespace TheSeer\Autoload {
          * Helper to get instance of AutoloadRenderer with cli options applied
          *
          * @throws \RuntimeException
-         * @return \TheSeer\Autoload\AutoloadRenderer|\TheSeer\Autoload\StaticBuilder
+         * @return \TheSeer\Autoload\AutoloadRenderer|\TheSeer\Autoload\StaticRenderer
          */
-        public function getBuilder(ClassFinder $finder) {
+        public function getRenderer(ClassFinder $finder) {
             $isStatic = $this->config->isStaticMode();
             $isPhar   = $this->config->isPharMode();
             $isCompat = $this->config->isCompatMode();
-            $noLower  = !$this->config->isLowercaseMode();
             $isOnce   = $this->config->isOnceMode();
-            $tplType  = $noLower ? 'cs' : 'ci';
 
             if ($isStatic === TRUE) {
-                $builder = new StaticRenderer($finder->getMerged());
-                $builder->setDependencies($finder->getDependencies());
-                $builder->setPharMode($isPhar);
-                $builder->setRequireOnce($isOnce);
+                $renderer = new StaticRenderer($finder->getMerged());
+                $renderer->setDependencies($finder->getDependencies());
+                $renderer->setPharMode($isPhar);
+                $renderer->setRequireOnce($isOnce);
             } else {
-                $builder = new AutoloadRenderer($finder->getMerged());
+                $renderer = new AutoloadRenderer($finder->getMerged());
             }
 
-            $builder->setCompat($isCompat);
+            $renderer->setCompat($isCompat);
 
             $basedir = $this->config->getBaseDirectory();
             if (!$basedir || !is_dir($basedir)) {
                 throw new \RuntimeException("Given basedir '{$basedir}' does not exist or is not a directory");
             }
-            $builder->setBaseDir($basedir);
+            $renderer->setBaseDir($basedir);
 
             $format = $this->config->getDateFormat();
             if ($format) {
-                $builder->setDateTimeFormat($format);
+                $renderer->setDateTimeFormat($format);
             }
 
-            $builder->setIndent($this->config->getIndent());
-            $builder->setLineBreak($this->config->getLinebreak());
+            $renderer->setIndent($this->config->getIndent());
+            $renderer->setLineBreak($this->config->getLinebreak());
 
             foreach($this->config->getVariables() as $name => $value) {
-                $builder->setVariable($name, $value);
+                $renderer->setVariable($name, $value);
             }
 
-            return $builder;
+            return $renderer;
         }
 
     }

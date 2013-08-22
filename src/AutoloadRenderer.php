@@ -111,7 +111,7 @@ namespace TheSeer\Autoload {
          *
          * @return void
          */
-        public function __construct(array $classlist, $baseDir = '', $caseSensitive = false, $indent = '                ') {
+        public function __construct(array $classlist, $baseDir = '', $indent = '                ') {
             $this->classes = $classlist;
             ksort($this->classes);
             $this->baseDir = $baseDir;

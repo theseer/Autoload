@@ -43,7 +43,7 @@ namespace TheSeer\Autoload {
         private $factory;
         private $config;
 
-        public function __construct(Logger $logger, Config $config,  Factory $factory) {
+        public function __construct(Logger $logger, Config $config, Factory $factory) {
             $this->logger = $logger;
             $this->config = $config;
             $this->factory = $factory;
@@ -54,7 +54,7 @@ namespace TheSeer\Autoload {
             if ($finder->getCount() == 0) {
                 throw new ApplicationException("No classes were found - process aborted.", ApplicationException::NoUnitsFound);
             }
-            $builder = $this->factory->getBuilder($finder);
+            $builder = $this->factory->getRenderer($finder);
             $code = $builder->render(file_get_contents($this->config->getTemplate()));
             if ($this->config->isLintMode()) {
                 return $this->runLint($code);
@@ -86,7 +86,7 @@ namespace TheSeer\Autoload {
             return $finder;
         }
 
-        private function runSaver($code, $webCode = NULL) {
+        private function runSaver($code) {
             $output = $this->config->getOutputFile();
             if (!$this->config->isPharMode()) {
                 if ($output === 'STDOUT') {
@@ -105,19 +105,17 @@ namespace TheSeer\Autoload {
                 $this->logger->log("\nAutoload file {$output} generated.\n\n");
                 return CLI::RC_OK;
             }
-            /*
             if (strpos($code, '__HALT_COMPILER();') === FALSE) {
                 $this->logger->log(
                     "Warning: Template used in phar mode did not contain required __HALT_COMPILER() call\n" .
                         "which has been added automatically. The used stub code may not work as intended.\n\n", STDERR);
                 $code .= $this->config->getLineBreak() . '__HALT_COMPILER();';
             }
-            */
             $pharBuilder = $this->factory->getPharBuilder();
             if ($keyfile = $this->config->getPharKey()) {
                 $pharBuilder->setSignatureKey($this->loadPharSignatureKey($keyfile));
             }
-            $pharBuilder->build($output, $code, $webCode);
+            $pharBuilder->build($output, $code);
             $this->logger->log("\nphar archive '{$output}' generated.\n\n");
             return CLI::RC_OK;
         }

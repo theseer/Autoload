@@ -65,15 +65,13 @@ namespace TheSeer\Autoload {
             $this->directories[] = $directory;
         }
 
-        public function build($filename, $stub, $webStub = NULL) {
+        public function build($filename, $stub) {
             if (file_exists($filename)) {
                 unlink($filename);
             }
             $phar = new \Phar($filename, 0, basename($filename));
             $phar->startBuffering();
-            $phar->setStub(
-                $webStub != NULL ? $phar->createDefaultStub($stub, $webStub) : $phar->createDefaultStub($stub)
-            );
+            $phar->setStub($stub);
             if ($this->key !== NULL) {
                 $privateKey = '';
                 openssl_pkey_export($this->key, $privateKey);
