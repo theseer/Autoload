@@ -19,7 +19,6 @@ spl_autoload_register(
                 'theseer\\autoload\\cli' => '/CLI.php',
                 'theseer\\autoload\\config' => '/Config.php',
                 'theseer\\autoload\\factory' => '/Factory.php',
-                'theseer\\autoload\\filegenerator' => '/FileGenerator.php',
                 'theseer\\autoload\\logger' => '/Logger.php',
                 'theseer\\autoload\\pharbuilder' => '/PharBuilder.php',
                 'theseer\\autoload\\staticrenderer' => '/StaticRenderer.php',

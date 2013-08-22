@@ -60,8 +60,8 @@ namespace TheSeer\Autoload\Tests {
 
         /**
          *
-         * @covers \TheSeer\Autoload\AutoloadBuilder::__construct
-         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         * @covers \TheSeer\Autoload\AutoloadRenderer::__construct
+         * @covers \TheSeer\Autoload\AutoloadRenderer::render
          */
         public function testDefaultRendering() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
@@ -74,8 +74,8 @@ namespace TheSeer\Autoload\Tests {
 
         /**
          *
-         * @covers \TheSeer\Autoload\AutoloadBuilder::setLinebreak
-         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         * @covers \TheSeer\Autoload\AutoloadRenderer::setLinebreak
+         * @covers \TheSeer\Autoload\AutoloadRenderer::render
          */
         public function testWindowsLFRendering() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
@@ -86,8 +86,8 @@ namespace TheSeer\Autoload\Tests {
 
         /**
          *
-         * @covers \TheSeer\Autoload\AutoloadBuilder::setLinebreak
-         * @covers \TheSeer\Autoload\AutoloadBuilder::getLinebreak
+         * @covers \TheSeer\Autoload\AutoloadRenderer::setLinebreak
+         * @covers \TheSeer\Autoload\AutoloadRenderer::getLinebreak
          */
         public function testSettingAndGettingLinebreakWorks() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
@@ -97,8 +97,8 @@ namespace TheSeer\Autoload\Tests {
 
         /**
          *
-         * @covers \TheSeer\Autoload\AutoloadBuilder::setIndent
-         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         * @covers \TheSeer\Autoload\AutoloadRenderer::setIndent
+         * @covers \TheSeer\Autoload\AutoloadRenderer::render
          */
         public function testIndentWithTabsRendering() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
@@ -110,8 +110,8 @@ namespace TheSeer\Autoload\Tests {
 
         /**
          *
-         * @covers \TheSeer\Autoload\AutoloadBuilder::setBaseDir
-         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         * @covers \TheSeer\Autoload\AutoloadRenderer::setBaseDir
+         * @covers \TheSeer\Autoload\AutoloadRenderer::render
          */
         public function testSetBaseDirRendering() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
@@ -128,7 +128,7 @@ namespace TheSeer\Autoload\Tests {
 
         /**
          *
-         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         * @covers \TheSeer\Autoload\AutoloadRenderer::render
          */
         public function testRenderingInCompatMode() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
@@ -140,7 +140,7 @@ namespace TheSeer\Autoload\Tests {
         }
 
         /**
-         * @covers \TheSeer\Autoload\AutoloadBuilder::resolvePath
+         * @covers \TheSeer\Autoload\AutoloadRenderer::resolvePath
          */
         public function testRelativeSubBaseDirRendering() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
@@ -179,7 +179,7 @@ namespace TheSeer\Autoload\Tests {
 
         /**
          *
-         * @covers \TheSeer\Autoload\AutoloadBuilder::setVariable
+         * @covers \TheSeer\Autoload\AutoloadRenderer::setVariable
          */
         public function testSetVariable() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
@@ -189,7 +189,7 @@ namespace TheSeer\Autoload\Tests {
 
         /**
          *
-         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         * @covers \TheSeer\Autoload\AutoloadRenderer::render
          */
         public function testGetUniqueReproducibleValueForAutoloadName() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
@@ -199,7 +199,7 @@ namespace TheSeer\Autoload\Tests {
 
         /**
          *
-         * @covers \TheSeer\Autoload\AutoloadBuilder::render
+         * @covers \TheSeer\Autoload\AutoloadRenderer::render
          */
         public function testGetUniqueValueForAutoloadName() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
@@ -212,7 +212,7 @@ namespace TheSeer\Autoload\Tests {
         }
 
         /**
-         * @covers \TheSeer\Autoload\AutoloadBuilder::setCompat
+         * @covers \TheSeer\Autoload\AutoloadRenderer::setCompat
          */
         public function testSetCompatMode() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
