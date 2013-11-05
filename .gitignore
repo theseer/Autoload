@@ -5,3 +5,5 @@ phpunit.xml
 .settings
 .gitignore
 .idea
+
+/vendor/
