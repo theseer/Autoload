@@ -7,5 +7,5 @@ php:
 before_script:
     - composer install --prefer-dist --dev
 script:
-    - ./vendor/bin/phpunit
+    - ./vendor/bin/phpunit --configuration phpunit.xml.composer
     - ./vendor/bin/phpcs
