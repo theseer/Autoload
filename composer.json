@@ -1,0 +1,22 @@
+{
+    "name": "theseer/autoload",
+    "description": "A tool and library to generate autoload code.",
+    "require": {
+        "theseer/directoryscanner": "1.2.0",
+        "zetacomponents/console-tools": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*",
+        "squizlabs/php_codesniffer": "*"
+    },
+    "license": "BSD License",
+    "authors": [
+        {
+            "name": "Arne Blankerts",
+            "email": "arne@blankerts.de"
+        }
+    ],
+    "bin": [
+        "composer/bin/phpab"
+    ]
+}

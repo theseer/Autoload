@@ -1,0 +1,10 @@
+language: php
+php:
+    - 5.4
+    - 5.5
+
+before_script:
+    - composer install --prefer-dist --dev
+script:
+    - ./vendor/bin/phpunit --configuration phpunit.xml.composer
+    - ./vendor/bin/phpcs --standard=phpcs.xml  src/
