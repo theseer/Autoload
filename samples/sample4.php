@@ -10,7 +10,7 @@
 
   $found = $finder->parseMulti($scanner('../src'));
 
-  $ab = new \TheSeer\Autoload\AutoloadBuilder($finder->getClasses());
+  $ab = new \TheSeer\Autoload\AutoloadRenderer($finder->getClasses());
   $ab->setIndent("\t");
   $ab->setLineBreak("\r\n");
   echo $ab->render();

@@ -10,6 +10,6 @@
 
   $found = $finder->parseMulti($scanner('../src'));
 
-  $ab = new \TheSeer\Autoload\AutoloadBuilder($finder->getClasses());
+  $ab = new \TheSeer\Autoload\AutoloadRenderer($finder->getClasses());
 
   echo $ab->render();
