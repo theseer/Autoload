@@ -1,5 +1,5 @@
 <?php
 namespace {
 
-    class demo() {}
+    class demo {}
 }

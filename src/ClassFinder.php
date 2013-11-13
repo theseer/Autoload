@@ -188,6 +188,11 @@ namespace TheSeer\Autoload {
             $mode = 'classname';
             foreach(array_slice($stack, 1, -1) as $tok) {
                 switch ($tok[0]) {
+                    case T_COMMENT:
+                    case T_DOC_COMMENT:
+                    case T_WHITESPACE: {
+                        continue;
+                    }
                     case T_STRING: {
                         $$mode .= $tok[1];
                         continue;
@@ -212,6 +217,13 @@ namespace TheSeer\Autoload {
                             $implements = '';
                         }
                         continue;
+                    }
+                    default: {
+                        throw new ClassFinderException(sprintf(
+                                "Parse error in file '%s' while trying to process class definition (unexpected token in name).\n\n",
+                                $this->filename
+                            ), ClassFinderException::ParseError
+                        );
                     }
                 }
             }
@@ -312,7 +324,7 @@ namespace TheSeer\Autoload {
             if (!$this->disableLowercase) {
                 $name = strtolower($name);
             }
-            if ($name == '') {
+            if ($name == '' || substr($name, -1) == '\\') {
                 throw new ClassFinderException(sprintf(
                         "Parse error in file '%s' while trying to process %s definition.\n\n",
                         $this->filename,

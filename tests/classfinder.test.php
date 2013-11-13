@@ -115,6 +115,33 @@ namespace TheSeer\Autoload\Tests {
             $finder->parseFile(__DIR__.'/_data/classfinder/parseerror4.php');
         }
 
+        /**
+         * @expectedException  \TheSeer\Autoload\ClassFinderException
+         * @expectedExceptionCode  \TheSeer\Autoload\ClassFinderException::ParseError
+         */
+        public function testSyntacticallyInvalidClassnameThrowsException() {
+            $finder = new \TheSeer\Autoload\ClassFinder;
+            $finder->parseFile(__DIR__.'/_data/classfinder/invalid1.php');
+        }
+
+        /**
+         * @expectedException  \TheSeer\Autoload\ClassFinderException
+         * @expectedExceptionCode  \TheSeer\Autoload\ClassFinderException::ParseError
+         */
+        public function testInvalidTokenInClassnameThrowsException() {
+            $finder = new \TheSeer\Autoload\ClassFinder;
+            $finder->parseFile(__DIR__.'/_data/classfinder/invalid2.php');
+        }
+
+        /**
+         * @expectedException  \TheSeer\Autoload\ClassFinderException
+         * @expectedExceptionCode  \TheSeer\Autoload\ClassFinderException::ParseError
+         */
+        public function testInvalidTokenInClassnameWithinNamespaceThrowsException() {
+            $finder = new \TheSeer\Autoload\ClassFinder;
+            $finder->parseFile(__DIR__.'/_data/classfinder/invalid3.php');
+        }
+
         public function testRedeclaringClassInSameFileDoesNotThrowExceptionInTolerantMode()
         {
             $finder = new \TheSeer\Autoload\ClassFinder(false, true);
