@@ -49,13 +49,14 @@ This should install phpab along with its dependencies, once completed, you can v
 
 ```
 [theseer@rikka ~]$ phpab -v
-phpab 1.10.1 - Copyright (C) 2009 - 2013 by Arne Blankerts
+phpab 1.12.0 - Copyright (C) 2009 - 2013 by Arne Blankerts
 ```
 
 ### Executable PHAR
 
 Alternativly **phpab** can be downloaded as a fully self contained PHAR archive:
 
+* [Version 1.12.0](http://phpab.net/phpab-1.12.0.phar) - 170kb
 * [Version 1.11.0](http://phpab.net/phpab-1.11.0.phar) - 170kb
 * [Version 1.10.3](http://phpab.net/phpab-1.10.3.phar) - 170kb
 * [Version 1.10.2](http://phpab.net/phpab-1.10.2.phar) - 169kb
