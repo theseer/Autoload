@@ -131,6 +131,8 @@
             <arg value="--var" />
             <arg value="VERSION=${version}" />
             <arg value="--all" />
+            <arg value="--alias" />
+            <arg value="phpab.phar" />
             <arg value="--phar" />
             <arg value="--gzip" />
             <arg value="--output" />
