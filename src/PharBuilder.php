@@ -45,6 +45,7 @@ namespace TheSeer\Autoload {
         private $compression;
         private $key;
         private $basedir;
+        private $aliasName;
 
         private $directories = array();
 
@@ -65,11 +66,15 @@ namespace TheSeer\Autoload {
             $this->directories[] = $directory;
         }
 
+        public function setAliasName($name) {
+            $this->aliasName = $name;
+        }
+
         public function build($filename, $stub) {
             if (file_exists($filename)) {
                 unlink($filename);
             }
-            $phar = new \Phar($filename, 0, basename($filename));
+            $phar = new \Phar($filename, 0, $this->aliasName ? $this->aliasName : basename($filename));
             $phar->startBuffering();
             $phar->setStub($stub);
             if ($this->key !== NULL) {

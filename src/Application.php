@@ -115,6 +115,9 @@ namespace TheSeer\Autoload {
             if ($keyfile = $this->config->getPharKey()) {
                 $pharBuilder->setSignatureKey($this->loadPharSignatureKey($keyfile));
             }
+            if ($aliasName = $this->config->getPharAliasName()) {
+                $pharBuilder->setAliasName($aliasName);
+            }
             $pharBuilder->build($output, $code);
             $this->logger->log("\nphar archive '{$output}' generated.\n\n");
             return CLI::RC_OK;

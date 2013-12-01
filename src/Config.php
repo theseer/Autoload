@@ -62,6 +62,7 @@ namespace TheSeer\Autoload {
         private $pharCompression = 'NONE';
         private $pharKey;
         private $pharAll = false;
+        private $pharAliasName = '';
         private $followSymlinks = false;
 
         public function __construct(Array $directories) {
@@ -171,11 +172,12 @@ namespace TheSeer\Autoload {
             return $this->outputFile;
         }
 
-        public function enablePharMode($compression = 'NONE', $all = true, $key = NULL) {
+        public function enablePharMode($compression = 'NONE', $all = true, $key = NULL, $alias = NULL) {
             $this->pharMode = true;
             $this->pharCompression = $compression;
             $this->pharAll = (boolean)$all;
             $this->pharKey = $key;
+            $this->pharAliasName = $alias;
         }
 
         public function isPharMode() {
@@ -192,6 +194,10 @@ namespace TheSeer\Autoload {
 
         public function getPharKey() {
             return $this->pharKey;
+        }
+
+        public function getPharAliasName() {
+            return $this->pharAliasName;
         }
 
         public function setPhp($php) {

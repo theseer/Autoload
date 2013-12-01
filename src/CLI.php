@@ -139,7 +139,8 @@ namespace TheSeer\Autoload {
                 $config->enablePharMode(
                     $compression,
                     $input->getOption('all')->value,
-                    $input->getOption('key')->value
+                    $input->getOption('key')->value,
+                    $input->getOption('alias')->value
                 );
                 $config->setVariable('PHAR', basename($output));
             }
@@ -246,6 +247,7 @@ Usage: phpab [switches] <directory1> [...<directoryN>]
       --once          Use require_once instead of require when creating a static require file
 
       --all           Include all files in given directory when creating a phar
+      --alias         Specify explicit internal phar alias filename (default: output filename)
 
       --trusting      Do not check mimetype of files prior to parsing (default)
       --paranoid      Do check mimetype of files prior to parsing
@@ -290,6 +292,13 @@ EOF;
             $input->registerOption( new \ezcConsoleOption(
                 '', 'all', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'Add all files from src dir to phar',
+                NULL,
+                array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'alias', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                'Provide explicit internal alias filename for phar',
                 NULL,
                 array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
             ));
