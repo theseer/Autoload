@@ -74,7 +74,7 @@ namespace TheSeer\Autoload {
             if (file_exists($filename)) {
                 unlink($filename);
             }
-            $phar = new \Phar($filename, 0, $this->aliasName ? $this->aliasName : basename($filename));
+            $phar = new \Phar($filename, 0, $this->aliasName != '' ? $this->aliasName : basename($filename));
             $phar->startBuffering();
             $phar->setStub($stub);
             if ($this->key !== NULL) {
