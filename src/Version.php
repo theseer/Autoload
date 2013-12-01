@@ -50,7 +50,7 @@ namespace TheSeer\Autoload {
                     $git = exec('command -p git describe --always --dirty 2>/dev/null', $foo, $rc);
                     chdir($cwd);
                     if ($rc === 0) {
-                        self::$version = substr($git, 8);
+                        self::$version = $git;
                     }
                 }
             }
