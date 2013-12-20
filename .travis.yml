@@ -8,3 +8,6 @@ before_script:
 script:
     - ./vendor/bin/phpunit --configuration phpunit.xml.composer
     - ./vendor/bin/phpcs --standard=phpcs.xml  src/
+
+notifications:
+  email: false
