@@ -68,6 +68,13 @@ namespace TheSeer\Autoload\Tests {
             $this->assertArrayHasKey('Demo', $finder->getMerged());
         }
 
+        public function testClassKeywordReusageForResolvingGetsIgnored() {
+            $finder = new \TheSeer\Autoload\ClassFinder;
+            $rc = $finder->parseFile(__DIR__.'/_data/classfinder/classname.php');
+            $this->assertEquals(1,$rc);
+            $this->assertArrayHasKey('x\\\\demo', $finder->getClasses());
+            $this->assertArrayHasKey('x\\\\demo', $finder->getMerged());
+        }
         /**
          *
          * @expectedException  \TheSeer\Autoload\ClassFinderException

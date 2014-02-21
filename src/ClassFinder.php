@@ -151,6 +151,10 @@ namespace TheSeer\Autoload {
                 if (!in_array($current[0], $tokList)) {
                     continue;
                 }
+                // PHP 5.5 has classname::class, reusing T_CLASS
+                if ($this->tokenArray[$t-1][0] == T_DOUBLE_COLON) {
+                    continue;
+                }
                 $t = call_user_func(array($this, $map[$current[0]]), $t);
             }
             return count($this->found['all']);
