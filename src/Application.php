@@ -77,9 +77,8 @@ namespace TheSeer\Autoload {
                 if ($basedir == NULL) {
                     $basedir = $directory;
                 }
-                $scanner = $this->factory->getScanner();
-                // the call to __invoke is here to make PHPStorm happy
-                $finder->parseMulti($scanner->__invoke($directory), !$trusting);
+                $scanner = $this->factory->getScanner()->getIterator($directory);
+                $finder->parseMulti($scanner, !$trusting);
                 // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
                 unset($scanner);
             }
