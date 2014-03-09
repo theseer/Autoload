@@ -142,7 +142,9 @@ namespace TheSeer\Autoload {
                     $input->getOption('key')->value,
                     $input->getOption('alias')->value
                 );
-                $config->setVariable('PHAR', basename($output));
+                $config->setVariable('PHAR',
+                    $input->getOption('alias')->value ? $input->getOption('alias')->value : basename($output)
+                );
             }
 
             if ($basedir = $input->getOption('basedir')->value) {
