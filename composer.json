@@ -2,7 +2,7 @@
     "name": "theseer/autoload",
     "description": "A tool and library to generate autoload code.",
     "require": {
-        "theseer/directoryscanner": "1.2.0",
+        "theseer/directoryscanner": "1.3.0",
         "zetacomponents/console-tools": "dev-master"
     },
     "require-dev": {
