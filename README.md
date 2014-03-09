@@ -26,11 +26,35 @@ an autoload require file with the option of creating static require lists as wel
 
 ## Installation
 
-### Using PEAR
+### Executable PHAR
 
-**phpab** can be installed using the [PEAR Installer](http://pear.php.net/manual/en/guide.users.commandline.cli.php).
-This installer is the backbone of PEAR, which provides a distribution system for PHP packages, and is shipped
-with every release of PHP since version 4.3.0.
+The recommended why to install **phpab** is by downloading a fully self contained PHAR archive:
+
+* [Version 1.14.1](http://phpab.net/phpab-1.14.1.phar) - 169kb
+* [Version 1.14.0](http://phpab.net/phpab-1.14.0.phar) - 169kb
+* [Version 1.13.1](http://phpab.net/phpab-1.13.1.phar) - 170kb
+* [Version 1.12.0](http://phpab.net/phpab-1.12.0.phar) - 170kb
+* [Version 1.11.0](http://phpab.net/phpab-1.11.0.phar) - 170kb
+* [Version 1.10.3](http://phpab.net/phpab-1.10.3.phar) - 170kb
+* [Version 1.10.2](http://phpab.net/phpab-1.10.2.phar) - 169kb
+* [Version 1.10.1](http://phpab.net/phpab-1.10.1.phar) - 185kb
+
+_Please note:_
+On Linux/Unix based system the phar needs to be marked executable for direct execution:
+```
+[theseer@rikka ~]$ chmod +x phpab*.phar
+```
+
+Once it is marked as executable, you can run it directly. For instance:
+
+```
+[theseer@rikka ~]$ ./phpab.phar -v
+phpab 1.14.1 - Copyright (C) 2009 - 2014 by Arne Blankerts
+```
+
+### Alternative using PEAR
+
+**phpab** can also be installed using the [PEAR Installer](http://pear.php.net/manual/en/guide.users.commandline.cli.php).
 
 The PEAR channel (`pear.netpirates.net`) that is used to distribute **phpab** needs to be registered with the
 local PEAR environment. This can be done automatically if PEAR is configured to auto-discover channels:
@@ -49,27 +73,8 @@ This should install phpab along with its dependencies, once completed, you can v
 
 ```
 [theseer@rikka ~]$ phpab -v
-phpab 1.14.0 - Copyright (C) 2009 - 2014 by Arne Blankerts
+phpab 1.14.1 - Copyright (C) 2009 - 2014 by Arne Blankerts
 ```
-
-### Executable PHAR
-
-Alternativly **phpab** can be downloaded as a fully self contained PHAR archive:
-
-* [Version 1.14.0](http://phpab.net/phpab-1.14.0.phar) - 169kb
-* [Version 1.13.1](http://phpab.net/phpab-1.13.1.phar) - 170kb
-* [Version 1.12.0](http://phpab.net/phpab-1.12.0.phar) - 170kb
-* [Version 1.11.0](http://phpab.net/phpab-1.11.0.phar) - 170kb
-* [Version 1.10.3](http://phpab.net/phpab-1.10.3.phar) - 170kb
-* [Version 1.10.2](http://phpab.net/phpab-1.10.2.phar) - 169kb
-* [Version 1.10.1](http://phpab.net/phpab-1.10.1.phar) - 185kb
-
-_Please note:_
-On Linux/Unix based system the phar needs to be marked executable for direct execution:
-```
-[theseer@rikka ~]$ chmod +x phpab*.phar
-```
-
 
 ## Other Downloads
 
@@ -107,6 +112,7 @@ phpab [switches] <directory> [... <directoryN>]
         --once       Use require_once instead of require when creating a static require file
 
         --all        Include all files in given directory when creating a phar
+        --alias      Specify explicit internal phar alias filename (default: output filename)
 
         --trusting   Do not check mimetype of files prior to parsing (default)
         --paranoid   Do check mimetype of files prior to parsing
@@ -173,7 +179,7 @@ Known variables are:
 * ```___BASEDIR___```     If a Basedir is set, the value will get removed from the file path and get replaced by __DIR__
 
 Used in PHAR Mode only:
-* ```___PHAR___```         The filename of the generated phar (see src/templates/phar.php.tpl)
+* ```___PHAR___```         The filename of the generated phar or it's alias when --alias is given (see src/templates/phar.php.tpl)
 
 Custom variables as defined by passing --var name=value via cli are accessed by pre- and appending ___ to it:
 * ```___name___```         Going to be replaced by the value provided via cli param
