@@ -69,6 +69,9 @@ namespace TheSeer\Autoload {
             return new Logger($this->config->isQuietMode());
         }
 
+        /**
+         * @return ClassFinder
+         */
         public function getFinder() {
             return new ClassFinder(
                 $this->config->isStaticMode(),
@@ -82,7 +85,7 @@ namespace TheSeer\Autoload {
          * Get instance of DirectoryScanner with filter options applied
          *
          * @param bool $filter
-         * @return \TheSeer\DirectoryScanner\IncludeExcludeFilterIterator
+         * @return \TheSeer\DirectoryScanner\DirectoryScanner
          */
         public function getScanner($filter = TRUE) {
             $scanner = new \TheSeer\DirectoryScanner\DirectoryScanner;
