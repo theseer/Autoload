@@ -127,7 +127,7 @@
             </fileset>
         </delete>
 
-        <exec executable="phpab" failonerror="true">
+        <exec executable="./phpab.php" failonerror="true">
             <arg value="--var" />
             <arg value="VERSION=${version}" />
             <arg value="--all" />
