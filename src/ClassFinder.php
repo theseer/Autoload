@@ -323,7 +323,8 @@ namespace TheSeer\Autoload {
             $typeMap = array(
                 T_INTERFACE => 'interface',
                 T_CLASS => 'class',
-                T_TRAIT => 'trait'
+                T_TRAIT => 'trait',
+                T_TRAIT_53 => 'trait'
             );
             if (!$this->disableLowercase) {
                 $name = strtolower($name);
