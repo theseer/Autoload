@@ -30,6 +30,7 @@ an autoload require file with the option of creating static require lists as wel
 
 The recommended why to install **phpab** is by downloading a fully self contained PHAR archive:
 
+* [Version 1.14.2](http://phpab.net/phpab-1.14.2.phar) - 169kb
 * [Version 1.14.1](http://phpab.net/phpab-1.14.1.phar) - 169kb
 * [Version 1.14.0](http://phpab.net/phpab-1.14.0.phar) - 169kb
 * [Version 1.13.1](http://phpab.net/phpab-1.13.1.phar) - 170kb
@@ -183,3 +184,61 @@ Used in PHAR Mode only:
 
 Custom variables as defined by passing --var name=value via cli are accessed by pre- and appending ___ to it:
 * ```___name___```         Going to be replaced by the value provided via cli param
+
+
+## Changelog
+
+#####Release 1.14.2
+
+* Fix Trait handling in PHP 5.3
+* Changed file type for phpunit.xml.dist in pear package
+
+#####Release 1.14.1
+
+* Providing --alias in phar mode now sets ___PHAR___ accordingly
+* Updated DirectoryScanner to 1.3.0
+
+#####Release 1.14.0
+
+* Added support for PHP 5.5's classname::class constant to parser
+
+#####Release 1.13.1
+
+* Fix Regression, make composer installs work again
+
+#####Release 1.13.0
+
+* Added alias support to phar mode building
+
+#####Release 1.12.0
+
+* Added composer support (Thanks to HCO)
+* Made parser code more robust to not crash on invalid names
+
+#####Release 1.11.0
+
+* Added support for symlinks (Thanks to Jan Peterson)
+
+#####Release 1.10.3
+
+* Support empty indent
+* Fixed Trait parsing
+
+#####Release 1.10.2
+
+* Fixed mode flag handling on phar mode
+
+#####Release 1.10.1
+
+* Various regression fixes after internal cleanup
+* Use git version info for development checkouts
+
+#####Release 1.10.0
+
+* Added multi directory support
+* Added compression support to phar mode
+* Added support for openssl key signing of phars
+
+#####Older Releases
+
+Please refer to the git history log for details
