@@ -75,7 +75,11 @@ namespace TheSeer\Autoload {
         }
 
         public function getBaseDirectory() {
-            return realpath($this->baseDirectory !== NULL ? $this->baseDirectory : $this->directories[0]);
+            if ($this->baseDirectory !== NULL) {
+                return realpath($this->baseDirectory);
+            }
+            $tmp = $this->getDirectories();
+            return realpath($tmp[0]);
         }
 
         public function setCompatMode($compatMode) {
@@ -295,7 +299,15 @@ namespace TheSeer\Autoload {
         }
 
         public function getDirectories() {
-            return $this->directories;
+            $list = array();
+            foreach($this->directories as $dir) {
+                foreach(glob($dir) as $match) {
+                    if (is_dir($match)) {
+                        $list[] = $match;
+                    }
+                }
+            }
+            return $list;
         }
 
     }
