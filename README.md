@@ -28,7 +28,7 @@ an autoload require file with the option of creating static require lists as wel
 
 ### Executable PHAR
 
-The recommended why to install **phpab** is by downloading a fully self contained PHAR archive:
+The recommended way to install **phpab** is by downloading a fully self contained PHAR archive:
 
 * [Version 1.14.2](http://phpab.net/phpab-1.14.2.phar) - 169kb
 * [Version 1.14.1](http://phpab.net/phpab-1.14.1.phar) - 169kb
