@@ -70,16 +70,22 @@ namespace TheSeer\Autoload {
         }
 
         /**
-         * @return ClassFinder
+         * @return Parser
          */
-        public function getFinder() {
-            return new ClassFinder(
-                $this->config->isStaticMode(),
-                $this->config->isTolerantMode(),
-                !$this->config->isLowercaseMode()
+        public function getParser() {
+            return new Parser(
+                $this->config->isLowercaseMode()
             );
         }
 
+
+        public function getCollector() {
+            return new Collector(
+                $this->getParser(),
+                $this->config->isTolerantMode(),
+                $this->config->isTrustingMode()
+            );
+        }
 
         /**
          * Get instance of DirectoryScanner with filter options applied
@@ -94,7 +100,7 @@ namespace TheSeer\Autoload {
                 $scanner->setExcludes($this->config->getExclude());
             }
             if ($this->config->isFollowSymlinks()) {
-                $scanner->setFollowSymlinks(TRUE);
+                $scanner->setFlag(\FilesystemIterator::FOLLOW_SYMLINKS);
             }
             return $scanner;
         }
@@ -119,19 +125,19 @@ namespace TheSeer\Autoload {
          * @throws \RuntimeException
          * @return \TheSeer\Autoload\AutoloadRenderer|\TheSeer\Autoload\StaticRenderer
          */
-        public function getRenderer(ClassFinder $finder) {
+        public function getRenderer(CollectorResult $result) {
             $isStatic = $this->config->isStaticMode();
             $isPhar   = $this->config->isPharMode();
             $isCompat = $this->config->isCompatMode();
             $isOnce   = $this->config->isOnceMode();
 
             if ($isStatic === TRUE) {
-                $renderer = new StaticRenderer($finder->getMerged());
-                $renderer->setDependencies($finder->getDependencies());
+                $renderer = new StaticRenderer($result->getUnits());
+                $renderer->setDependencies($result->getDependencies());
                 $renderer->setPharMode($isPhar);
                 $renderer->setRequireOnce($isOnce);
             } else {
-                $renderer = new AutoloadRenderer($finder->getMerged());
+                $renderer = new AutoloadRenderer($result->getUnits());
             }
 
             $renderer->setCompat($isCompat);

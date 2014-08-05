@@ -50,11 +50,11 @@ namespace TheSeer\Autoload {
         }
 
         public function run() {
-            $finder = $this->runCollector();
-            if ($finder->getCount() == 0) {
+            $result = $this->runCollector();
+            if (!$result->hasUnits()) {
                 throw new ApplicationException("No classes were found - process aborted.", ApplicationException::NoUnitsFound);
             }
-            $builder = $this->factory->getRenderer($finder);
+            $builder = $this->factory->getRenderer($result);
             $code = $builder->render(file_get_contents($this->config->getTemplate()));
             if ($this->config->isLintMode()) {
                 return $this->runLint($code);
@@ -63,26 +63,21 @@ namespace TheSeer\Autoload {
         }
 
         /**
-         * @return Finder
+         * @return CollectorResult
          */
         private function runCollector() {
-            $finder = $this->factory->getFinder();
-            $basedir = $this->config->getBaseDirectory();
-            $trusting = $this->config->isTrustingMode();
             if ($this->config->isFollowSymlinks()) {
                 $this->logger->log('Following symbolic links is enabled.' . "\n\n");
             }
+            $collector = $this->factory->getCollector();
             foreach ($this->config->getDirectories() as $directory) {
                 $this->logger->log('Scanning directory ' . $directory . "\n");
-                if ($basedir == NULL) {
-                    $basedir = $directory;
-                }
                 $scanner = $this->factory->getScanner()->getIterator($directory);
-                $finder->parseMulti($scanner, !$trusting);
+                $collector->addDirectory($scanner);
                 // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
                 unset($scanner);
             }
-            return $finder;
+            return $collector->getResult();
         }
 
         private function runSaver($code) {

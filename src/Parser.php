@@ -37,8 +37,6 @@
 
 namespace TheSeer\Autoload {
 
-    use \TheSeer\DirectoryScanner\PHPFilterIterator;
-
     // PHP 5.3 compat
     define('T_TRAIT_53', 10355);
     if (!defined('T_TRAIT')) {
@@ -51,96 +49,68 @@ namespace TheSeer\Autoload {
      * @author     Arne Blankerts <arne@blankerts.de>
      * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
      */
-    class ClassFinder {
+    class Parser {
 
-        protected $withDeps;
-        protected $filename;
-        protected $isInTolerantMode = false;
-        protected $disableLowercase = false;
-
-        protected $tokenArray = array();
-
-        protected $inNamespace = '';
-        protected $inClass = '';
-
-        protected $nsBracket = 0;
-        protected $classBracket = 0;
-
-        protected $bracketLevel = 0;
-        protected $aliases = array();
-
-        protected $found = array(
-            'all' => array(),
-            'class' => array(),
-            'trait' => array(),
-            'interface' => array()
+        private $methodMap = array(
+            T_TRAIT      => 'processClass',
+            T_TRAIT_53   => 'processClass',
+            T_CLASS      => 'processClass',
+            T_INTERFACE  => 'processInterface',
+            T_NAMESPACE  => 'processNamespace',
+            T_USE        => 'processUse',
+            '}'          => 'processBracketClose',
+            '{'          => 'processBracketOpen',
+            T_CURLY_OPEN => 'processBracketOpen',
+            T_DOLLAR_OPEN_CURLY_BRACES  => 'processBracketOpen'
         );
-        protected $dependencies = array();
 
-        public function __construct($doDeps = false, $tolerantMode = false, $disableLower = false) {
-            $this->withDeps = $doDeps;
-            $this->isInTolerantMode = $tolerantMode;
-            $this->disableLowercase = $disableLower;
-        }
+        private $typeMap = array(
+            T_INTERFACE => 'interface',
+            T_CLASS => 'class',
+            T_TRAIT => 'trait',
+            T_TRAIT_53 => 'trait'
+        );
 
-        public function getClasses() {
-            return $this->found['class'];
-        }
+        private $caseInsensitive;
 
-        public function getInterfaces() {
-            return $this->found['interface'];
-        }
+        private $tokenArray = array();
 
-        public function getTraits() {
-            return $this->found['trait'];
-        }
+        private $inNamespace = '';
+        private $inUnit = '';
 
-        public function getMerged() {
-            return $this->found['all'];
-        }
+        private $nsBracket = 0;
+        private $classBracket = 0;
 
-        public function getCount() {
-            return count($this->found['all']);
-        }
+        private $bracketLevel = 0;
+        private $aliases = array();
 
-        public function getDependencies() {
-            if (!$this->withDeps) {
-                throw new ClassFinderException('Dependency collection disabled', ClassFinderException::NoDependencies);
-            }
-            return $this->dependencies;
+        private $found = array();
+        private $dependencies = array();
+        private $redeclarations = array();
+
+        public function __construct($caseInsensitive = true) {
+            $this->caseInsensitive = $caseInsensitive;
         }
 
         /**
-         * Parse a given file for defintions of classes and interfaces
+         * Parse a given file for defintions of classes, traits and interfaces
          *
-         * @param string $file Filename of file to process
+         * @param SourceFile $source file to process
          *
-         * @return integer
+         * @return ParseResult
          */
-        public function parseFile($file) {
-            $this->filename = $file;
-            $map = array(
-                T_TRAIT      => 'processClass',
-                T_TRAIT_53   => 'processClass',
-                T_CLASS      => 'processClass',
-                T_INTERFACE  => 'processInterface',
-                T_NAMESPACE  => 'processNamespace',
-                T_USE        => 'processUse',
-                '}'          => 'processBracketClose',
-                '{'          => 'processBracketOpen',
-                T_CURLY_OPEN => 'processBracketOpen',
-                T_DOLLAR_OPEN_CURLY_BRACES  => 'processBracketOpen'
-            );
-
+        public function parse(SourceFile $source) {
+            $this->found = array();
+            $this->redeclarations = array();
             $this->inNamespace = '';
             $this->aliases = array();
             $this->bracketLevel = 0;
-            $this->inClass = '';
+            $this->inUnit = '';
             $this->nsBracket = 0;
             $this->classBracket = 0;
-            $this->tokenArray = token_get_all(file_get_contents($file));
+            $this->tokenArray = $source->getTokens();
             $tokenCount = count($this->tokenArray);
-            $tokList = array_keys($map);
+            $tokList = array_keys($this->methodMap);
             for($t=0; $t<$tokenCount; $t++) {
                 $current = (array)$this->tokenArray[$t];
                 if ($current[0]==T_STRING && $current[1]=='trait' && T_TRAIT==-1) {
@@ -155,17 +125,17 @@ namespace TheSeer\Autoload {
                 if ($this->tokenArray[$t-1][0] == T_DOUBLE_COLON) {
                     continue;
                 }
-                $t = call_user_func(array($this, $map[$current[0]]), $t);
+                $t = call_user_func(array($this, $this->methodMap[$current[0]]), $t);
             }
-            return count($this->found['all']);
+            return new ParseResult($this->found, $this->dependencies, $this->redeclarations);
         }
 
-        protected function processBracketOpen($pos) {
+        private function processBracketOpen($pos) {
             $this->bracketLevel++;
             return $pos + 1;
         }
 
-        protected function processBracketClose($pos) {
+        private function processBracketClose($pos) {
             $this->bracketLevel--;
             if ($this->bracketLevel < $this->nsBracket) {
                 $this->inNamespace = '';
@@ -174,12 +144,12 @@ namespace TheSeer\Autoload {
             }
             if ($this->bracketLevel <= $this->classBracket) {
                 $this->classBracket = 0;
-                $this->inClass = '';
+                $this->inUnit = '';
             }
             return $pos + 1;
         }
 
-        protected function processClass($pos) {
+        private function processClass($pos) {
             $list = array('{');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
@@ -217,43 +187,39 @@ namespace TheSeer\Autoload {
                     }
                     case ',': {
                         if ($mode == 'implements') {
-                            $implementsList[] = $this->resolveDepdencyName($implements);
+                            $implementsList[] = $this->resolveDependencyName($implements);
                             $implements = '';
                         }
                         continue;
                     }
                     default: {
-                        throw new ClassFinderException(sprintf(
-                                "Parse error in file '%s' while trying to process class definition (unexpected token in name).\n\n",
-                                $this->filename
-                            ), ClassFinderException::ParseError
+                        throw new ParserException(sprintf(
+                            "Parse error while trying to process class definition (unexpected token in name)."
+                            ), ParserException::ParseError
                         );
                     }
                 }
             }
             if ($implements != '') {
-                $implementsList[] = $this->resolveDepdencyName($implements);
+                $implementsList[] = $this->resolveDependencyName($implements);
             }
             if ($implementsFound && count($implementsList)==0) {
-                throw new ClassFinderException(sprintf(
-                        "Parse error in file '%s' while trying to process class definition (extends or implements).\n\n",
-                        $this->filename
-                ), ClassFinderException::ParseError
+                throw new ParserException(sprintf(
+                    "Parse error while trying to process class definition (extends or implements)."
+                ), ParserException::ParseError
                 );
             }
-            $classname = $this->registerClass($classname, $stack[0][0]);
-            if ($this->withDeps) {
-                $this->dependencies[$classname] = $implementsList;
-                if ($extendsFound) {
-                    $this->dependencies[$classname][] = $this->resolveDepdencyName($extends);
-                }
+            $classname = $this->registerUnit($classname, $stack[0][0]);
+            $this->dependencies[$classname] = $implementsList;
+            if ($extendsFound) {
+                $this->dependencies[$classname][] = $this->resolveDependencyName($extends);
             }
-            $this->inClass = $classname;
+            $this->inUnit = $classname;
             $this->classBracket = $this->bracketLevel + 1;
             return $pos + $stackSize - 1;
         }
 
-        protected function processInterface($pos) {
+        private function processInterface($pos) {
             $list = array('{');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
@@ -274,32 +240,26 @@ namespace TheSeer\Autoload {
                     }
                     case ',': {
                         if ($mode == 'extends') {
-                            $extendsList[] = $this->resolveDepdencyName($extends);
+                            $extendsList[] = $this->resolveDependencyName($extends);
                             $extends = '';
                         }
                     }
                 }
             }
-            $name = $this->registerClass($name, T_INTERFACE);
-            if ($this->withDeps) {
-                if ($extends != '') {
-                    $extendsList[] = $this->resolveDepdencyName($extends);
-                }
-                $this->dependencies[$name] = $extendsList;
+            $name = $this->registerUnit($name, T_INTERFACE);
+            if ($extends != '') {
+                $extendsList[] = $this->resolveDependencyName($extends);
             }
-            $this->inClass = $name;
+            $this->dependencies[$name] = $extendsList;
+            $this->inUnit = $name;
             return $pos + $stackSize - 1;
         }
 
-        protected function resolveDepdencyName($name) {
-            if (!$this->disableLowercase) {
-                $name = strtolower($name);
-            }
+        private function resolveDependencyName($name) {
             if ($name == '') {
-                throw new ClassFinderException(sprintf(
-                        "Parse error in file '%s' while trying to process class definition (extends or implements).\n\n",
-                        $this->filename
-                    ), ClassFinderException::ParseError
+                throw new ParserException(sprintf(
+                    "Parse error while trying to process class definition (extends or implements)."
+                    ), ParserException::ParseError
                 );
             }
             if ($name[0] == '\\') {
@@ -316,44 +276,32 @@ namespace TheSeer\Autoload {
                     }
                 }
             }
-            return addslashes($name);
-        }
-
-        protected function registerClass($name, $type) {
-            $typeMap = array(
-                T_INTERFACE => 'interface',
-                T_CLASS => 'class',
-                T_TRAIT => 'trait',
-                T_TRAIT_53 => 'trait'
-            );
-            if (!$this->disableLowercase) {
+            if ($this->caseInsensitive) {
                 $name = strtolower($name);
             }
-            if ($name == '' || substr($name, -1) == '\\') {
-                throw new ClassFinderException(sprintf(
-                        "Parse error in file '%s' while trying to process %s definition.\n\n",
-                        $this->filename,
-                        $typeMap[$type]
-                ), ClassFinderException::ParseError
-                );
-            }
-            $name = addslashes($name);
-            if (isset($this->found['all'][$name]) && !$this->canTolerateRedeclaration($name, $this->filename)) {
-                throw new ClassFinderException(sprintf(
-                        "Redeclaration of class, interface or trait '%s' detected\n Original: %s\n Secondary: %s\n\n",
-                        stripslashes($name),
-                        $this->found['all'][$name],
-                        $this->filename
-                    ), ClassFinderException::ClassRedeclaration
-                );
-            }
-            $target = $typeMap[$type];
-            $this->found[$target][$name] = $this->filename;
-            $this->found['all'][$name] = $this->filename;
             return $name;
         }
 
-        protected function processNamespace($pos) {
+        private function registerUnit($name, $type) {
+            if ($name == '' || substr($name, -1) == '\\') {
+                throw new ParserException(sprintf(
+                    "Parse error while trying to process %s definition.",
+                    $this->typeMap[$type]
+                    ), ParserException::ParseError
+                );
+            }
+            if ($this->caseInsensitive) {
+                $name = strtolower($name);
+            }
+            if (in_array($name, $this->found)) {
+                $this->redeclarations[] = $name;
+            } else {
+                $this->found[] = $name;
+            }
+            return $name;
+        }
+
+        private function processNamespace($pos) {
             $list = array(';', '{');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
@@ -373,14 +321,10 @@ namespace TheSeer\Autoload {
             }
             $this->aliases = array();
 
-            if (!$this->disableLowercase) {
-                $this->inNamespace = strtolower($this->inNamespace);
-            }
-
             return $pos + $stackSize - 1;
         }
 
-        protected function processUse($pos) {
+        private function processUse($pos) {
             $list = array(';','(');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
@@ -390,9 +334,6 @@ namespace TheSeer\Autoload {
             }
 
             if ($this->classBracket > 0) {
-                if (!$this->withDeps) {
-                    return $pos + $stackSize -1 ;
-                }
                 // trait use
                 $use = '';
                 for($t=0; $t<$stackSize; $t++) {
@@ -411,7 +352,7 @@ namespace TheSeer\Autoload {
                         }
                         case ';':
                         case ',': {
-                            $this->dependencies[$this->inClass][] = $use;
+                            $this->dependencies[$this->inUnit][] = $use;
                             $use = '';
                             continue;
                         }
@@ -432,10 +373,6 @@ namespace TheSeer\Autoload {
                     switch($current[0]) {
                         case ';':
                         case ',': {
-                            if (!$this->disableLowercase) {
-                                $use = strtolower($use);
-                                $alias = strtolower($alias);
-                            }
                             if ($alias == '') {
                                 $nss = strrpos($use, '\\');
                                 if ($nss !== false) {
@@ -466,7 +403,7 @@ namespace TheSeer\Autoload {
             return $pos + $stackSize - 1;
         }
 
-        protected function getTokensTill($start, $list) {
+        private function getTokensTill($start, $list) {
             $list = (array)$list;
             $stack = array();
             $skip = array(
@@ -488,42 +425,11 @@ namespace TheSeer\Autoload {
             return $stack;
         }
 
-
-        /**
-         * @param string $redeclaredClassName
-         * @param string $redeclaredInFilePath
-         * @return boolean
-         */
-        protected function canTolerateRedeclaration($redeclaredClassName, $redeclaredInFilePath) {
-            return $this->found['all'][$redeclaredClassName] === $redeclaredInFilePath
-            && $this->isInTolerantMode === true;
-        }
-
-        /**
-         * Process multiple files and parse them for classes and interfaces
-         *
-         * @param \Iterator $sources Iterator based list of files (SplFileObject) to parse
-         * @param bool $mimeCheck Enable or disable mimetype check on files
-         *
-         * @return integer
-         */
-        public function parseMulti(\Iterator $sources, $mimeCheck = false) {
-            $worker = $mimeCheck ? new PHPFilterIterator($sources) : $sources;
-            /** @var $file \DirectoryIterator */
-            foreach($worker as $file) {
-                $this->parseFile($file->getPathname());
-            }
-
-            return count($this->found['all']);
-        }
-
     }
 
-    class ClassFinderException extends \Exception {
+    class ParserException extends \Exception {
 
-        const NoDependencies = 1;
-        const ClassRedeclaration = 2;
-        const ParseError = 3;
+        const ParseError = 1;
 
     }
 }
