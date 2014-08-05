@@ -7,20 +7,25 @@ spl_autoload_register(
         static $classes = null;
         if ($classes === null) {
             $classes = array(
-                'foo' => '/test/test.php',
                 'theseer\\autoload\\application' => '/Application.php',
                 'theseer\\autoload\\applicationexception' => '/Application.php',
                 'theseer\\autoload\\autoloadbuilderexception' => '/AutoloadRenderer.php',
                 'theseer\\autoload\\autoloadrenderer' => '/AutoloadRenderer.php',
                 'theseer\\autoload\\classdependencysorter' => '/DependencySorter.php',
                 'theseer\\autoload\\classdependencysorterexception' => '/DependencySorter.php',
-                'theseer\\autoload\\classfinder' => '/ClassFinder.php',
-                'theseer\\autoload\\classfinderexception' => '/ClassFinder.php',
                 'theseer\\autoload\\cli' => '/CLI.php',
+                'theseer\\autoload\\collector' => '/Collector.php',
+                'theseer\\autoload\\collectorexception' => '/Collector.php',
+                'theseer\\autoload\\collectorresult' => '/CollectorResult.php',
+                'theseer\\autoload\\collectorresultexception' => '/CollectorResult.php',
                 'theseer\\autoload\\config' => '/Config.php',
                 'theseer\\autoload\\factory' => '/Factory.php',
                 'theseer\\autoload\\logger' => '/Logger.php',
+                'theseer\\autoload\\parser' => '/Parser.php',
+                'theseer\\autoload\\parseresult' => '/ParseResult.php',
+                'theseer\\autoload\\parserexception' => '/Parser.php',
                 'theseer\\autoload\\pharbuilder' => '/PharBuilder.php',
+                'theseer\\autoload\\sourcefile' => '/SourceFile.php',
                 'theseer\\autoload\\staticrenderer' => '/StaticRenderer.php',
                 'theseer\\autoload\\version' => '/Version.php'
             );
