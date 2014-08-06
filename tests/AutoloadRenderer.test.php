@@ -53,8 +53,8 @@ namespace TheSeer\Autoload\Tests {
 
         public function setUp() {
             $this->classlist = array();
-            $this->classlist['demo1'] = realpath(__DIR__ . '/_data/classfinder/class.php');
-            $this->classlist['demo2'] = realpath(__DIR__ . '/_data/classfinder/class.php');
+            $this->classlist['demo1'] = realpath(__DIR__ . '/_data/parser/class.php');
+            $this->classlist['demo2'] = realpath(__DIR__ . '/_data/parser/class.php');
             $this->template = file_get_contents(__DIR__ . '/_data/templates/default.php.tpl');
         }
 
@@ -65,7 +65,7 @@ namespace TheSeer\Autoload\Tests {
          */
         public function testDefaultRendering() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
-            $expected = "         \$classes = array(\n                'demo1' => '".__DIR__."/_data/classfinder/class.php',\n";
+            $expected = "         \$classes = array(\n                'demo1' => '".__DIR__."/_data/parser/class.php',\n";
             $expected = strtr($expected, '\\', '/');
             $this->assertContains($expected, $ab->render($this->template));
             $expected = "require \$classes[\$cn]";
@@ -80,7 +80,7 @@ namespace TheSeer\Autoload\Tests {
         public function testWindowsLFRendering() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
             $ab->setLineBreak("\r\n");
-            $expected = "_data/classfinder/class.php',\r\n";
+            $expected = "_data/parser/class.php',\r\n";
             $this->assertContains($expected, $ab->render($this->template));
         }
 
@@ -122,7 +122,7 @@ namespace TheSeer\Autoload\Tests {
             $expected = strtr($expected, '\\', '/');
             $this->assertContains($expected, $result);
 
-            $expected = "         \$classes = array(\n                'demo1' => '/tests/_data/classfinder/class.php',\n";
+            $expected = "         \$classes = array(\n                'demo1' => '/tests/_data/parser/class.php',\n";
             $this->assertContains($expected, $result);
         }
 
@@ -145,7 +145,7 @@ namespace TheSeer\Autoload\Tests {
         public function testRelativeSubBaseDirRendering() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
             $ab->setBaseDir(realpath(__DIR__.'/_data/dependency'));
-            $expected = "'demo1' => '/../classfinder/class.php'";
+            $expected = "'demo1' => '/../parser/class.php'";
             $this->assertContains($expected, $ab->render($this->template));
         }
 
