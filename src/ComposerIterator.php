@@ -40,13 +40,15 @@ namespace TheSeer\Autoload {
                     $this->addDirectory($baseDir . '/' . $dir);
                 }
             }
-            if (isset($map['psr-0'])) {
-                foreach($map['psr-0'] as $node => $dir) {
-                    if ($dir === '') {
-                        $this->addDirectory($baseDir);
-                        continue;
+            foreach(array('psr-0', 'psr-4') as $psr) {
+                if (isset($map[$psr])) {
+                    foreach ($map[$psr] as $node => $dir) {
+                        if ($dir === '') {
+                            $this->addDirectory($baseDir);
+                            continue;
+                        }
+                        $this->addDirectory($baseDir . '/' . $dir);
                     }
-                    $this->addDirectory($baseDir . '/' . $dir);
                 }
             }
         }
