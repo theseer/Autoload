@@ -305,6 +305,11 @@ namespace TheSeer\Autoload {
                     if (is_dir($match)) {
                         $list[] = $match;
                     }
+                    if (is_file($dir) && basename($dir) == 'composer.json') {
+                        foreach(new ComposerIterator(new \SplFileInfo($dir)) as $d) {
+                            $list[] = $d;
+                        }
+                    }
                 }
             }
             return $list;

@@ -18,6 +18,8 @@ spl_autoload_register(
                 'theseer\\autoload\\collectorexception' => '/Collector.php',
                 'theseer\\autoload\\collectorresult' => '/CollectorResult.php',
                 'theseer\\autoload\\collectorresultexception' => '/CollectorResult.php',
+                'theseer\\autoload\\composeriterator' => '/ComposerIterator.php',
+                'theseer\\autoload\\composeriteratorexception' => '/ComposerIterator.php',
                 'theseer\\autoload\\config' => '/Config.php',
                 'theseer\\autoload\\factory' => '/Factory.php',
                 'theseer\\autoload\\logger' => '/Logger.php',
