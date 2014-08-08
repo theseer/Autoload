@@ -18,22 +18,22 @@ namespace TheSeer\Autoload {
         /**
          * @var bool
          */
-        private $toleranceMode;
+        private $tolerantMode;
 
         /**
          * @var bool
          */
-        private $mimeCheck;
+        private $paranoidMode;
 
         /**
          * @param Parser $parser
-         * @param bool   $toleranceMode
-         * @param bool   $mimeCheck
+         * @param bool   $tolerantMode
+         * @param bool   $paranoidMode
          */
-        public function __construct(Parser $parser, $toleranceMode = false, $mimeCheck = false) {
+        public function __construct(Parser $parser, $tolerantMode = false, $paranoidMode = false) {
             $this->parser = $parser;
-            $this->toleranceMode = $toleranceMode;
-            $this->mimeCheck = $mimeCheck;
+            $this->tolerantMode = $tolerantMode;
+            $this->paranoidMode = $paranoidMode;
             $this->collectorResult = new CollectorResult();
         }
 
@@ -41,15 +41,15 @@ namespace TheSeer\Autoload {
             return $this->collectorResult;
         }
 
-        public function addDirectory(\Iterator $sources) {
-            $worker = $this->mimeCheck ? new PHPFilterIterator($sources) : $sources;
+        public function processDirectory(\Iterator $sources) {
+            $worker = $this->paranoidMode ? new PHPFilterIterator($sources) : $sources;
             foreach($worker as $file) {
                 try {
                     $parseResult = $this->parser->parse(new SourceFile($file->getRealpath()));
-                    if ($parseResult->hasRedeclarations() && !$this->toleranceMode) {
+                    if ($parseResult->hasRedeclarations() && !$this->tolerantMode) {
                         throw new CollectorException(
                             sprintf(
-                                'The file "%s" conains duplicate (potentially conditional) definitions of the following unit(s): %s',
+                                'The file "%s" contains duplicate (potentially conditional) definitions of the following unit(s): %s',
                                 $file->getRealPath(),
                                 join(', ', $parseResult->getRedeclarations())
                             ),
