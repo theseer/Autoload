@@ -52,7 +52,7 @@ namespace TheSeer\Autoload {
         public function run() {
             $result = $this->runCollector();
             if (!$result->hasUnits()) {
-                throw new ApplicationException("No classes were found - process aborted.", ApplicationException::NoUnitsFound);
+                throw new ApplicationException("No units were found - process aborted.", ApplicationException::NoUnitsFound);
             }
             $builder = $this->factory->getRenderer($result);
             $code = $builder->render(file_get_contents($this->config->getTemplate()));
@@ -73,7 +73,7 @@ namespace TheSeer\Autoload {
             foreach ($this->config->getDirectories() as $directory) {
                 $this->logger->log('Scanning directory ' . $directory . "\n");
                 $scanner = $this->factory->getScanner()->getIterator($directory);
-                $collector->addDirectory($scanner);
+                $collector->processDirectory($scanner);
                 // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
                 unset($scanner);
             }
@@ -120,7 +120,7 @@ namespace TheSeer\Autoload {
         private function loadPharSignatureKey($keyfile) {
             if (!extension_loaded('openssl')) {
                 throw new ApplicationException("Extension for OpenSSL not loaded - cannot sign phar archive - process aborted.",
-                    \ApplicationException::OpenSSLError);
+                    ApplicationException::OpenSSLError);
             }
             $keydata = file_get_contents($keyfile);
             if (strpos($keydata, 'ENCRYPTED') !== FALSE) {
@@ -135,7 +135,7 @@ namespace TheSeer\Autoload {
                 $private = openssl_pkey_get_private($keydata);
             }
             if (!$private) {
-                throw new ApplicationException("Opening private key '$keyfile' failed - process aborted.\n\n", \ApplicationException::OpenSSLError);
+                throw new ApplicationException("Opening private key '$keyfile' failed - process aborted.\n\n", ApplicationException::OpenSSLError);
             }
             return $private;
         }
