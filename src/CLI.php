@@ -102,6 +102,21 @@ namespace TheSeer\Autoload {
                 echo $e->getMessage() . "\n\n";
                 $this->showUsage();
                 exit(CLI::RC_PARAM_ERROR);
+            } catch (CollectorException $e) {
+                switch($e->getCode()) {
+                    case CollectorException::InFileRedeclarationFound:
+                    case CollectorException::RedeclarationFound:
+                    case CollectorException::ParseErrror: {
+                        $message = $e->getMessage();
+                        break;
+                    }
+                    default: {
+                       $message = "Unexpected error in collector process: " . $e->getMessage() . "\n\nPlease report this as a bug.\n\n";
+                    }
+                }
+                $this->showVersion();
+                fwrite(STDERR, $message . "\n\n");
+                exit(CLI::RC_EXEC_ERROR);
             } catch (\Exception $e) {
                 $this->showVersion();
                 fwrite(STDERR, "\nError while processing request:\n - " . $e->getMessage()."\n");

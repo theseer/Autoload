@@ -15,10 +15,10 @@ namespace TheSeer\Autoload {
                 if (isset($this->units[$unit])) {
                     throw new CollectorResultException(
                         sprintf(
-                            'Redeclaration of unit "%s" in file "%s" (first occurance was in file "%s")',
+                            "Redeclaration of trait, interface or class found:\n\n\tUnit name: %s\n\tFirst occurance: %s\n\tRedeclaration: %s",
                             $unit,
-                            $filename,
-                            $this->units[$unit]
+                            $this->units[$unit],
+                            $filename
                         ),
                         CollectorResultException::DuplicateUnitName
                     );

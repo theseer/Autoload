@@ -49,9 +49,9 @@ namespace TheSeer\Autoload {
                     if ($parseResult->hasRedeclarations() && !$this->tolerantMode) {
                         throw new CollectorException(
                             sprintf(
-                                'The file "%s" contains duplicate (potentially conditional) definitions of the following unit(s): %s',
-                                $file->getRealPath(),
-                                join(', ', $parseResult->getRedeclarations())
+                                "Duplicate (potentially conditional) definitions of the following unit(s) found:\n\n\tUnit(s): %s\n\tFile: %s",
+                                join(', ', $parseResult->getRedeclarations()),
+                                $file->getRealPath()
                             ),
                             CollectorException::InFileRedeclarationFound
                         );
@@ -60,7 +60,7 @@ namespace TheSeer\Autoload {
                 } catch(ParserException $e) {
                     throw new CollectorException(
                         sprintf(
-                            'Could not process file "%s" due to parse errors',
+                            "Could not process file '%s' due to parse errors",
                             $file->getRealPath()
                         ),
                         CollectorException::ParseErrror,
