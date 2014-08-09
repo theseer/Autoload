@@ -234,7 +234,7 @@ namespace TheSeer\Autoload {
          */
         protected function showUsage() {
             print <<<EOF
-Usage: phpab [switches] <directory1> [...<directoryN>]
+Usage: phpab [switches] <directory1|/path/to/composer.json> [...<directoryN>]
 
   -i, --include       File pattern to include (default: *.php)
   -e, --exclude       File pattern to exclude
