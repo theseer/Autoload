@@ -5,7 +5,8 @@ an autoload require file with the option of creating static require lists as wel
 
 ## Features
 
-* scan multiple directories recursively in one run, optionally follow symlinks
+* scan multiple directories recursively in one run, optionally follow symlinks, wildcards or based on composer.json
+* Cache scan results
 * Template based autoload code
 * Custom variables for templates
 * Compatibility mode for PHP 5.2 compliant autoloader
@@ -30,6 +31,7 @@ an autoload require file with the option of creating static require lists as wel
 
 The recommended way to install **phpab** is by downloading a fully self contained PHAR archive:
 
+* [Version 1.15.0](http://phpab.net/phpab-1.15.0.phar) - 175kb
 * [Version 1.14.2](http://phpab.net/phpab-1.14.2.phar) - 169kb
 * [Version 1.14.1](http://phpab.net/phpab-1.14.1.phar) - 169kb
 * [Version 1.14.0](http://phpab.net/phpab-1.14.0.phar) - 169kb
@@ -50,38 +52,13 @@ Once it is marked as executable, you can run it directly. For instance:
 
 ```
 [theseer@rikka ~]$ ./phpab.phar -v
-phpab 1.14.1 - Copyright (C) 2009 - 2014 by Arne Blankerts
-```
-
-### Alternative using PEAR
-
-**phpab** can also be installed using the [PEAR Installer](http://pear.php.net/manual/en/guide.users.commandline.cli.php).
-
-The PEAR channel (`pear.netpirates.net`) that is used to distribute **phpab** needs to be registered with the
-local PEAR environment. This can be done automatically if PEAR is configured to auto-discover channels:
-
-```
-[theseer@rikka ~]$ sudo pear config-set auto_discover 1
-```
-
-You are now ready to install the PHP Autoload Builder (phpab):
-
-```
-[theseer@rikka ~]$ sudo pear install pear.netpirates.net/Autoload
-```
-
-This should install phpab along with its dependencies, once completed, you can verify the success as follows:
-
-```
-[theseer@rikka ~]$ phpab -v
-phpab 1.14.1 - Copyright (C) 2009 - 2014 by Arne Blankerts
+phpab 1.15.0 - Copyright (C) 2009 - 2014 by Arne Blankerts
 ```
 
 ## Other Downloads
 
 * [Latest development snapshot](https://github.com/theseer/Autoload/archive/master.zip)</a> (ZIP Archive)
 * [Releases (Source)](https://github.com/theseer/Autoload/tags)
-* [Pear Packages](http://pear.netpirates.net/)
 
 ## Usage
 ```
@@ -187,6 +164,14 @@ Custom variables as defined by passing --var name=value via cli are accessed by 
 
 
 ## Changelog
+
+#####Release 1.15.0
+
+* Added support for composer.json parsing
+* Added (optional) caching
+* Added explicit wildcard support for directory name matching
+* Changed error messages on unit redeclarations
+* Some code cleanup and refactoring of internals
 
 #####Release 1.14.2
 
