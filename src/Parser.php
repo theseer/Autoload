@@ -49,7 +49,7 @@ namespace TheSeer\Autoload {
      * @author     Arne Blankerts <arne@blankerts.de>
      * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
      */
-    class Parser {
+    class Parser implements ParserInterface {
 
         private $methodMap = array(
             T_TRAIT      => 'processClass',

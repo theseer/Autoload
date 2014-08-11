@@ -64,6 +64,7 @@ namespace TheSeer\Autoload {
         private $pharAll = false;
         private $pharAliasName = '';
         private $followSymlinks = false;
+        private $cacheFilename;
 
         public function __construct(Array $directories) {
             $this->directories = $directories;
@@ -313,6 +314,18 @@ namespace TheSeer\Autoload {
                 }
             }
             return $list;
+        }
+
+        public function setCacheFile($filename) {
+            $this->cacheFilename = $filename;
+        }
+
+        public function isCacheEnabled() {
+            return $this->cacheFilename !== NULL;
+        }
+
+        public function getCacheFile() {
+            return $this->cacheFilename;
         }
 
     }

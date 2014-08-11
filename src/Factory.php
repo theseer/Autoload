@@ -45,6 +45,11 @@ namespace TheSeer\Autoload {
         private $config;
 
         /**
+         * @var Cache
+         */
+        private $cache;
+
+        /**
          * @param \TheSeer\Autoload\Config $config
          */
         public function setConfig(Config $config) {
@@ -73,11 +78,33 @@ namespace TheSeer\Autoload {
          * @return Parser
          */
         public function getParser() {
-            return new Parser(
+            $parser = new Parser(
                 $this->config->isLowercaseMode()
+            );
+            if (!$this->config->isCacheEnabled()) {
+                return $parser;
+            }
+            return new CachingParser(
+                $this->getCache(),
+                $parser
             );
         }
 
+        /**
+         * @return Cache
+         */
+        public function getCache() {
+            if (!$this->cache instanceof Cache) {
+                $fname = $this->config->getCacheFile();
+                if (file_exists($fname)) {
+                    $data = unserialize(file_get_contents($fname));
+                } else {
+                    $data = array();
+                }
+                $this->cache = new Cache($data);
+            }
+            return $this->cache;
+        }
 
         public function getCollector() {
             return new Collector(

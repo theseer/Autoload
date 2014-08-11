@@ -6,7 +6,7 @@ namespace TheSeer\Autoload {
     class Collector {
 
         /**
-         * @var Parser
+         * @var ParserInterface
          */
         private $parser;
 
@@ -26,11 +26,11 @@ namespace TheSeer\Autoload {
         private $paranoidMode;
 
         /**
-         * @param Parser $parser
+         * @param ParserInterface $parser
          * @param bool   $tolerantMode
          * @param bool   $paranoidMode
          */
-        public function __construct(Parser $parser, $tolerantMode = false, $paranoidMode = false) {
+        public function __construct(ParserInterface $parser, $tolerantMode = false, $paranoidMode = false) {
             $this->parser = $parser;
             $this->tolerantMode = $tolerantMode;
             $this->paranoidMode = $paranoidMode;

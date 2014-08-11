@@ -54,6 +54,9 @@ namespace TheSeer\Autoload {
             if (!$result->hasUnits()) {
                 throw new ApplicationException("No units were found - process aborted.", ApplicationException::NoUnitsFound);
             }
+            if ($this->config->isCacheEnabled()) {
+                $this->factory->getCache()->persist($this->config->getCacheFile());
+            }
             $builder = $this->factory->getRenderer($result);
             $code = $builder->render(file_get_contents($this->config->getTemplate()));
             if ($this->config->isLintMode()) {

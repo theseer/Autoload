@@ -162,6 +162,10 @@ namespace TheSeer\Autoload {
                 );
             }
 
+            if ($input->getOption('cache')->value) {
+                $config->setCacheFile($input->getOption('cache')->value);
+            }
+
             if ($basedir = $input->getOption('basedir')->value) {
                 $config->setBaseDirectory($basedir);
             }
@@ -255,6 +259,8 @@ Usage: phpab [switches] <directory1|/path/to/composer.json> [...<directoryN>]
 
   -q, --quiet         Quiet mode, do not output any processing errors or information
 
+      --cache <file>  Enable caching and set filename to use for cache storage
+
       --follow        Enables following symbolic links (not compatible with phar mode)
       --format        Dateformat string for timestamp
       --linebreak     Linebreak style (CR, CRLF or LF, default: LF)
@@ -293,6 +299,11 @@ EOF;
             $this->helpOption = $input->registerOption( new \ezcConsoleOption( 'h', 'help' ) );
             $this->helpOption->isHelpOption = TRUE;
             $this->helpOption->shorthelp    = 'Prints this usage information';
+
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'cache', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                'Enable cache and set cache filename'
+            ));
 
             $this->outputOption = $input->registerOption( new \ezcConsoleOption(
                 'o', 'output', \ezcConsoleInput::TYPE_STRING, 'STDOUT', FALSE,
