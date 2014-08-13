@@ -31,13 +31,19 @@ an autoload require file with the option of creating static require lists as wel
 
 The recommended way to install **phpab** is by downloading a fully self contained PHAR archive:
 
+* [Version 1.15.1](http://phpab.net/phpab-1.15.1.phar) - 175kb
 * [Version 1.15.0](http://phpab.net/phpab-1.15.0.phar) - 175kb
+
 * [Version 1.14.2](http://phpab.net/phpab-1.14.2.phar) - 169kb
 * [Version 1.14.1](http://phpab.net/phpab-1.14.1.phar) - 169kb
 * [Version 1.14.0](http://phpab.net/phpab-1.14.0.phar) - 169kb
+
 * [Version 1.13.1](http://phpab.net/phpab-1.13.1.phar) - 170kb
+
 * [Version 1.12.0](http://phpab.net/phpab-1.12.0.phar) - 170kb
+
 * [Version 1.11.0](http://phpab.net/phpab-1.11.0.phar) - 170kb
+
 * [Version 1.10.3](http://phpab.net/phpab-1.10.3.phar) - 170kb
 * [Version 1.10.2](http://phpab.net/phpab-1.10.2.phar) - 169kb
 * [Version 1.10.1](http://phpab.net/phpab-1.10.1.phar) - 185kb
@@ -164,6 +170,10 @@ Custom variables as defined by passing --var name=value via cli are accessed by 
 
 
 ## Changelog
+
+#####Release 1.15.1
+
+* Fix regression for sorted static require lists
 
 #####Release 1.15.0
 
