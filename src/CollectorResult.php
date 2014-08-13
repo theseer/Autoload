@@ -23,7 +23,6 @@ namespace TheSeer\Autoload {
                         CollectorResultException::DuplicateUnitName
                     );
                 }
-                $unit = addslashes($unit);
                 $this->units[$unit] = $filename;
                 $this->dependencies[$unit] = $result->getDependenciesForUnit($unit);
             }

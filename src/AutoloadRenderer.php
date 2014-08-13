@@ -242,7 +242,7 @@ namespace TheSeer\Autoload {
             $entries = array();
             foreach($this->classes as $class => $file) {
                 $fname = $this->resolvePath($file);
-                $entries[] = "'$class' => '$fname'";
+                $entries[] = "'". addslashes($class). "' => '$fname'";
             }
 
             $baseDir = '';
