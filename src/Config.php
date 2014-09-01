@@ -45,6 +45,8 @@ namespace TheSeer\Autoload {
         private $pharMode = FALSE;
         private $include = array('*.php');
         private $exclude = array();
+        private $whitelist = array('*');
+        private $blacklist = array();
         private $baseDirectory = NULL;
         private $template;
         private $linebreak = "\n";
@@ -113,6 +115,34 @@ namespace TheSeer\Autoload {
 
         public function getInclude() {
             return $this->include;
+        }
+
+        /**
+         * @return array
+         */
+        public function getBlacklist() {
+            return $this->blacklist;
+        }
+
+        /**
+         * @param array $blacklist
+         */
+        public function setBlacklist($blacklist) {
+            $this->blacklist = $blacklist;
+        }
+
+        /**
+         * @return array
+         */
+        public function getWhitelist() {
+            return $this->whitelist;
+        }
+
+        /**
+         * @param array $whitelist
+         */
+        public function setWhitelist($whitelist) {
+            $this->whitelist = $whitelist;
         }
 
         public function setIndent($indent) {

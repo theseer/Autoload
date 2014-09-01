@@ -182,6 +182,19 @@ namespace TheSeer\Autoload {
                 $config->setExclude($exclude);
             }
 
+            $whitelist = $input->getOption('whitelist')->value;
+            if (!is_array($whitelist)) {
+                $whitelist = array($whitelist);
+            }
+            $config->setWhitelist($whitelist);
+
+            if ($blacklist = $input->getOption('blacklist')->value) {
+                if (!is_array($blacklist)) {
+                    $blacklist = array($blacklist);
+                }
+                $config->setBlacklist($blacklist);
+            }
+
             if ($input->getOption('static')->value) {
                 $config->setStaticMode(TRUE);
             }
@@ -242,6 +255,9 @@ Usage: phpab [switches] <directory1|/path/to/composer.json> [...<directoryN>]
 
   -i, --include       File pattern to include (default: *.php)
   -e, --exclude       File pattern to exclude
+
+      --blacklist     Blacklist classname or namespace (wildcards supported)
+      --whitelist     Whitelist classname or namespace (wildcards supported)
 
   -b, --basedir       Basedir for filepaths
   -t, --template      Path to code template to use
@@ -357,6 +373,16 @@ EOF;
             $input->registerOption( new \ezcConsoleOption(
                 'i', 'include', \ezcConsoleInput::TYPE_STRING, '*.php', TRUE,
                 'File pattern to include (default: *.php)'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'blacklist', \ezcConsoleInput::TYPE_STRING, NULL, TRUE,
+                'Name pattern to exclude'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                '', 'whitelist', \ezcConsoleInput::TYPE_STRING, '*', TRUE,
+                'Name pattern to include (default: *)'
             ));
 
             $input->registerOption( new \ezcConsoleOption(

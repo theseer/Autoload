@@ -110,7 +110,9 @@ namespace TheSeer\Autoload {
             return new Collector(
                 $this->getParser(),
                 $this->config->isTolerantMode(),
-                $this->config->isTrustingMode()
+                $this->config->isTrustingMode(),
+                $this->config->getWhitelist(),
+                $this->config->getBlacklist()
             );
         }
 

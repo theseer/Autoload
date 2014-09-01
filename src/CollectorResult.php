@@ -3,8 +3,30 @@ namespace TheSeer\Autoload {
 
     class CollectorResult {
 
+        /**
+         * @var array
+         */
+        private $whitelist;
+
+        /**
+         * @var array
+         */
+        private $blacklist;
+
+        /**
+         * @var array
+         */
         private $units = array();
+
+        /**
+         * @var array
+         */
         private $dependencies = array();
+
+        public function __construct(array $whitelist, array $blacklist) {
+            $this->whitelist = $whitelist;
+            $this->blacklist = $blacklist;
+        }
 
         public function addParseResult(\SplFileInfo $file, ParseResult $result) {
             if (!$result->hasUnits()) {
@@ -12,6 +34,9 @@ namespace TheSeer\Autoload {
             }
             $filename = $file->getRealPath();
             foreach($result->getUnits() as $unit) {
+                if (!$this->accept($unit)) {
+                    continue;
+                }
                 if (isset($this->units[$unit])) {
                     throw new CollectorResultException(
                         sprintf(
@@ -26,7 +51,6 @@ namespace TheSeer\Autoload {
                 $this->units[$unit] = $filename;
                 $this->dependencies[$unit] = $result->getDependenciesForUnit($unit);
             }
-
         }
 
         public function hasUnits() {
@@ -46,6 +70,26 @@ namespace TheSeer\Autoload {
         public function getUnits() {
             return $this->units;
         }
+
+        /**
+         * @param string $unit
+         *
+         * @return bool
+         */
+        private function accept($unit) {
+            foreach($this->blacklist as $entry) {
+                if (fnmatch($entry, $unit)) {
+                    return false;
+                }
+            }
+            foreach($this->whitelist as $entry) {
+                if (fnmatch($entry, $unit)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 
     class CollectorResultException extends \Exception {

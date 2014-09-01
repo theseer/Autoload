@@ -30,11 +30,11 @@ namespace TheSeer\Autoload {
          * @param bool   $tolerantMode
          * @param bool   $paranoidMode
          */
-        public function __construct(ParserInterface $parser, $tolerantMode = false, $paranoidMode = false) {
+        public function __construct(ParserInterface $parser, $tolerantMode = false, $paranoidMode = false, Array $whitelist = array('*'), Array $blacklist = array()) {
             $this->parser = $parser;
             $this->tolerantMode = $tolerantMode;
             $this->paranoidMode = $paranoidMode;
-            $this->collectorResult = new CollectorResult();
+            $this->collectorResult = new CollectorResult($whitelist, $blacklist);
         }
 
         public function getResult() {
