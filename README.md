@@ -70,7 +70,7 @@ phpab 1.16.0 - Copyright (C) 2009 - 2014 by Arne Blankerts
 
 ## Usage
 ```
-Usage: phpab [switches] <directory1|/path/to/composer.json> [...<directoryN>]
+phpab [switches] <directory1|/path/to/composer.json> [...<directoryN>]
 
   -i, --include       File pattern to include (default: *.php)
   -e, --exclude       File pattern to exclude
@@ -117,6 +117,7 @@ Usage: phpab [switches] <directory1|/path/to/composer.json> [...<directoryN>]
 
   -h, --help          Prints this usage information
   -v, --version       Prints the version and exits
+```
 
 ### Usage Examples
 
