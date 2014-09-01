@@ -75,6 +75,8 @@ namespace TheSeer\Autoload {
 
             try {
 
+                $this->preBootstrap();
+
                 $input = $this->setupInput();
                 $input->process();
 
@@ -97,6 +99,12 @@ namespace TheSeer\Autoload {
                 $rc = $this->factory->getApplication()->run();
                 exit($rc);
 
+            } catch (CLIEnvironmentException $e) {
+                $this->showVersion();
+                fwrite(STDERR, 'Sorry, but your PHP environment is currently not able to run phpab due to');
+                fwrite(STDERR, "\nthe following issue(s):\n\n" . $e->getMessage() . "\n\n");
+                fwrite(STDERR, "Please adjust your PHP configuration and try again.\n\n");
+                exit(CLI::RC_EXEC_ERROR);
             } catch (\ezcConsoleException $e) {
                 $this->showVersion();
                 echo $e->getMessage() . "\n\n";
@@ -169,6 +177,7 @@ namespace TheSeer\Autoload {
             if ($basedir = $input->getOption('basedir')->value) {
                 $config->setBaseDirectory($basedir);
             }
+
             $include = $input->getOption('include')->value;
             if (!is_array($include)) {
                 $include = array($include);
@@ -492,6 +501,35 @@ EOF;
 
             return $input;
         }
+
+        private function preBootstrap() {
+            $required = array('tokenizer', 'fileinfo');
+            $missing = array();
+            foreach($required as $test) {
+                if (!extension_loaded($test)) {
+                    $missing[] = sprintf('ext/%s not installed/enabled', $test);
+                }
+            }
+            if (count($missing)) {
+                throw new CLIEnvironmentException(
+                    join("\n", $missing),
+                    CLIEnvironmentException::ExtensionMissing
+                );
+            }
+
+            if (extension_loaded('xdebug')) {
+                ini_set('xdebug.scream', 0);
+                ini_set('xdebug.max_nesting_level', 8192);
+                ini_set('xdebug.show_exception_trace', 0);
+                xdebug_disable();
+            }
+
+        }
+
+    }
+
+    class CLIEnvironmentException extends \Exception {
+        const ExtensionMissing = 1;
     }
 }
 
