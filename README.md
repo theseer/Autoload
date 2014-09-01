@@ -171,6 +171,11 @@ Custom variables as defined by passing --var name=value via cli are accessed by 
 
 ## Changelog
 
+#####Releaes 1.16.0
+
+* Added whitelist/blacklist filter for classnames/namespaces
+* Ensure ext/fileinfo is loaded
+
 #####Release 1.15.1
 
 * Fix regression for sorted static require lists
