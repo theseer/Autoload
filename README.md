@@ -31,6 +31,8 @@ an autoload require file with the option of creating static require lists as wel
 
 The recommended way to install **phpab** is by downloading a fully self contained PHAR archive:
 
+* [Version 1.16.0](http://phpab.net/phpab-1.16.0.phar) - 176kb
+
 * [Version 1.15.1](http://phpab.net/phpab-1.15.1.phar) - 175kb
 * [Version 1.15.0](http://phpab.net/phpab-1.15.0.phar) - 175kb
 
@@ -58,7 +60,7 @@ Once it is marked as executable, you can run it directly. For instance:
 
 ```
 [theseer@rikka ~]$ ./phpab.phar -v
-phpab 1.15.0 - Copyright (C) 2009 - 2014 by Arne Blankerts
+phpab 1.16.0 - Copyright (C) 2009 - 2014 by Arne Blankerts
 ```
 
 ## Other Downloads
@@ -68,47 +70,54 @@ phpab 1.15.0 - Copyright (C) 2009 - 2014 by Arne Blankerts
 
 ## Usage
 ```
-phpab [switches] <directory> [... <directoryN>]
+Usage: phpab [switches] <directory1|/path/to/composer.json> [...<directoryN>]
 
-    -i, --include    File pattern to include (default: *.php)
-    -e, --exclude    File pattern to exclude
+  -i, --include       File pattern to include (default: *.php)
+  -e, --exclude       File pattern to exclude
 
-    -b, --basedir    Basedir for filepaths
-    -t, --template   Path to code template to use
+      --blacklist     Blacklist classname or namespace (wildcards supported)
+      --whitelist     Whitelist classname or namespace (wildcards supported)
 
-    -o, --output     Output file for generated code (default: STDOUT)
-    -p, --phar       Create a phar archive (requires -o )
-        --bzip2      Compress phar archive using bzip2 (bzip2 required)
-        --gz         Compress phar archive using gzip (gzip required)
-        --key        OpenSSL key file to use for signing phar archive (openssl required)
+  -b, --basedir       Basedir for filepaths
+  -t, --template      Path to code template to use
 
-    -c, --compat     Generate PHP 5.2 compatible code
-    -s, --static     Generate a static require file
+  -o, --output        Output file for generated code (default: STDOUT)
+  -p, --phar          Create a phar archive (requires -o )
+      --bzip2         Compress phar archive using bzip2 (requires -p) (bzip2 required)
+      --gz            Compress phar archive using gzip (requires -p) (gzip required)
+      --key           OpenSSL key file to use for signing phar archive (requires -p) (openssl required)
 
-    -n, --nolower    Do not lowercase classnames for case insensitivity
+  -c, --compat        Generate PHP 5.2 compatible code
+  -s, --static        Generate a static require file
 
-        --follow     Enables following symbolic links (not compatible with phar mode)
-        --format     Dateformat string for timestamp
-        --linebreak  Linebreak style (CR, CR/LF or LF)
-        --indent     String used for indenting (default: 3 spaces)
+  -n, --nolower       Do not lowercase classnames for case insensitivity
 
-        --tolerant   Ignore Class Redeclarations in the same file
-        --once       Use require_once instead of require when creating a static require file
+  -q, --quiet         Quiet mode, do not output any processing errors or information
 
-        --all        Include all files in given directory when creating a phar
-        --alias      Specify explicit internal phar alias filename (default: output filename)
+      --cache <file>  Enable caching and set filename to use for cache storage
 
-        --trusting   Do not check mimetype of files prior to parsing (default)
-        --paranoid   Do check mimetype of files prior to parsing
+      --follow        Enables following symbolic links (not compatible with phar mode)
+      --format        Dateformat string for timestamp
+      --linebreak     Linebreak style (CR, CRLF or LF, default: LF)
+      --indent        String used for indenting or number of spaces (default: 16 (compat 12) spaces)
 
-        --var name=foo  Assign value 'foo' to variable 'name' to be used in (custom) templates
+      --tolerant      Ignore Class Redeclarations in the same file
+      --once          Use require_once instead of require when creating a static require file
 
-        --lint       Run lint on generated code and exit
-        --lint-php   PHP binary to use for linting (default: /usr/bin/php or c:\php\php.exe)
+      --all           Include all files in given directory when creating a phar
+      --alias         Specify explicit internal phar alias filename (default: output filename)
 
-    -h, --help       Prints this usage information
-    -v, --version    Prints the version and exits
-```
+      --trusting      Do not check mimetype of files prior to parsing (default)
+      --paranoid      Do check mimetype of files prior to parsing
+
+      --var name=foo  Assign value 'foo' to variable 'name' to be used in (custom) templates
+
+      --lint          Run lint on generated code and exit
+      --lint-php      PHP binary to use for linting (default: /usr/bin/php or c:\php\php.exe)
+
+  -h, --help          Prints this usage information
+  -v, --version       Prints the version and exits
+
 ### Usage Examples
 
     [theseer@rikka ~]$ phpab -o src/autoload.inc.php src
