@@ -44,6 +44,10 @@
 
 define('PHPAB_VERSION', '%development%');
 
+if (!ini_get('date.timezone')) {
+     ini_set('date.timezone', 'UTC');
+}
+
 require 'TheSeer/DirectoryScanner/autoload.php';
 require 'ezc/Base/base.php';
 
