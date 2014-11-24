@@ -47,17 +47,7 @@ define('PHPAB_VERSION', '%development%');
 if (!ini_get('date.timezone')) {
      ini_set('date.timezone', 'UTC');
 }
-
-require 'TheSeer/DirectoryScanner/autoload.php';
-require 'ezc/Base/base.php';
-
-if (strpos(PHPAB_VERSION, '%development') === 0) {
-    require __DIR__ . '/src/autoload.php';
-} else {
-    require 'TheSeer/Autoload/autoload.php';
-}
-spl_autoload_register(array('\ezcBase','autoload'));
-
+require __DIR__ . '/src/autoload.php';
 
 $factory = new \TheSeer\Autoload\Factory();
 $factory->getCLI()->run();

@@ -9,6 +9,11 @@
         "phpunit/phpunit": "*",
         "squizlabs/php_codesniffer": "*"
     },
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    },
     "license": "BSD License",
     "authors": [
         {

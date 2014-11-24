@@ -84,12 +84,13 @@
         <exec executable="phpab">
             <arg value="--output"/>
             <arg path="src/autoload.php"/>
+            <arg value="--basedir"/>
             <arg path="src"/>
+            <arg path="composer.json"/>
         </exec>
     </target>
 
-    <target name="phar"
-            description="Create PHAR archive of Autoload Builder and its dependencies">
+    <target name="phar" description="Create PHAR archive of Autoload Builder and its dependencies">
 
         <delete dir="${basedir}/build/phar/_tmp"/>
         <mkdir dir="${basedir}/build/phar/_tmp"/>
@@ -102,14 +103,16 @@
 
         <exec executable="bash" outputproperty="version">
             <arg value="-c" />
-            <arg value="${basedir}/phpab.php --version | awk 'BEGIN { ORS = &quot;&quot;; } {print $2}'" />
+            <arg value="git describe --tags --dirty" />
         </exec>
 
-        <untar dest="${basedir}/build/phar/_tmp" compression="gzip">
-            <fileset dir="${basedir}/build/phar/dependencies">
-                <include name="**/*.tgz"/>
+        <copy todir="${basedir}/build/phar/_tmp/vendor">
+            <fileset dir="${basedir}/vendor">
+                <include name="theseer/directoryscanner/src/**" />
+                <include name="zetacomponents/console-tools/src/**" />
+                <include name="zetacomponents/base/src/**" />
             </fileset>
-        </untar>
+        </copy>
 
         <copy todir="${basedir}/build/phar/_tmp/phpab">
             <fileset dir="${basedir}/src"/>
@@ -117,17 +120,20 @@
 
         <delete>
             <fileset dir="${basedir}/build/phar/_tmp">
-                <include name="**/autoload.php" />
-                <include name="**/Autoload.php" />
-                <include name="**/Autoload.php.in" />
-                <include name="**/package.sig" />
-                <include name="**/package.xml" />
-                <include name="**/docs/**" />
-                <include name="**/design/**" />
+                <include name="**/autoload.php"/>
+                <include name="**/Autoload.php"/>
+                <include name="**/Autoload.php.in"/>
+                <include name="**/package.sig"/>
+                <include name="**/package.xml"/>
+                <include name="**/composer.json"/>
+                <include name="**/*.md"/>
+                <include name="**/docs/**"/>
+                <include name="**/design/**"/>
+                <include name="**/grammar/**"/>
             </fileset>
         </delete>
 
-        <exec executable="./phpab.php" failonerror="true">
+        <exec executable="phpab" failonerror="true">
             <arg value="--var" />
             <arg value="VERSION=${version}" />
             <arg value="--all" />
