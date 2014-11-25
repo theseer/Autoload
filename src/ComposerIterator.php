@@ -11,7 +11,7 @@ namespace TheSeer\Autoload {
         private $pos = 0;
 
         public function __construct(\SplFileInfo $composerFile) {
-            if (!$composerFile->isFile() && $composerFile->isReadable()) {
+            if (!$composerFile->isFile() || !$composerFile->isReadable()) {
                 throw new ComposerIteratorException(
                     sprintf('Composer file "%s" not found or not readable', $composerFile->getPathname()),
                     ComposerIteratorException::InvalidComposerJsonFile
@@ -29,8 +29,6 @@ namespace TheSeer\Autoload {
             }
             if (isset($composerData['autoload'])) {
                 $this->processAutoload($composerDir, $composerData['autoload']);
-            } else {
-                $this->addDirectory($composerDir);
             }
         }
 
