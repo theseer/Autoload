@@ -31,6 +31,7 @@ an autoload require file with the option of creating static require lists as wel
 
 The recommended way to install **phpab** is by downloading a fully self contained PHAR archive:
 
+* [Version 1.16.1](http://phpab.net/phpab-1.16.1.phar) - 196kb
 * [Version 1.16.0](http://phpab.net/phpab-1.16.0.phar) - 176kb
 
 * [Version 1.15.1](http://phpab.net/phpab-1.15.1.phar) - 175kb
@@ -60,7 +61,7 @@ Once it is marked as executable, you can run it directly. For instance:
 
 ```
 [theseer@rikka ~]$ ./phpab.phar -v
-phpab 1.16.0 - Copyright (C) 2009 - 2014 by Arne Blankerts
+phpab 1.16.1 - Copyright (C) 2009 - 2014 by Arne Blankerts
 ```
 
 ## Other Downloads
@@ -121,18 +122,21 @@ phpab [switches] <directory1|/path/to/composer.json> [...<directoryN>]
 
 ### Usage Examples
 
+    [theseer@rikka ~]$ phpab -o src/autoload.php -b src composer.json
+
     [theseer@rikka ~]$ phpab -o src/autoload.inc.php src
 
     [theseer@rikka ~]$ phpab -c -o src/autoload.inc.php src
 
     [theseer@rikka ~]$ phpab -o src/core/autoload.inc.php -b src src
 
+    [theseer@rikka ~]$ phpab -p -o framework.phar -b src composer.json
+
     [theseer@rikka ~]$ phpab -p -o framework.phar framework/src
 
     [theseer@rikka ~]$ phpab -p -o framework.phar --bzip2 --key sign.key framework/src
 
     [theseer@rikka ~]$ phpab -b . --tolerant -o zf1_autoload.php -e '*/Test/*' Zend
-
 
 ### Automation
 
@@ -180,6 +184,11 @@ Custom variables as defined by passing --var name=value via cli are accessed by 
 
 
 ## Changelog
+
+#####Release 1.16.1
+* Fix minor issues with composer.json handling
+* define date.timezone to avoid warning (in buildystem) [Remi]
+* Pear installation now deploys as phar
 
 #####Releaes 1.16.0
 
