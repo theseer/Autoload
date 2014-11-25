@@ -90,6 +90,38 @@
         </exec>
     </target>
 
+
+    <target name="pear" depends="phar" description="Create a PEAR archive">
+        <delete dir="${basedir}/build/pear/_tmp"/>
+        <mkdir dir="${basedir}/build/pear/_tmp"/>
+
+        <exec executable="bash" outputproperty="version">
+            <arg value="-c" />
+            <arg value="git describe --tags --dirty" />
+        </exec>
+
+        <move file="${basedir}/build/phar/phpab-${version}.phar" tofile="${basedir}/build/pear/_tmp/phpab.phar" />
+
+        <copy todir="${basedir}/build/pear/_tmp">
+            <fileset dir="${basedir}">
+                <include name="phpab.bat"/>
+                <include name="package.xml" />
+            </fileset>
+        </copy>
+
+        <replace file="${basedir}/build/pear/_tmp/package.xml" token="%release%" value="${version}" />
+
+        <exec executable="bash" dir="${basedir}/build/pear/_tmp">
+            <arg value="-c" />
+            <arg value="pear package" />
+        </exec>
+
+        <move file="${basedir}/build/pear/_tmp/Autoload-${version}.tgz" todir="${basedir}/build/pear" />
+
+        <delete dir="${basedir}/build/pear/_tmp"/>
+
+    </target>
+
     <target name="phar" description="Create PHAR archive of Autoload Builder and its dependencies">
 
         <delete dir="${basedir}/build/phar/_tmp"/>
