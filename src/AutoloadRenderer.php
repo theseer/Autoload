@@ -227,10 +227,14 @@ namespace TheSeer\Autoload {
                 return str_replace('\\', '/', $fname);
             }
             $rel = join('/', array_slice($filedir, $pos));
+            if (!empty($rel)) {
+                $rel .= '/';
+            }
             if ($pos<count($basedir)) {
                 $rel = str_repeat('../', count($basedir)-$pos) . $rel;
             }
-            return '/' . (!empty($rel) ? $rel : '') . basename($fname);
+            var_dump($fname,  '/' . (!empty($rel) ? $rel : '') . basename($fname));
+            return '/' . $rel . basename($fname);
         }
 
         /**
