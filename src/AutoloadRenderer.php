@@ -233,7 +233,6 @@ namespace TheSeer\Autoload {
             if ($pos<count($basedir)) {
                 $rel = str_repeat('../', count($basedir)-$pos) . $rel;
             }
-            var_dump($fname,  '/' . (!empty($rel) ? $rel : '') . basename($fname));
             return '/' . $rel . basename($fname);
         }
 
