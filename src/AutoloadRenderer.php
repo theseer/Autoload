@@ -217,7 +217,7 @@ namespace TheSeer\Autoload {
             $filedir = explode(DIRECTORY_SEPARATOR, dirname(realpath($fname)));
             $pos = 0;
             $max = count($basedir);
-            while ($filedir[$pos] == $basedir[$pos]) {
+            while (isset($filedir[$pos]) && $filedir[$pos] == $basedir[$pos]) {
                 $pos++;
                 if ($pos == $max) {
                     break;
@@ -227,10 +227,13 @@ namespace TheSeer\Autoload {
                 return str_replace('\\', '/', $fname);
             }
             $rel = join('/', array_slice($filedir, $pos));
+            if (!empty($rel)) {
+                $rel .= '/';
+            }
             if ($pos<count($basedir)) {
                 $rel = str_repeat('../', count($basedir)-$pos) . $rel;
             }
-            return '/' . (!empty($rel) ? $rel . '/' : '') . basename($fname);
+            return '/' . $rel . basename($fname);
         }
 
         /**
