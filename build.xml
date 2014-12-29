@@ -13,6 +13,9 @@
                 <include name="**/*.phar" />
             </fileset>
         </delete>
+
+        <mkdir dir="${basedir}/build/logs"/>
+        <mkdir dir="${basedir}/build/pdepend"/>
     </target>
 
     <!-- Run unit tests and generate junit.xml and clover.xml -->
@@ -27,7 +30,6 @@
             <antcall target="phpmd"/>
             <antcall target="phpcpd"/>
             <antcall target="phpcs"/>
-            <antcall target="phpdoc"/>
         </parallel>
     </target>
 
@@ -65,21 +67,6 @@
         </exec>
     </target>
 
-    <!-- Generate API documentation -->
-    <target name="phpdoc">
-        <exec executable="phpdoc">
-            <arg line="-d src -t build/api"/>
-        </exec>
-    </target>
-
-    <target name="phpcb">
-        <exec executable="phpcb">
-            <arg line="--log    ${basedir}/build/logs
-              --source ${basedir}/src
-              --output ${basedir}/build/code-browser"/>
-        </exec>
-    </target>
-
     <target name="phpab" description="Generate autoloader scripts">
         <exec executable="phpab">
             <arg value="--output"/>
@@ -89,7 +76,6 @@
             <arg path="composer.json"/>
         </exec>
     </target>
-
 
     <target name="pear" depends="phar" description="Create a PEAR archive">
         <delete dir="${basedir}/build/pear/_tmp"/>
@@ -184,5 +170,5 @@
         <delete dir="${basedir}/build/phar/_tmp" />
     </target>
 
-    <target name="build" depends="clean,parallelTasks,phpunit,phpcb"/>
+    <target name="build" depends="clean,parallelTasks,phpunit"/>
 </project>
