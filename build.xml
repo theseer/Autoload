@@ -68,7 +68,7 @@
     </target>
 
     <target name="phpab" description="Generate autoloader scripts">
-        <exec executable="phpab">
+        <exec executable="${basedir}/phpab.php">
             <arg value="--output"/>
             <arg path="src/autoload.php"/>
             <arg value="--basedir"/>
@@ -151,7 +151,7 @@
             </fileset>
         </delete>
 
-        <exec executable="phpab" failonerror="true">
+        <exec executable="${basedir}/phpab.php" failonerror="true">
             <arg value="--var" />
             <arg value="VERSION=${version}" />
             <arg value="--all" />
