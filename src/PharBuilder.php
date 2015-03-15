@@ -83,6 +83,8 @@ namespace TheSeer\Autoload {
                 $phar->setSignatureAlgorithm(\Phar::OPENSSL, $privateKey);
                 $keyDetails = openssl_pkey_get_details($this->key);
                 file_put_contents($filename . '.pubkey', $keyDetails['key']);
+            } else {
+                $phar->setSignatureAlgorithm($this->selectSignatureType($phar));
             }
 
             $basedir = $this->basedir ? $this->basedir : $this->directories[0];
@@ -94,6 +96,24 @@ namespace TheSeer\Autoload {
                 $phar->compressFiles($this->compression);
             }
             $phar->stopBuffering();
+        }
+
+        private function selectSignatureType(\Phar $phar) {
+            $map = array(
+                'SHA-512' => \Phar::SHA512,
+                'SHA-256' => \Phar::SHA256,
+                'SHA-1' => \Phar::SHA1
+            );
+            $supported = $phar->getSupportedSignatures();
+            foreach($map as $candidate => $type) {
+                if (in_array($candidate, $supported)) {
+                    return $type;
+                }
+            }
+
+            // Is there any PHP Version out there that does not support at least SHA-1?
+            // But hey, fallback to md5, better than nothing
+            return \Phar::MD5;
         }
 
     }
