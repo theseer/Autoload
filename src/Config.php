@@ -67,6 +67,8 @@ namespace TheSeer\Autoload {
         private $pharAliasName = '';
         private $followSymlinks = false;
         private $cacheFilename;
+        private $prepend = false;
+        private $exceptions = true;
 
         public function __construct(Array $directories) {
             $this->directories = $directories;
@@ -356,6 +358,22 @@ namespace TheSeer\Autoload {
 
         public function getCacheFile() {
             return $this->cacheFilename;
+        }
+
+        public function enablePrepend() {
+            $this->prepend = true;
+        }
+
+        public function usePrepend() {
+            return $this->prepend;
+        }
+
+        public function disableExceptions() {
+            $this->exceptions = false;
+        }
+
+        public function useExceptions() {
+            return $this->exceptions;
         }
 
     }

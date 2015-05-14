@@ -57,14 +57,14 @@ namespace TheSeer\Autoload {
          *
          * @var string
          */
-        protected  $baseDir;
+        protected $baseDir = '';
 
         /**
          * Indenting char(s)
          *
          * @var string
          */
-        protected $indent;
+        protected $indent = '                ';
 
         /**
          * Char(s) used as linebreak
@@ -102,20 +102,28 @@ namespace TheSeer\Autoload {
         protected $compat = false;
 
         /**
+         * Flag to pass on to spl_autoload_register to prepend
+         *
+         * @var bool
+         */
+        private $usePrepend = false;
+
+        /**
+         * Flag to pass on to spl_autoload_register to optionally throw exceptions on registration error
+         *
+         * @var bool
+         */
+        private $throwExceptions = false;
+
+        /**
          * Constructor of AutoloadRenderer class
          *
-         * @param array  $classlist Array of classes
-         * @param string $baseDir   Base folder for class files
-         * @param string $tpl       Template file to use for generated code
-         * @param string $indent    Chars to set default indenting to
+         * @param array $classlist Array of classes
          *
-         * @return void
          */
-        public function __construct(array $classlist, $baseDir = '', $indent = '                ') {
+        public function __construct(array $classlist) {
             $this->classes = $classlist;
             ksort($this->classes);
-            $this->baseDir = $baseDir;
-            $this->indent  = $indent;
         }
 
         /**
@@ -125,6 +133,14 @@ namespace TheSeer\Autoload {
          */
         public function setCompat($mode) {
             $this->compat = $mode;
+        }
+
+        public function enableExceptions() {
+            $this->throwExceptions = true;
+        }
+
+        public function prependAutoloader() {
+            $this->usePrepend = true;
         }
 
         /**
@@ -254,10 +270,12 @@ namespace TheSeer\Autoload {
             }
 
             $replace = array_merge($this->variables, array(
-            '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
-            '___CLASSLIST___' => join( ',' . $this->linebreak . $this->indent, $entries),
-            '___BASEDIR___'   => $baseDir,
-            '___AUTOLOAD___'  => 'autoload' . md5(serialize($entries))
+                '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
+                '___CLASSLIST___' => join( ',' . $this->linebreak . $this->indent, $entries),
+                '___BASEDIR___'   => $baseDir,
+                '___AUTOLOAD___'  => 'autoload' . md5(serialize($entries)),
+                '___EXCEPTION___' => $this->throwExceptions ? 'true' : 'false',
+                '___PREPEND___'   => $this->usePrepend ? 'true' : 'false'
             ));
             return str_replace(array_keys($replace), array_values($replace), $template);
         }

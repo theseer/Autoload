@@ -12,7 +12,9 @@ function ___AUTOLOAD___($class) {
     $cn = strtolower($class);
     if (isset($classes[$cn])) {
         require ___BASEDIR___$classes[$cn];
-    }
+    },
+    ___EXCEPTION___,
+    ___PREPEND___
 }
 spl_autoload_register('___AUTOLOAD___');
 // @codeCoverageIgnoreEnd

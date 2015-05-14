@@ -214,6 +214,13 @@ namespace TheSeer\Autoload {
                 $config->setFollowSymlinks(TRUE);
             }
 
+            if ($input->getOption('prepend')->value) {
+                $config->enablePrepend();
+            }
+
+            if ($input->getOption('no-exception')->value)
+                $config->disableExceptions();
+
             $indent = $input->getOption('indent')->value;
             if ($indent !== FALSE) {
                 $config->setIndent($indent);
@@ -279,6 +286,9 @@ Usage: phpab [switches] <directory1|/path/to/composer.json> [...<directoryN>]
 
   -c, --compat        Generate PHP 5.2 compatible code
   -s, --static        Generate a static require file
+
+  -1, --prepend       Register as first autoloader (prepend to stack, defaukt: append)
+  -d, --no-exception  Do not throw exception on registration problem (default: throw exception)
 
   -n, --nolower       Do not lowercase classnames for case insensitivity
 
@@ -487,6 +497,16 @@ EOF;
             $input->registerOption( new \ezcConsoleOption(
                 'q', 'quiet', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'Run in quiet mode, no output'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                '1', 'prepend', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Prepend autoloader to stack'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                'd', 'no-exception', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'Disable exceptions on registration error'
             ));
 
             $input->registerOption( new \ezcConsoleOption(

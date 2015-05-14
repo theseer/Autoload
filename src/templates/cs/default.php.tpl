@@ -13,6 +13,8 @@ spl_autoload_register(
         if (isset($classes[$class])) {
             require ___BASEDIR___$classes[$class];
         }
-     }
+    },
+    ___EXCEPTION___,
+    ___PREPEND___
 );
 // @codeCoverageIgnoreEnd

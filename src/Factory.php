@@ -167,6 +167,12 @@ namespace TheSeer\Autoload {
                 $renderer->setRequireOnce($isOnce);
             } else {
                 $renderer = new AutoloadRenderer($result->getUnits());
+                if ($this->config->usePrepend()) {
+                    $renderer->prependAutoloader();
+                }
+                if ($this->config->useExceptions()) {
+                    $renderer->enableExceptions();
+                }
             }
 
             $renderer->setCompat($isCompat);
