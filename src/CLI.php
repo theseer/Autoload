@@ -218,8 +218,9 @@ namespace TheSeer\Autoload {
                 $config->enablePrepend();
             }
 
-            if ($input->getOption('no-exception')->value)
+            if ($input->getOption('no-exception')->value) {
                 $config->disableExceptions();
+            }
 
             $indent = $input->getOption('indent')->value;
             if ($indent !== FALSE) {
@@ -267,7 +268,7 @@ namespace TheSeer\Autoload {
          */
         protected function showUsage() {
             print <<<EOF
-Usage: phpab [switches] <directory1|/path/to/composer.json> [...<directoryN>]
+Usage: phpab [switches] <directory1|file1|/path/to/composer.json> [...<directoryN|fileN>]
 
   -i, --include       File pattern to include (default: *.php)
   -e, --exclude       File pattern to exclude

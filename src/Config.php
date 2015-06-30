@@ -84,7 +84,7 @@ namespace TheSeer\Autoload {
                 return realpath($this->baseDirectory);
             }
             $tmp = $this->getDirectories();
-            return realpath($tmp[0]);
+            return realpath(is_dir($tmp[0]) ? $tmp[0] : (dirname($tmp[0]) ?: '.'));
         }
 
         public function setCompatMode($compatMode) {

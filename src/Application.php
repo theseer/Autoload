@@ -74,11 +74,16 @@ namespace TheSeer\Autoload {
             }
             $collector = $this->factory->getCollector();
             foreach ($this->config->getDirectories() as $directory) {
-                $this->logger->log('Scanning directory ' . $directory . "\n");
-                $scanner = $this->factory->getScanner()->getIterator($directory);
-                $collector->processDirectory($scanner);
-                // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
-                unset($scanner);
+                if (is_dir($directory)) {
+                    $this->logger->log('Scanning directory ' . $directory . "\n");
+                    $scanner = $this->factory->getScanner()->getIterator($directory);
+                    $collector->processDirectory($scanner);
+                    // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
+                    unset($scanner);
+                } else {
+                    $this->logger->log('Scanning file ' . $directory . "\n");
+                    $collector->processFile(new \SplFileInfo($directory));
+                }
             }
             return $collector->getResult();
         }

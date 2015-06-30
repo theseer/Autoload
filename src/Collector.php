@@ -44,6 +44,11 @@ namespace TheSeer\Autoload {
         public function processDirectory(\Iterator $sources) {
             $worker = $this->paranoidMode ? new PHPFilterIterator($sources) : $sources;
             foreach($worker as $file) {
+                $this->processFile($file);
+            }
+        }
+
+        public function processFile(\SplFileInfo $file) {
                 try {
                     $parseResult = $this->parser->parse(new SourceFile($file->getRealpath()));
                     if ($parseResult->hasRedeclarations() && !$this->tolerantMode) {
@@ -72,7 +77,6 @@ namespace TheSeer\Autoload {
                         CollectorException::RedeclarationFound
                     );
                 }
-            }
         }
     }
 
