@@ -31,6 +31,7 @@ an autoload require file with the option of creating static require lists as wel
 
 The recommended way to install **phpab** is by downloading a fully self contained PHAR archive:
 
+* [Version 1.18.0](http://phpab.net/phpab-1.18.0.phar) - 208kb
 * [Version 1.17.0](http://phpab.net/phpab-1.17.0.phar) - 208kb
 
 * [Version 1.16.1](http://phpab.net/phpab-1.16.1.phar) - 196kb
@@ -63,7 +64,7 @@ Once it is marked as executable, you can run it directly. For instance:
 
 ```
 [theseer@rikka ~]$ ./phpab.phar -v
-phpab 1.17.0 - Copyright (C) 2009 - 2015 by Arne Blankerts
+phpab 1.18.0 - Copyright (C) 2009 - 2015 by Arne Blankerts
 ```
 
 ## Other Downloads
@@ -189,6 +190,9 @@ Custom variables as defined by passing --var name=value via cli are accessed by 
 
 
 ## Changelog
+
+#####Release 1.18.0
+* Allow filenames as source instead of only allowing directories (this also fixes composer classmap issues)   
 
 #####Release 1.17.0
 * Added support for parameter 'prepend' of spl_autoload_register to allow for prepending without changing templates
