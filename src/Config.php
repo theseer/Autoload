@@ -41,7 +41,7 @@ namespace TheSeer\Autoload {
 
         private $quietMode = FALSE;
         private $directories = array();
-        private $outputFile = 'php://stdout';
+        private $outputFile = 'STDOUT';
         private $pharMode = FALSE;
         private $include = array('*.php');
         private $exclude = array();
