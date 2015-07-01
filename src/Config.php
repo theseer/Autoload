@@ -83,6 +83,9 @@ namespace TheSeer\Autoload {
             if ($this->baseDirectory !== NULL) {
                 return realpath($this->baseDirectory);
             }
+            if ($this->outputFile != 'STDOUT') {
+                return realpath(dirname($this->outputFile) ?: '.');
+            }
             $tmp = $this->getDirectories();
             return realpath(is_dir($tmp[0]) ? $tmp[0] : (dirname($tmp[0]) ?: '.'));
         }
