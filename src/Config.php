@@ -41,7 +41,7 @@ namespace TheSeer\Autoload {
 
         private $quietMode = FALSE;
         private $directories = array();
-        private $outputFile = 'php://stdout';
+        private $outputFile = 'STDOUT';
         private $pharMode = FALSE;
         private $include = array('*.php');
         private $exclude = array();
@@ -82,6 +82,9 @@ namespace TheSeer\Autoload {
         public function getBaseDirectory() {
             if ($this->baseDirectory !== NULL) {
                 return realpath($this->baseDirectory);
+            }
+            if ($this->outputFile != 'STDOUT') {
+                return realpath(dirname($this->outputFile) ?: '.');
             }
             $tmp = $this->getDirectories();
             return realpath(is_dir($tmp[0]) ? $tmp[0] : (dirname($tmp[0]) ?: '.'));
