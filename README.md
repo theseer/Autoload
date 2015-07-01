@@ -191,6 +191,10 @@ Custom variables as defined by passing --var name=value via cli are accessed by 
 
 ## Changelog
 
+#####Release 1.19.0
+* Fix filenames via CLI to actually work [Remi]
+* Changed default basedir to be based on the output file rather than the directory to be scanned [Remi]
+
 #####Release 1.18.0
 * Allow filenames as source instead of only allowing directories (this also fixes composer classmap issues)   
 
