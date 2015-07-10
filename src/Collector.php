@@ -23,17 +23,17 @@ namespace TheSeer\Autoload {
         /**
          * @var bool
          */
-        private $paranoidMode;
+        private $trustingMode;
 
         /**
          * @param ParserInterface $parser
          * @param bool   $tolerantMode
-         * @param bool   $paranoidMode
+         * @param bool   $trustingMode
          */
-        public function __construct(ParserInterface $parser, $tolerantMode = false, $paranoidMode = false, Array $whitelist = array('*'), Array $blacklist = array()) {
+        public function __construct(ParserInterface $parser, $tolerantMode = false, $trustingMode = true, Array $whitelist = array('*'), Array $blacklist = array()) {
             $this->parser = $parser;
             $this->tolerantMode = $tolerantMode;
-            $this->paranoidMode = $paranoidMode;
+            $this->trustingMode = $trustingMode;
             $this->collectorResult = new CollectorResult($whitelist, $blacklist);
         }
 
@@ -42,7 +42,8 @@ namespace TheSeer\Autoload {
         }
 
         public function processDirectory(\Iterator $sources) {
-            $worker = $this->paranoidMode ? new PHPFilterIterator($sources) : $sources;
+            $worker = $this->trustingMode ? $sources : new PHPFilterIterator($sources);
+            var_dump(get_class($worker));
             foreach($worker as $file) {
                 $this->processFile($file);
             }
