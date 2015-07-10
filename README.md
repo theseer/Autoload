@@ -191,6 +191,9 @@ Custom variables as defined by passing --var name=value via cli are accessed by 
 
 ## Changelog
 
+#####Release 1.19.1
+* Fix regression since 1.15.0: paranoid and trusting mode handling was switched
+
 #####Release 1.19.0
 * Fix filenames via CLI to actually work [Remi]
 * Changed default basedir to be based on the output file rather than the directory to be scanned [Remi]
