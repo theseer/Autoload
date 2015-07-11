@@ -29,10 +29,10 @@ an autoload require file with the option of creating static require lists as wel
 
 ### Executable PHAR
 
-The recommended way to install **phpab** is by downloading a fully self contained PHAR archive:
+The recommended way to install **phpab** is by downloading a fully self contained PHAR archive
+from the [Releases](https://github.com/theseer/Autoload/releases) tab.
 
-* [Version 1.18.0](http://phpab.net/phpab-1.18.0.phar) - 208kb
-* [Version 1.17.0](http://phpab.net/phpab-1.17.0.phar) - 208kb
+Additionally, phar archives of Older versions can be found here:
 
 * [Version 1.16.1](http://phpab.net/phpab-1.16.1.phar) - 196kb
 * [Version 1.16.0](http://phpab.net/phpab-1.16.0.phar) - 176kb
