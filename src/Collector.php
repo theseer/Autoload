@@ -43,7 +43,6 @@ namespace TheSeer\Autoload {
 
         public function processDirectory(\Iterator $sources) {
             $worker = $this->trustingMode ? $sources : new PHPFilterIterator($sources);
-            var_dump(get_class($worker));
             foreach($worker as $file) {
                 $this->processFile($file);
             }
