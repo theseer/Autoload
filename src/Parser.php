@@ -419,6 +419,7 @@ namespace TheSeer\Autoload {
                     case T_CONST:
                     case T_FUNCTION: {
                         $ignore = true;
+                        continue;
                     }
                     case '{': {
                         $group = $use;
