@@ -472,10 +472,44 @@ namespace TheSeer\Autoload\Tests {
             $this->assertEquals(array(), $rc->getDependenciesForUnit('demo\\a\\demo2'));
         }
 
+        public function testUseConstIsIgnored() {
+            $parser = new \TheSeer\Autoload\Parser(true);
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/use9.php')));
+            $this->assertEquals(array('demo'), $rc->getUnits());
+            $this->assertEquals(array('name'), $rc->getDependenciesForUnit('demo'));
+        }
+
+        public function testUseFunctionIsIgnored() {
+            $parser = new \TheSeer\Autoload\Parser(true);
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/use10.php')));
+            $this->assertEquals(array('demo'), $rc->getUnits());
+            $this->assertEquals(array('name'), $rc->getDependenciesForUnit('demo'));
+        }
+
         public function testGroupUseSyntaxIsHandeled() {
             $parser = new Parser();
             $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/groupuse.php')));
-            $classes = $rc->getUnits();
+            $units = array('some\\name\\space\\classd');
+            $dependencies = array(
+                'foo\bar\interfacea',
+                'my\other\name\interfaceb',
+                'my\other\some\interfaced',
+                'my\other\name\classa'
+            );
+            $this->assertEquals($units, $rc->getUnits());
+            $this->assertEquals($dependencies, $rc->getDependenciesForUnit('some\\name\\space\\classd'));
+        }
+
+        public function testGroupUseSyntaxWithConstIsHandeled() {
+            $parser = new Parser();
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/groupuse2.php')));
+            $units = array('some\\name\\space\\classd');
+            $dependencies = array(
+                'my\other\name\interfaceb',
+                'some\name\space\foo'
+            );
+            $this->assertEquals($units, $rc->getUnits());
+            $this->assertEquals($dependencies, $rc->getDependenciesForUnit('some\\name\\space\\classd'));
         }
     }
 

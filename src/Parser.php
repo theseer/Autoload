@@ -328,81 +328,21 @@ namespace TheSeer\Autoload {
             $list = array(';','(');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
-            if ($stack[$stackSize-1][0] == '(') {
-                // ignore closure use
+            $ignore = array(
+                '(', // closue use
+                T_CONST, // use const foo\bar;
+                T_FUNCTION // use function foo\bar;
+            );
+            if (in_array($stack[1][0], $ignore)) {
                 return $pos + $stackSize - 1;
             }
 
             if ($this->classBracket > 0) {
-                // trait use
-                $use = '';
-                for($t=0; $t<$stackSize; $t++) {
-                    $current = (array)$stack[$t];
-                    switch($current[0]) {
-                        case '{': {
-                            // find closing bracket to skip contents
-                            for($x=$t+1; $x<$stackSize; $x++) {
-                                $tok = $stack[$x];
-                                if ($tok[0]=='}') {
-                                    $t = $x;
-                                    break;
-                                }
-                            }
-                            continue;
-                        }
-                        case ';':
-                        case ',': {
-                            $this->dependencies[$this->inUnit][] = $use;
-                            $use = '';
-                            continue;
-                        }
-                        case T_NS_SEPARATOR:
-                        case T_STRING: {
-                            $use .= $current[1];
-                            continue;
-                        }
-                    }
-                }
+                $this->parseUseOfTrait($stackSize, $stack);
+
             } else {
-                // namespace import / alias
-                $use = '';
-                $alias = '';
-                $mode = 'use';
-                $group = '';
-                foreach($stack as $tok) {
-                    $current = $tok;
-                    switch($current[0]) {
-                        case '{': {
-                            $group = $use;
-                            continue;
-                        }
-                        case ';':
-                        case ',': {
-                            if ($alias == '') {
-                                $nss = strrpos($use, '\\');
-                                if ($nss !== false) {
-                                    $alias = substr($use, $nss+1);
-                                } else {
-                                    $alias = $use;
-                                }
-                            }
-                            $this->aliases[$use] = $alias;
-                            $alias = '';
-                            $use = $group;
-                            $mode = 'use';
-                            continue;
-                        }
-                        case T_NS_SEPARATOR:
-                        case T_STRING: {
-                            $$mode .= $current[1];
-                            continue;
-                        }
-                        case T_AS: {
-                            $mode = 'alias';
-                            continue;
-                        }
-                    }
-                }
+                $this->parseUseAsImport($stack);
+
             }
             return $pos + $stackSize - 1;
         }
@@ -427,6 +367,93 @@ namespace TheSeer\Autoload {
                 }
             }
             return $stack;
+        }
+
+        /**
+         * @param $stackSize
+         * @param $stack
+         */
+        private function parseUseOfTrait($stackSize, $stack) {
+            $use = '';
+            for ($t = 0; $t < $stackSize; $t++) {
+                $current = (array)$stack[$t];
+                switch ($current[0]) {
+                    case '{': {
+                        // find closing bracket to skip contents
+                        for ($x = $t + 1; $x < $stackSize; $x++) {
+                            $tok = $stack[$x];
+                            if ($tok[0] == '}') {
+                                $t = $x;
+                                break;
+                            }
+                        }
+                        continue;
+                    }
+                    case ';':
+                    case ',': {
+                        $this->dependencies[$this->inUnit][] = $use;
+                        $use = '';
+                        continue;
+                    }
+                    case T_NS_SEPARATOR:
+                    case T_STRING: {
+                        $use .= $current[1];
+                        continue;
+                    }
+                }
+            }
+        }
+
+        /**
+         * @param $stack
+         */
+        private function parseUseAsImport($stack) {
+            $use = '';
+            $alias = '';
+            $mode = 'use';
+            $group = '';
+            $ignore = false;
+            foreach ($stack as $tok) {
+                $current = $tok;
+                switch ($current[0]) {
+                    case T_CONST:
+                    case T_FUNCTION: {
+                        $ignore = true;
+                    }
+                    case '{': {
+                        $group = $use;
+                        continue;
+                    }
+                    case ';':
+                    case ',': {
+                        if (!$ignore) {
+                            if ($alias == '') {
+                                $nss = strrpos($use, '\\');
+                                if ($nss !== FALSE) {
+                                    $alias = substr($use, $nss + 1);
+                                } else {
+                                    $alias = $use;
+                                }
+                            }
+                            $this->aliases[$use] = $alias;
+                        }
+                        $alias = '';
+                        $use = $group;
+                        $mode = 'use';
+                        $ignore = false;
+                        continue;
+                    }
+                    case T_NS_SEPARATOR:
+                    case T_STRING: {
+                        $$mode .= $current[1];
+                        continue;
+                    }
+                    case T_AS: {
+                        $mode = 'alias';
+                        continue;
+                    }
+                }
+            }
         }
 
     }
