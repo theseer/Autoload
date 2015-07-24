@@ -37,6 +37,7 @@
 
 namespace TheSeer\Autoload\Tests {
 
+    use TheSeer\Autoload\Parser;
     use TheSeer\Autoload\SourceFile;
 
     /**
@@ -471,6 +472,11 @@ namespace TheSeer\Autoload\Tests {
             $this->assertEquals(array(), $rc->getDependenciesForUnit('demo\\a\\demo2'));
         }
 
+        public function testGroupUseSyntaxIsHandeled() {
+            $parser = new Parser();
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/groupuse.php')));
+            $classes = $rc->getUnits();
+        }
     }
 
 }

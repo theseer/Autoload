@@ -137,7 +137,7 @@ namespace TheSeer\Autoload {
 
         private function processBracketClose($pos) {
             $this->bracketLevel--;
-            if ($this->bracketLevel < $this->nsBracket) {
+            if ($this->nsBracket != 0 && $this->bracketLevel < $this->nsBracket) {
                 $this->inNamespace = '';
                 $this->nsBracket = 0;
                 $this->aliases = array();
@@ -368,9 +368,14 @@ namespace TheSeer\Autoload {
                 $use = '';
                 $alias = '';
                 $mode = 'use';
+                $group = '';
                 foreach($stack as $tok) {
                     $current = $tok;
                     switch($current[0]) {
+                        case '{': {
+                            $group = $use;
+                            continue;
+                        }
                         case ';':
                         case ',': {
                             if ($alias == '') {
@@ -383,7 +388,7 @@ namespace TheSeer\Autoload {
                             }
                             $this->aliases[$use] = $alias;
                             $alias = '';
-                            $use = '';
+                            $use = $group;
                             $mode = 'use';
                             continue;
                         }
@@ -399,7 +404,6 @@ namespace TheSeer\Autoload {
                     }
                 }
             }
-
             return $pos + $stackSize - 1;
         }
 
