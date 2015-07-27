@@ -14,5 +14,5 @@ function ___AUTOLOAD___($class) {
         require ___BASEDIR___$classes[$cn];
     }
 }
-spl_autoload_register('___AUTOLOAD___');
+spl_autoload_register('___AUTOLOAD___', ___EXCEPTION___);
 // @codeCoverageIgnoreEnd

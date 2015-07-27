@@ -13,5 +13,5 @@ function ___AUTOLOAD___($class) {
         require ___BASEDIR___$classes[$class];
     }
 }
-spl_autoload_register('___AUTOLOAD___', ___EXCEPTION___, ___PREPEND___);
+spl_autoload_register('___AUTOLOAD___', ___EXCEPTION___);
 // @codeCoverageIgnoreEnd

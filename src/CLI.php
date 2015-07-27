@@ -455,7 +455,7 @@ EOF;
                 array( new \ezcConsoleOptionRule( $input->getOption( 'lint' ) ) )
             ));
 
-            $input->registerOption( new \ezcConsoleOption(
+            $compat = $input->registerOption( new \ezcConsoleOption(
                 'c', 'compat', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'Generate PHP 5.2 compliant code'
             ));
@@ -502,7 +502,10 @@ EOF;
 
             $input->registerOption( new \ezcConsoleOption(
                 '1', 'prepend', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
-                'Prepend autoloader to stack'
+                'Prepend autoloader to stack',
+                NULL,
+                array(),
+                array( new \ezcConsoleOptionRule( $compat ) )
             ));
 
             $input->registerOption( new \ezcConsoleOption(
