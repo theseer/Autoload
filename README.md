@@ -192,4 +192,4 @@ Custom variables as defined by passing --var name=value via cli are accessed by 
 
 ## Changelog
 
-The (changelog)[https://github.com/theseer/Autoload/blob/master/CHANGELOG.md] moved to its own document 
+The [changelog](https://github.com/theseer/Autoload/blob/master/CHANGELOG.md) moved to its own document 
