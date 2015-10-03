@@ -1,5 +1,9 @@
 # Changelog
 
+## Release 1.20.1
+* Fix issue #65: Trait sorted after using class when --static is used
+* Fix issue #63: Workdirectory included as subdirectory in phar archive (Regression as of 1.19.0)
+
 ## Release 1.20.0
 * PHP 7: Added parsing support for new (grouped use syntax)[https://wiki.php.net/rfc/group_use_declarations]
 
