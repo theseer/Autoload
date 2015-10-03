@@ -27,13 +27,13 @@ namespace TheSeer\Autoload {
             foreach($this->directories as $dir) {
                 $result = substr($dir, 0, $this->commonPrefix($result, $dir));
             }
-            return rtrim($result,'/');
+            return rtrim($result, '/');
         }
 
 
         private function commonPrefix( $s1, $s2, $i=0 ) {
             return (
-                !empty($s1[$i]) && !empty($s2[$i]) && $s1[$i] == $s2[$i]
+                $i<strlen($s1) && $i<strlen($s2) && $s1[$i] == $s2[$i]
             ) ? $this->commonPrefix( $s1, $s2, ++$i ) : $i;
         }
     }
