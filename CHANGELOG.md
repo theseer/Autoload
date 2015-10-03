@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.20.2
+* Merge PR [#66](https://github.com/theseer/Autoload/pull/66): fix PathComparator when 0 in path [Remi]
+
 ## Release 1.20.1
 * Fix issue #65: Trait sorted after using class when --static is used
 * Fix issue #63: Workdirectory included as subdirectory in phar archive (Regression as of 1.19.0)
