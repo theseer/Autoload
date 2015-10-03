@@ -136,15 +136,15 @@ namespace TheSeer\Autoload {
 
 
         public function getPharBuilder() {
+            $directories = $this->config->getDirectories();
             $builder = new PharBuilder(
                 $this->getScanner(!$this->config->isPharAllMode()),
-                $this->config->getBaseDirectory()
+                $directories[0]
             );
             $builder->setCompressionMode($this->config->getPharCompression());
-            foreach($this->config->getDirectories() as $directory) {
+            foreach($directories as $directory) {
                 $builder->addDirectory($directory);
             }
-
             return $builder;
         }
 
