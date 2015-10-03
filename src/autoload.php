@@ -127,6 +127,7 @@ spl_autoload_register(
                 'theseer\\autoload\\parseresult' => '/ParseResult.php',
                 'theseer\\autoload\\parserexception' => '/Parser.php',
                 'theseer\\autoload\\parserinterface' => '/ParserInterface.php',
+                'theseer\\autoload\\pathcomparator' => '/PathComparator.php',
                 'theseer\\autoload\\pharbuilder' => '/PharBuilder.php',
                 'theseer\\autoload\\sourcefile' => '/SourceFile.php',
                 'theseer\\autoload\\staticrenderer' => '/StaticRenderer.php',
@@ -142,6 +143,8 @@ spl_autoload_register(
         if (isset($classes[$cn])) {
             require __DIR__ . $classes[$cn];
         }
-    }
+    },
+    true,
+    false
 );
 // @codeCoverageIgnoreEnd
