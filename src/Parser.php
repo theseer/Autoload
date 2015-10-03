@@ -266,7 +266,8 @@ namespace TheSeer\Autoload {
                 $name = substr($name, 1);
             } else {
                 $parts = explode('\\', $name, 2);
-                $key = array_search($parts[0], $this->aliases);
+                $search = $this->caseInsensitive ? strtolower($parts[0]) : $parts[0];
+                $key = array_search($search, $this->aliases);
                 if (!$key) {
                     $name = ($this->inNamespace != '' ? $this->inNamespace . '\\' : ''). $name;
                 } else {
@@ -391,7 +392,7 @@ namespace TheSeer\Autoload {
                     }
                     case ';':
                     case ',': {
-                        $this->dependencies[$this->inUnit][] = $use;
+                        $this->dependencies[$this->inUnit][] = $this->resolveDependencyName($use);
                         $use = '';
                         continue;
                     }
@@ -435,6 +436,9 @@ namespace TheSeer\Autoload {
                                 } else {
                                     $alias = $use;
                                 }
+                            }
+                            if ($this->caseInsensitive) {
+                                $alias = strtolower($alias);
                             }
                             $this->aliases[$use] = $alias;
                         }
