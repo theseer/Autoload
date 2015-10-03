@@ -45,12 +45,12 @@ namespace TheSeer\Autoload {
      */
     class ClassDependencySorter {
 
-        protected $classList;
-        protected $dependencies;
+        private $classList;
+        private $dependencies;
 
-        protected $level;
+        private $level;
 
-        protected $sorted = array();
+        private $sorted = array();
 
         public function __construct(Array $classes, Array $dependencies) {
             $this->classList    = $classes;
@@ -64,6 +64,7 @@ namespace TheSeer\Autoload {
                     $this->resolve($class);
                 }
             }
+
             $res = array();
             foreach($this->sorted as $class) {
                 if (!isset($this->classList[$class])) {
@@ -74,7 +75,7 @@ namespace TheSeer\Autoload {
             return $res;
         }
 
-        protected function resolve($class) {
+        private function resolve($class) {
             $this->level++;
             if ($this->level == 50) {
                 throw new ClassDependencySorterException("Can't resolve more than 50 levels of dependencies", ClassDependencySorterException::TooManyDependencyLevels);
