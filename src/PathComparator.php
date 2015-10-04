@@ -15,7 +15,7 @@ namespace TheSeer\Autoload {
          */
         public function __construct(array $directories) {
             foreach($directories as $dir) {
-                $this->directories[] = realpath($dir);
+                $this->directories[] = realpath($dir).'/';
             }
         }
 
@@ -27,14 +27,18 @@ namespace TheSeer\Autoload {
             foreach($this->directories as $dir) {
                 $result = substr($dir, 0, $this->commonPrefix($result, $dir));
             }
-            return rtrim($result, '/');
+            return ($result ?: '/');
         }
 
 
-        private function commonPrefix( $s1, $s2, $i=0 ) {
-            return (
-                $i<strlen($s1) && $i<strlen($s2) && $s1[$i] == $s2[$i]
-            ) ? $this->commonPrefix( $s1, $s2, ++$i ) : $i;
+        private function commonPrefix( $s1, $s2 ) {
+            $l1 = strlen($s1);
+            $l2 = strlen($s2);
+            $i=0;
+            while($i < $l1 && $i < $l2 && $s1[$i] == $s2[$i]) {
+                $i++;
+            }
+            return strrpos(substr($s1, 0, $i), '/');
         }
     }
 
