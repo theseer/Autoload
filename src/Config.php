@@ -85,7 +85,7 @@ namespace TheSeer\Autoload {
             }
             if ($this->isPharMode()) {
                 $comparator = new PathComparator($this->directories);
-                return  $comparator->getCommondBase();
+                return  $comparator->getCommonBase();
             }
             if ($this->outputFile != 'STDOUT') {
                 return realpath(dirname($this->outputFile) ?: '.');

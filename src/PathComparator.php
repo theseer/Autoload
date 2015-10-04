@@ -19,7 +19,7 @@ namespace TheSeer\Autoload {
             }
         }
 
-        public function getCommondBase() {
+        public function getCommonBase() {
             if (count($this->directories) == 0) {
                 return '/';
             }

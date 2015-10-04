@@ -11,7 +11,7 @@ namespace TheSeer\Autoload\Tests {
          */
         public function testComparatorYieldsCorrectCommonBase(array $directories, $common) {
             $comparator = new PathComparator($directories);
-            $this->assertEquals($common, $comparator->getCommondBase());
+            $this->assertEquals($common, $comparator->getCommonBase());
         }
 
         public function directoriesProvider() {
