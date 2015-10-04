@@ -26,7 +26,7 @@ namespace TheSeer\Autoload\Tests {
                     array(__DIR__, dirname(__DIR__)), dirname(__DIR__)
                 ],
                 'partns' => [
-                    array(__DIR__ . '/../src', __DIR__ . '/../vendor/theseer'), dirname(__DIR__)
+                    array(__DIR__ . '/../src', __DIR__ . '/../tests/_data'), dirname(__DIR__)
                 ],
                 'with0' => [
                     [$a=__DIR__.'/_data/parser/trait0.php'], $a
