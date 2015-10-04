@@ -1,5 +1,10 @@
 # Changelog
 
+## Release 1.20.3
+* Merge PR [#68](https://github.com/theseer/Autoload/pull/68): return parent dir when 2 dirs have a common prefix
+* Merge PR [#67](https://github.com/theseer/Autoload/pull/67): don't use 'vendor' in test suite
+* Some internal code cleanup
+
 ## Release 1.20.2
 * Merge PR [#66](https://github.com/theseer/Autoload/pull/66): fix PathComparator when 0 in path [Remi]
 
