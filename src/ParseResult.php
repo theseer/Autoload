@@ -33,6 +33,9 @@ namespace TheSeer\Autoload {
         }
 
         /**
+         *
+         * @param string $unit
+         *
          * @return array
          */
         public function getDependenciesForUnit($unit) {

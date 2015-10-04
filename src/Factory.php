@@ -37,6 +37,8 @@
  */
 namespace TheSeer\Autoload {
 
+    use TheSeer\DirectoryScanner\DirectoryScanner;
+
     class Factory {
 
         /**
@@ -120,10 +122,10 @@ namespace TheSeer\Autoload {
          * Get instance of DirectoryScanner with filter options applied
          *
          * @param bool $filter
-         * @return \TheSeer\DirectoryScanner\DirectoryScanner
+         * @return DirectoryScanner
          */
         public function getScanner($filter = TRUE) {
-            $scanner = new \TheSeer\DirectoryScanner\DirectoryScanner;
+            $scanner = new DirectoryScanner;
             if ($filter) {
                 $scanner->setIncludes($this->config->getInclude());
                 $scanner->setExcludes($this->config->getExclude());
@@ -150,6 +152,8 @@ namespace TheSeer\Autoload {
 
         /**
          * Helper to get instance of AutoloadRenderer with cli options applied
+         *
+         * @param CollectorResult $result
          *
          * @throws \RuntimeException
          * @return \TheSeer\Autoload\AutoloadRenderer|\TheSeer\Autoload\StaticRenderer

@@ -189,6 +189,8 @@ namespace TheSeer\Autoload {
          * Setter to use allow usage of fixed date/time for ___CREATED___
          *
          * @param integer $time unix timestamp
+         *
+         * @throws AutoloadBuilderException
          */
         public function setTimestamp($time) {
             if (!is_int($time) && !is_null($time)) {
@@ -254,6 +256,8 @@ namespace TheSeer\Autoload {
 
         /**
          * Render autoload code into a string
+         *
+         * @param string $template
          *
          * @return string
          */

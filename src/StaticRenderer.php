@@ -76,8 +76,9 @@ namespace TheSeer\Autoload {
         }
 
         /**
-         * (non-PHPdoc)
-         * @see TheSeer\Autoload.AutoloadRenderer::render()
+         * @param string $template
+         *
+         * @return string
          */
         public function render($template) {
             $baseDir = '';

@@ -26,9 +26,13 @@ namespace TheSeer\Autoload {
         private $trustingMode;
 
         /**
+         * Collector constructor.
+         *
          * @param ParserInterface $parser
-         * @param bool   $tolerantMode
-         * @param bool   $trustingMode
+         * @param bool            $tolerantMode
+         * @param bool            $trustingMode
+         * @param array           $whitelist
+         * @param array           $blacklist
          */
         public function __construct(ParserInterface $parser, $tolerantMode = false, $trustingMode = true, Array $whitelist = array('*'), Array $blacklist = array()) {
             $this->parser = $parser;
