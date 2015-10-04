@@ -30,6 +30,12 @@ namespace TheSeer\Autoload\Tests {
                 ],
                 'with0' => [
                     [$a=__DIR__.'/_data/parser/trait0.php'], $a
+                ],
+                'dirwithprefix' => [
+                    [__DIR__.'/_data/parser/trait0.php', __DIR__.'/_data/parser/trait1.php'], __DIR__.'/_data/parser'
+                ],
+                'dirwithoutprefix' => [
+                    [__DIR__, '/usr'], '/'
                 ]
             ];
         }
