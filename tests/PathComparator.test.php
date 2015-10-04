@@ -20,13 +20,13 @@ namespace TheSeer\Autoload\Tests {
                     [], '/'
                 ],
                 'single' => [
-                    array(__DIR__), __DIR__
+                    [__DIR__], __DIR__
                 ],
                 'two' => [
-                    array(__DIR__, dirname(__DIR__)), dirname(__DIR__)
+                    [__DIR__, dirname(__DIR__)], dirname(__DIR__)
                 ],
-                'partns' => [
-                    array(__DIR__ . '/../src', __DIR__ . '/../tests/_data'), dirname(__DIR__)
+                'parents' => [
+                    [__DIR__ . '/../src', __DIR__ . '/../tests/_data'], dirname(__DIR__)
                 ],
                 'with0' => [
                     [$a=__DIR__.'/_data/parser/trait0.php'], $a
