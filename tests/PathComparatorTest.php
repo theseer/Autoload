@@ -15,29 +15,29 @@ namespace TheSeer\Autoload\Tests {
         }
 
         public function directoriesProvider() {
-            return [
-                'empty' => [
-                    [], '/'
-                ],
-                'single' => [
-                    [__DIR__], __DIR__
-                ],
-                'two' => [
-                    [__DIR__, dirname(__DIR__)], dirname(__DIR__)
-                ],
-                'parents' => [
-                    [__DIR__ . '/../src', __DIR__ . '/../tests/_data'], dirname(__DIR__)
-                ],
-                'with0' => [
-                    [$a=__DIR__.'/_data/parser/trait0.php'], $a
-                ],
-                'dirwithprefix' => [
-                    [__DIR__.'/_data/parser/trait0.php', __DIR__.'/_data/parser/trait1.php'], __DIR__.'/_data/parser'
-                ],
-                'dirwithoutprefix' => [
-                    [__DIR__, '/usr'], '/'
-                ]
-            ];
+            return array(
+                'empty' => array(
+                    array(), '/'
+                ),
+                'single' => array(
+                    array(__DIR__), __DIR__
+                ),
+                'two' => array(
+                    array(__DIR__, dirname(__DIR__)), dirname(__DIR__)
+                ),
+                'parents' => array(
+                    array(__DIR__ . '/../src', __DIR__ . '/../tests/_data'), dirname(__DIR__)
+                ),
+                'with0' => array(
+                    array($a=__DIR__.'/_data/parser/trait0.php'), $a
+                ),
+                'dirwithprefix' => array(
+                    array(__DIR__.'/_data/parser/trait0.php', __DIR__.'/_data/parser/trait1.php'), __DIR__.'/_data/parser'
+                ),
+                'dirwithoutprefix' => array(
+                    array(__DIR__, '/usr'), '/'
+                )
+            );
         }
     }
 
