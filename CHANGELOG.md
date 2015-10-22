@@ -37,7 +37,7 @@
 * define date.timezone to avoid warning (in buildystem) [Remi]
 * Pear installation now deploys as phar
 
-#####Releaes 1.16.0
+## Release 1.16.0
 
 * Added whitelist/blacklist filter for classnames/namespaces
 * Ensure ext/fileinfo is loaded
