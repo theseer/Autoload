@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.21.0
+* Added --hash option to explicitly choose hash algorithm for phar generation (defaults to best available)
+
 ## Release 1.20.3
 * Merge PR [#68](https://github.com/theseer/Autoload/pull/68): return parent dir when 2 dirs have a common prefix
 * Merge PR [#67](https://github.com/theseer/Autoload/pull/67): don't use 'vendor' in test suite
@@ -26,11 +29,11 @@
 * Changed default basedir to be based on the output file rather than the directory to be scanned [Remi]
 
 ## Release 1.18.0
-* Allow filenames as source instead of only allowing directories (this also fixes composer classmap issues)   
+* Allow filenames as source instead of only allowing directories (this also fixes composer classmap issues)
 
 ## Release 1.17.0
 * Added support for parameter 'prepend' of spl_autoload_register to allow for prepending without changing templates
-* Added support for parameter 'exception' of spl_autoload_register to optionally disable exceptions on errors 
+* Added support for parameter 'exception' of spl_autoload_register to optionally disable exceptions on errors
 
 ## Release 1.16.1
 * Fix minor issues with composer.json handling
