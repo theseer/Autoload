@@ -120,6 +120,9 @@ namespace TheSeer\Autoload {
             if ($aliasName = $this->config->getPharAliasName()) {
                 $pharBuilder->setAliasName($aliasName);
             }
+            if ($this->config->hasPharHashAlgorithm()) {
+                $pharBuilder->setSignatureType($this->config->getPharHashAlgorithm());
+            }
             $pharBuilder->build($output, $code);
             $this->logger->log("\nphar archive '{$output}' generated.\n\n");
             return CLI::RC_OK;

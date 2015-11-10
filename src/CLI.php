@@ -168,6 +168,9 @@ namespace TheSeer\Autoload {
                 $config->setVariable('PHAR',
                     $input->getOption('alias')->value ? $input->getOption('alias')->value : basename($output)
                 );
+                if ($hashAlgorithm = $input->getOption('hash')->value) {
+                    $config->setPharHashAlgorithm($hashAlgorithm);
+                }
             }
 
             if ($input->getOption('cache')->value) {
@@ -281,6 +284,7 @@ Usage: phpab [switches] <directory1|file1|/path/to/composer.json> [...<directory
 
   -o, --output        Output file for generated code (default: STDOUT)
   -p, --phar          Create a phar archive (requires -o )
+      --hash          Force given hash algorithm (SHA-1, SHA-256 or SHA-512) (requires -p, conflicts with --key)
       --bzip2         Compress phar archive using bzip2 (requires -p) (bzip2 required)
       --gz            Compress phar archive using gzip (requires -p) (gzip required)
       --key           OpenSSL key file to use for signing phar archive (requires -p) (openssl required)
@@ -388,6 +392,14 @@ EOF;
                 'Keyfile to use for signing phar archive',
                 NULL,
                 array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
+            ));
+
+            $this->outputOption = $input->registerOption( new \ezcConsoleOption(
+                '', 'hash', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                'Force given hash algorithm (SHA-1, SHA-256 or SHA-512) (requires -p)',
+                NULL,
+                array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) ),
+                array( new \ezcConsoleOptionRule( $input->getOption( 'key' ) ) )
             ));
 
             $input->registerOption( new \ezcConsoleOption(

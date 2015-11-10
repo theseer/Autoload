@@ -46,8 +46,15 @@ namespace TheSeer\Autoload {
         private $key;
         private $basedir;
         private $aliasName;
+        private $signatureType;
 
         private $directories = array();
+
+        private $supportedSignatureTypes = array(
+            'SHA-512' => \Phar::SHA512,
+            'SHA-256' => \Phar::SHA256,
+            'SHA-1' => \Phar::SHA1
+        );
 
         public function __construct(DirectoryScanner $scanner, $basedir) {
             $this->scanner = $scanner;
@@ -56,6 +63,15 @@ namespace TheSeer\Autoload {
 
         public function setCompressionMode($mode) {
             $this->compression = $mode;
+        }
+
+        public function setSignatureType($type) {
+            if (!in_array($type, array_keys($this->supportedSignatureTypes))) {
+                throw new \InvalidArgumentException(
+                    sprintf('Signature type "%s" not known or not supported by this PHP installation.', $type)
+                );
+            }
+            $this->signatureType = $type;
         }
 
         public function setSignatureKey($key) {
@@ -99,13 +115,11 @@ namespace TheSeer\Autoload {
         }
 
         private function selectSignatureType(\Phar $phar) {
-            $map = array(
-                'SHA-512' => \Phar::SHA512,
-                'SHA-256' => \Phar::SHA256,
-                'SHA-1' => \Phar::SHA1
-            );
+            if ($this->signatureType !== NULL) {
+                return $this->supportedSignatureTypes[$this->signatureType];
+            }
             $supported = $phar->getSupportedSignatures();
-            foreach($map as $candidate => $type) {
+            foreach($this->supportedSignatureTypes as $candidate => $type) {
                 if (in_array($candidate, $supported)) {
                     return $type;
                 }

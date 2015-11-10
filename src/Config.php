@@ -65,6 +65,7 @@ namespace TheSeer\Autoload {
         private $pharKey;
         private $pharAll = false;
         private $pharAliasName = '';
+        private $pharHashAlgorithm;
         private $followSymlinks = false;
         private $cacheFilename;
         private $prepend = false;
@@ -242,6 +243,29 @@ namespace TheSeer\Autoload {
 
         public function getPharAliasName() {
             return $this->pharAliasName;
+        }
+
+        public function hasPharHashAlgorithm() {
+            return $this->pharHashAlgorithm !== null;
+        }
+
+        /**
+         * @return string
+         */
+        public function getPharHashAlgorithm() {
+            return $this->pharHashAlgorithm;
+        }
+
+        /**
+         * @param string $pharHashAlgorithm
+         */
+        public function setPharHashAlgorithm($pharHashAlgorithm) {
+            if (!in_array($pharHashAlgorithm, array('SHA-512','SHA-256','SHA-1'))) {
+                throw new \InvalidArgumentException(
+                    sprintf('Algorithm %s not supported', $pharHashAlgorithm)
+                );
+            }
+            $this->pharHashAlgorithm = $pharHashAlgorithm;
         }
 
         public function setPhp($php) {
