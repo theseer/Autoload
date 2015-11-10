@@ -66,7 +66,7 @@ Once it is marked as executable, you can run it directly. For instance:
 
 ```
 [theseer@rikka ~]$ ./phpab.phar -v
-phpab 1.18.0 - Copyright (C) 2009 - 2015 by Arne Blankerts
+phpab 1.21.0 - Copyright (C) 2009 - 2015 by Arne Blankerts
 ```
 
 ## Other Downloads
@@ -76,7 +76,7 @@ phpab 1.18.0 - Copyright (C) 2009 - 2015 by Arne Blankerts
 
 ## Usage
 ```
-phpab [switches] <directory1|/path/to/composer.json> [...<directoryN>]
+Usage: phpab [switches] <directory1|file1|/path/to/composer.json> [...<directoryN|fileN>]
 
   -i, --include       File pattern to include (default: *.php)
   -e, --exclude       File pattern to exclude
@@ -89,6 +89,7 @@ phpab [switches] <directory1|/path/to/composer.json> [...<directoryN>]
 
   -o, --output        Output file for generated code (default: STDOUT)
   -p, --phar          Create a phar archive (requires -o )
+      --hash          Force given hash algorithm (SHA-1, SHA-256 or SHA-512) (requires -p, conflicts with --key)
       --bzip2         Compress phar archive using bzip2 (requires -p) (bzip2 required)
       --gz            Compress phar archive using gzip (requires -p) (gzip required)
       --key           OpenSSL key file to use for signing phar archive (requires -p) (openssl required)
@@ -192,4 +193,4 @@ Custom variables as defined by passing --var name=value via cli are accessed by 
 
 ## Changelog
 
-The [changelog](https://github.com/theseer/Autoload/blob/master/CHANGELOG.md) moved to its own document 
+The [changelog](https://github.com/theseer/Autoload/blob/master/CHANGELOG.md) moved to its own document
