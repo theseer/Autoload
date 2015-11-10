@@ -288,7 +288,7 @@ Usage: phpab [switches] <directory1|file1|/path/to/composer.json> [...<directory
   -c, --compat        Generate PHP 5.2 compatible code
   -s, --static        Generate a static require file
 
-  -1, --prepend       Register as first autoloader (prepend to stack, defaukt: append)
+  -1, --prepend       Register as first autoloader (prepend to stack, default: append)
   -d, --no-exception  Do not throw exception on registration problem (default: throw exception)
 
   -n, --nolower       Do not lowercase classnames for case insensitivity
