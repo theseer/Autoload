@@ -1,6 +1,6 @@
 <?php
     /**
-     * Copyright (c) 2009-2015 Arne Blankerts <arne@blankerts.de>
+     * Copyright (c) 2009-2016 Arne Blankerts <arne@blankerts.de>
      * All rights reserved.
      *
      * Redistribution and use in source and binary forms, with or without modification,
@@ -58,7 +58,7 @@ namespace TheSeer\Autoload {
         }
 
         public static function getInfoString() {
-            return 'phpab ' . self::getVersion() . " - Copyright (C) 2009 - " . date('Y') . " by Arne Blankerts";
+            return 'phpab ' . self::getVersion() . " - Copyright (C) 2009 - " . date('Y') . " by Arne Blankerts and Contributors";
         }
 
     }

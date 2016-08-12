@@ -66,7 +66,7 @@ Once it is marked as executable, you can run it directly. For instance:
 
 ```
 [theseer@rikka ~]$ ./phpab.phar -v
-phpab 1.21.0 - Copyright (C) 2009 - 2015 by Arne Blankerts
+phpab 1.22.0 - Copyright (C) 2009 - 2016 by Arne Blankerts
 ```
 
 ## Other Downloads
