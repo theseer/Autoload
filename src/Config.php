@@ -301,6 +301,10 @@ namespace TheSeer\Autoload {
                     if (file_exists($alternative)) {
                         $template = $alternative;
                     }
+                    $alternative .= '.php.tpl';
+                    if (file_exists($alternative)) {
+                        $template = $alternative;
+                    }
                 }
                 return $template;
             }
