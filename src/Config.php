@@ -318,6 +318,7 @@ namespace TheSeer\Autoload {
             if ($this->isPharMode()) {
                 if ($this->isStaticMode()) {
                     $tplFile = 'staticphar.php.tpl';
+                    $tplType = '.';
                 } else {
                     $tplFile = 'phar.php.tpl';
                 }
