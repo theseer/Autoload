@@ -1,7 +1,11 @@
 # Changelog
 
+## Release 1.23.0
+* Add support for parsing code containing anonymous classes (PHP 7)
+* Some internal code cleanup
+
 ## Release 1.22.0
-* Merge PR [#73](https://github.com/theseer/Autoload/pull/73): no cs/ci dir for statis tpl [Remi]
+* Merge PR [#73](https://github.com/theseer/Autoload/pull/73): no cs/ci dir for static tpl [Remi]
 * Merge PR [#74](https://github.com/theseer/Autoload/pull/74): auto add suffix to (short) template name [Remi]
 
 ## Release 1.21.0
