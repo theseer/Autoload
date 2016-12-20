@@ -113,6 +113,7 @@ namespace TheSeer\Autoload {
             $tokList = array_keys($this->methodMap);
             for($t=0; $t<$tokenCount; $t++) {
                 $current = (array)$this->tokenArray[$t];
+
                 if ($current[0]==T_STRING && $current[1]=='trait' && T_TRAIT==-1) {
                     // PHP < 5.4 compat fix
                     $current[0] = T_TRAIT_53;
@@ -155,6 +156,7 @@ namespace TheSeer\Autoload {
             $stackSize = count($stack);
             $classname = $this->inNamespace != '' ? $this->inNamespace . '\\' : '';
             $extends = '';
+            $classnameFound = false;
             $extendsFound = false;
             $implementsFound = false;
             $implementsList = array();
@@ -168,6 +170,9 @@ namespace TheSeer\Autoload {
                         continue;
                     }
                     case T_STRING: {
+                        if ($mode === 'classname') {
+                            $classnameFound = true;
+                        }
                         $$mode .= $tok[1];
                         continue;
                     }
@@ -209,12 +214,16 @@ namespace TheSeer\Autoload {
                 ), ParserException::ParseError
                 );
             }
-            $classname = $this->registerUnit($classname, $stack[0][0]);
-            $this->dependencies[$classname] = $implementsList;
-            if ($extendsFound) {
-                $this->dependencies[$classname][] = $this->resolveDependencyName($extends);
+            if ($classnameFound) {
+                $classname                      = $this->registerUnit($classname, $stack[0][0]);
+                $this->dependencies[$classname] = $implementsList;
+                if ($extendsFound) {
+                    $this->dependencies[$classname][] = $this->resolveDependencyName($extends);
+                }
+                $this->inUnit = $classname;
+            } else {
+                $this->inUnit = $classname . uniqid('#Anonymous', true);
             }
-            $this->inUnit = $classname;
             $this->classBracket = $this->bracketLevel + 1;
             return $pos + $stackSize - 1;
         }

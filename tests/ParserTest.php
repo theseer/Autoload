@@ -511,6 +511,19 @@ namespace TheSeer\Autoload\Tests {
             $this->assertEquals($units, $rc->getUnits());
             $this->assertEquals($dependencies, $rc->getDependenciesForUnit('some\\name\\space\\classd'));
         }
+
+        public function testAnonymousClassGetsIgnored() {
+            $parser = new Parser();
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/anonymousclass.php')));
+            $this->assertEmpty($rc->getUnits());
+        }
+
+        public function testAnonymousClassImplementingInterfaceGetsIgnored() {
+            $parser = new Parser();
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/anonymousclass2.php')));
+            $this->assertEquals(array('foo'), $rc->getUnits());
+        }
+
     }
 
 }
