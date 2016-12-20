@@ -193,7 +193,7 @@ namespace TheSeer\Autoload {
          * @throws AutoloadBuilderException
          */
         public function setTimestamp($time) {
-            if (!is_int($time) && !is_null($time)) {
+            if (!is_int($time) && null !== $time) {
                 throw new AutoloadBuilderException("'$time' is not a unix timestamp", AutoloadBuilderException::InvalidTimestamp);
             }
             $this->timestamp = $time;

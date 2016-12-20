@@ -58,7 +58,7 @@ namespace TheSeer\Autoload {
         }
 
         public static function getInfoString() {
-            return 'phpab ' . self::getVersion() . " - Copyright (C) 2009 - " . date('Y') . " by Arne Blankerts and Contributors";
+            return 'phpab ' . self::getVersion() . ' - Copyright (C) 2009 - ' . date('Y') . ' by Arne Blankerts and Contributors';
         }
 
     }

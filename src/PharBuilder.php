@@ -100,7 +100,7 @@ namespace TheSeer\Autoload {
                 $keyDetails = openssl_pkey_get_details($this->key);
                 file_put_contents($filename . '.pubkey', $keyDetails['key']);
             } else {
-                $phar->setSignatureAlgorithm($this->selectSignatureType($phar));
+                $phar->setSignatureAlgorithm($this->selectSignatureType());
             }
 
             $basedir = $this->basedir ? $this->basedir : $this->directories[0];
@@ -114,11 +114,11 @@ namespace TheSeer\Autoload {
             $phar->stopBuffering();
         }
 
-        private function selectSignatureType(\Phar $phar) {
+        private function selectSignatureType() {
             if ($this->signatureType !== NULL) {
                 return $this->supportedSignatureTypes[$this->signatureType];
             }
-            $supported = $phar->getSupportedSignatures();
+            $supported = \Phar::getSupportedSignatures();
             foreach($this->supportedSignatureTypes as $candidate => $type) {
                 if (in_array($candidate, $supported)) {
                     return $type;

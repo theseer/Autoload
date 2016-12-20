@@ -38,8 +38,6 @@
 
 namespace TheSeer\Autoload {
 
-    use TheSeer\DirectoryScanner\DirectoryScanner;
-
     /**
      * CLI interface to AutoloadRenderer / StaticRenderer
      *
@@ -119,7 +117,7 @@ namespace TheSeer\Autoload {
                         break;
                     }
                     default: {
-                       $message = "Unexpected error in collector process: " . $e->getMessage() . "\n\nPlease report this as a bug.\n\n";
+                       $message = 'Unexpected error in collector process: ' . $e->getMessage() . "\n\nPlease report this as a bug.\n\n";
                     }
                 }
                 $this->showVersion();
@@ -531,8 +529,8 @@ EOF;
             ));
 
             $input->argumentDefinition = new \ezcConsoleArguments();
-            $input->argumentDefinition[0] = new \ezcConsoleArgument( "directory" );
-            $input->argumentDefinition[0]->shorthelp = "The directory to process.";
+            $input->argumentDefinition[0] = new \ezcConsoleArgument('directory');
+            $input->argumentDefinition[0]->shorthelp = 'The directory to process.';
             $input->argumentDefinition[0]->multiple = TRUE;
 
             return $input;

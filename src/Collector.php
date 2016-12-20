@@ -54,7 +54,7 @@ namespace TheSeer\Autoload {
 
         public function processFile(\SplFileInfo $file) {
                 try {
-                    $parseResult = $this->parser->parse(new SourceFile($file->getRealpath()));
+                    $parseResult = $this->parser->parse(new SourceFile($file->getRealPath()));
                     if ($parseResult->hasRedeclarations() && !$this->tolerantMode) {
                         throw new CollectorException(
                             sprintf(

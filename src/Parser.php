@@ -195,7 +195,7 @@ namespace TheSeer\Autoload {
                     }
                     default: {
                         throw new ParserException(sprintf(
-                            "Parse error while trying to process class definition (unexpected token in name)."
+                            'Parse error while trying to process class definition (unexpected token in name).'
                             ), ParserException::ParseError
                         );
                     }
@@ -206,7 +206,7 @@ namespace TheSeer\Autoload {
             }
             if ($implementsFound && count($implementsList)==0) {
                 throw new ParserException(sprintf(
-                    "Parse error while trying to process class definition (extends or implements)."
+                    'Parse error while trying to process class definition (extends or implements).'
                 ), ParserException::ParseError
                 );
             }
@@ -259,7 +259,7 @@ namespace TheSeer\Autoload {
         private function resolveDependencyName($name) {
             if ($name == '') {
                 throw new ParserException(sprintf(
-                    "Parse error while trying to process class definition (extends or implements)."
+                    'Parse error while trying to process class definition (extends or implements).'
                     ), ParserException::ParseError
                 );
             }
@@ -287,7 +287,7 @@ namespace TheSeer\Autoload {
         private function registerUnit($name, $type) {
             if ($name == '' || substr($name, -1) == '\\') {
                 throw new ParserException(sprintf(
-                    "Parse error while trying to process %s definition.",
+                    'Parse error while trying to process %s definition.',
                     $this->typeMap[$type]
                     ), ParserException::ParseError
                 );

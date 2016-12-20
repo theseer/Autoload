@@ -52,7 +52,7 @@ namespace TheSeer\Autoload {
         public function run() {
             $result = $this->runCollector();
             if (!$result->hasUnits()) {
-                throw new ApplicationException("No units were found - process aborted.", ApplicationException::NoUnitsFound);
+                throw new ApplicationException('No units were found - process aborted.', ApplicationException::NoUnitsFound);
             }
             if ($this->config->isCacheEnabled()) {
                 $this->factory->getCache()->persist($this->config->getCacheFile());
@@ -111,7 +111,7 @@ namespace TheSeer\Autoload {
                 $this->logger->log(
                     "Warning: Template used in phar mode did not contain required __HALT_COMPILER() call\n" .
                         "which has been added automatically. The used stub code may not work as intended.\n\n", STDERR);
-                $code .= $this->config->getLineBreak() . '__HALT_COMPILER();';
+                $code .= $this->config->getLinebreak() . '__HALT_COMPILER();';
             }
             $pharBuilder = $this->factory->getPharBuilder();
             if ($keyfile = $this->config->getPharKey()) {
@@ -130,7 +130,7 @@ namespace TheSeer\Autoload {
 
         private function loadPharSignatureKey($keyfile) {
             if (!extension_loaded('openssl')) {
-                throw new ApplicationException("Extension for OpenSSL not loaded - cannot sign phar archive - process aborted.",
+                throw new ApplicationException('Extension for OpenSSL not loaded - cannot sign phar archive - process aborted.',
                     ApplicationException::OpenSSLError);
             }
             $keydata = file_get_contents($keyfile);
@@ -161,9 +161,9 @@ namespace TheSeer\Autoload {
          */
         protected function runLint($code) {
             $dsp = array(
-                0 => array("pipe", "r"),
-                1 => array("pipe", "w"),
-                2 => array("pipe", "w")
+                0 => array('pipe', 'r'),
+                1 => array('pipe', 'w'),
+                2 => array('pipe', 'w')
             );
 
             $binary = $this->config->getPhp();
