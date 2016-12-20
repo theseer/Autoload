@@ -69,8 +69,9 @@ namespace TheSeer\Autoload {
                 } catch(ParserException $e) {
                     throw new CollectorException(
                         sprintf(
-                            "Could not process file '%s' due to parse errors",
-                            $file->getRealPath()
+                            "Could not process file '%s' due to parse errors: %s",
+                            $file->getRealPath(),
+                            $e->getMessage()
                         ),
                         CollectorException::ParseErrror,
                         $e
