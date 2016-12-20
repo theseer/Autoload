@@ -122,10 +122,7 @@ namespace TheSeer\Autoload {
                 if (!in_array($current[0], $tokList)) {
                     continue;
                 }
-                // PHP 5.5 has classname::class, reusing T_CLASS
-                if ($this->tokenArray[$t-1][0] == T_DOUBLE_COLON) {
-                    continue;
-                }
+
                 $t = call_user_func(array($this, $this->methodMap[$current[0]]), $t);
             }
             return new ParseResult($this->found, $this->dependencies, $this->redeclarations);
@@ -151,12 +148,14 @@ namespace TheSeer\Autoload {
         }
 
         private function processClass($pos) {
+            if (!$this->classTokenNeedsProcessing($pos)) {
+                return $pos;
+            }
             $list = array('{');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
             $classname = $this->inNamespace != '' ? $this->inNamespace . '\\' : '';
             $extends = '';
-            $classnameFound = false;
             $extendsFound = false;
             $implementsFound = false;
             $implementsList = array();
@@ -170,9 +169,6 @@ namespace TheSeer\Autoload {
                         continue;
                     }
                     case T_STRING: {
-                        if ($mode === 'classname') {
-                            $classnameFound = true;
-                        }
                         $$mode .= $tok[1];
                         continue;
                     }
@@ -214,16 +210,12 @@ namespace TheSeer\Autoload {
                 ), ParserException::ParseError
                 );
             }
-            if ($classnameFound) {
-                $classname                      = $this->registerUnit($classname, $stack[0][0]);
-                $this->dependencies[$classname] = $implementsList;
-                if ($extendsFound) {
-                    $this->dependencies[$classname][] = $this->resolveDependencyName($extends);
-                }
-                $this->inUnit = $classname;
-            } else {
-                $this->inUnit = $classname . uniqid('#Anonymous', true);
+            $classname                      = $this->registerUnit($classname, $stack[0][0]);
+            $this->dependencies[$classname] = $implementsList;
+            if ($extendsFound) {
+                $this->dependencies[$classname][] = $this->resolveDependencyName($extends);
             }
+            $this->inUnit = $classname;
             $this->classBracket = $this->bracketLevel + 1;
             return $pos + $stackSize - 1;
         }
@@ -468,6 +460,21 @@ namespace TheSeer\Autoload {
                     }
                 }
             }
+        }
+
+        private function classTokenNeedsProcessing($position) {
+
+            // PHP 5.5 has classname::class, reusing T_CLASS
+            if ($this->tokenArray[$position-1][0] == T_DOUBLE_COLON) {
+                return false;
+            }
+
+            // PHP 7 has anonymous classes: $x = new class { ... }
+            if ($position > 2 && $this->tokenArray[$position-2][0] === T_NEW) {
+                return false;
+            }
+
+            return true;
         }
 
     }
