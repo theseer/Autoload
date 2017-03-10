@@ -46,7 +46,7 @@ namespace TheSeer\Autoload\Tests {
      * @author     Arne Blankerts <arne@blankerts.de>
      * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
      */
-    class ParserTest extends \PHPUnit_Framework_TestCase {
+    class ParserTest extends \PHPUnit\Framework\TestCase {
 
         public function testNoClassDefined() {
             $parser = new \TheSeer\Autoload\Parser;

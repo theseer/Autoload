@@ -46,7 +46,7 @@ namespace TheSeer\Autoload\Tests {
      * @author     Arne Blankerts <arne@blankerts.de>
      * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
      */
-    class AutoloadRendererTest extends \PHPUnit_Framework_TestCase {
+    class AutoloadRendererTest extends \PHPUnit\Framework\TestCase {
 
         private $classlist;
         private $template;

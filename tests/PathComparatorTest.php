@@ -4,7 +4,7 @@ namespace TheSeer\Autoload\Tests {
 
     use TheSeer\Autoload\PathComparator;
 
-    class PathComparatorTest extends \PHPUnit_Framework_TestCase {
+    class PathComparatorTest extends \PHPUnit\Framework\TestCase {
 
         /**
          * @dataProvider directoriesProvider
