@@ -41,7 +41,7 @@ namespace TheSeer\Autoload\Tests {
     use TheSeer\Autoload\Config;
     use TheSeer\Autoload\Factory;
 
-    class Bug65Test extends \PHPUnit_Framework_TestCase {
+    class Bug65Test extends \PHPUnit\Framework\TestCase {
 
         public function testBugIsFixed() {
             $config = new Config(array());

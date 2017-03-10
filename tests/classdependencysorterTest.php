@@ -47,7 +47,7 @@ namespace TheSeer\Autoload\Tests {
      * @author     Arne Blankerts <arne@blankerts.de>
      * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
      */
-    class ClassDependencySorterTest extends \PHPUnit_Framework_TestCase {
+    class ClassDependencySorterTest extends \PHPUnit\Framework\TestCase {
 
 
         public function testProcessingDependenciesInOneFile() {
@@ -115,7 +115,7 @@ namespace TheSeer\Autoload\Tests {
 
             $x = new ClassDependencySorter($classes, $dependency);
             $r = $x->process();
-
+            $this->assertTrue(true);
         }
 
     }
