@@ -20,7 +20,7 @@
 
     <!-- Run unit tests and generate junit.xml and clover.xml -->
     <target name="phpunit">
-        <exec executable="${basedir}/tools/phpunit" failonerror="true"/>
+        <exec executable="phpunit" failonerror="true"/>
     </target>
 
     <!-- Run pdepend, phpmd, phpcpd, and phpcs in parallel -->
