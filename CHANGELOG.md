@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.24.0
+* [#77](https://github.com/theseer/Autoload/issues/77): Change duplicate detection to collect all rather than exit on first
+
 ## Release 1.23.0
 * Add support for parsing code containing anonymous classes (PHP 7)
 * Some internal code cleanup
