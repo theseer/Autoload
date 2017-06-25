@@ -23,6 +23,11 @@ namespace TheSeer\Autoload {
          */
         private $dependencies = array();
 
+        /**
+         * @var array
+         */
+        private $duplicates = array();
+
         public function __construct(array $whitelist, array $blacklist) {
             $this->whitelist = $whitelist;
             $this->blacklist = $blacklist;
@@ -38,15 +43,11 @@ namespace TheSeer\Autoload {
                     continue;
                 }
                 if (isset($this->units[$unit])) {
-                    throw new CollectorResultException(
-                        sprintf(
-                            "Redeclaration of trait, interface or class found:\n\n\tUnit name: %s\n\tFirst occurance: %s\n\tRedeclaration: %s",
-                            $unit,
-                            $this->units[$unit],
-                            $filename
-                        ),
-                        CollectorResultException::DuplicateUnitName
-                    );
+                    if (!isset($this->duplicates[$unit])) {
+                        $this->duplicates[$unit] = [ $this->units[$unit] ];
+                    }
+                    $this->duplicates[$unit][] = $filename;
+                    continue;
                 }
                 $this->units[$unit] = $filename;
                 $this->dependencies[$unit] = $result->getDependenciesForUnit($unit);
@@ -57,6 +58,9 @@ namespace TheSeer\Autoload {
             return count($this->units) > 0;
         }
 
+        public function hasDuplicates() {
+            return count($this->duplicates) > 0;
+        }
         /**
          * @return array
          */
@@ -88,6 +92,10 @@ namespace TheSeer\Autoload {
                 }
             }
             return false;
+        }
+
+        public function getDuplicates() {
+            return $this->duplicates;
         }
 
     }

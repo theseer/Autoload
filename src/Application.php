@@ -54,6 +54,10 @@ namespace TheSeer\Autoload {
             if (!$result->hasUnits()) {
                 throw new ApplicationException('No units were found - process aborted.', ApplicationException::NoUnitsFound);
             }
+            if ($result->hasDuplicates()) {
+                return $this->showDuplicatesError($result->getDuplicates());
+            }
+
             if ($this->config->isCacheEnabled()) {
                 $this->factory->getCache()->persist($this->config->getCacheFile());
             }
@@ -193,6 +197,34 @@ namespace TheSeer\Autoload {
 
             $this->logger->log("Lint check of geneated code okay\n\n");
             return CLI::RC_OK;
+        }
+
+        /**
+         * @param array $duplicates
+         *
+         * @return int
+         */
+        private function showDuplicatesError(array $duplicates) {
+            $this->logger->log(
+                sprintf("\nMultiple declarations of trait(s), interface(s) or class(es). Could not generate autoload map.\n"),
+                STDERR
+            );
+            foreach($duplicates as $unit => $files) {
+                $this->logger->log(
+                    sprintf("\nUnit '%s' defined in:\n", $unit),
+                    STDERR
+                );
+
+                /** @var array $files */
+                foreach($files as $file) {
+                    $this->logger->log(
+                        sprintf(" - %s\n", $file),
+                        STDERR
+                    );
+
+                }
+            }
+            return CLI::RC_DUPLICATES_ERROR;
         }
 
     }

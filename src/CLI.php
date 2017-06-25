@@ -50,6 +50,7 @@ namespace TheSeer\Autoload {
         const RC_EXEC_ERROR = 1;
         const RC_PARAM_ERROR = 3;
         const RC_LINT_ERROR = 4;
+        const RC_DUPLICATES_ERROR = 5;
 
         private $pharOption;
         private $helpOption;

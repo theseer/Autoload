@@ -1,7 +1,6 @@
-#!/usr/bin/env php
 <?php
 /**
- * Copyright (c) 2009-2016 Arne Blankerts <arne@blankerts.de>
+ * Copyright (c) 2009-2017 Arne Blankerts <arne@blankerts.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -34,22 +33,35 @@
  * @author     Arne Blankerts <arne@blankerts.de>
  * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
  * @license    BSD License
- *
- * Exit codes:
- *   0 - No error
- *   1 - Execution Error
- *   3 - Parameter Error
- *   4 - Lint Error
- *   5 - Duplicates found Error
  */
 
-define('PHPAB_VERSION', '%development%');
+namespace TheSeer\Autoload\Tests {
 
-if (!ini_get('date.timezone')) {
-     ini_set('date.timezone', 'UTC');
+    use TheSeer\Autoload\Config;
+    use TheSeer\Autoload\Factory;
+
+    class DuplicateDetectionTest extends \PHPUnit\Framework\TestCase {
+
+        public function testBugIsFixed() {
+            $config = new Config([]);
+            $config->setLowercaseMode(true);
+
+            $factory = new Factory();
+            $factory->setConfig($config);
+
+            $collector = $factory->getCollector();
+
+            $scanner = $factory->getScanner()->getIterator(__DIR__ . '/_data/duplicates');
+            $collector->processDirectory($scanner);
+
+            $result = $collector->getResult();
+
+            $this->assertTrue($result->hasDuplicates());
+
+            $duplicates = $result->getDuplicates();
+            $this->assertCount(1, $duplicates);
+            $this->assertArrayHasKey('a\\b\\c\\duplicate', $duplicates);
+            $this->assertCount(3, $duplicates['a\\b\\c\\duplicate']);
+        }
+    }
 }
-require __DIR__ . '/src/autoload.php';
-
-$factory = new \TheSeer\Autoload\Factory();
-$factory->getCLI()->run();
-exit(0);
