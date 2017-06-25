@@ -29,44 +29,21 @@ an autoload require file with the option of creating static require lists as wel
 
 ### Executable PHAR
 
-The recommended way to install **phpab** is by downloading a fully self contained PHAR archive
+The recommended way to install **phpab** is by using [phive](https://phar.io):
+
+```
+phive install phpab
+```
+
+#### Manual install
+
+If you do not have phive installed or want to install manually, you can download the PHAR archive
 from the [Releases](https://github.com/theseer/Autoload/releases) tab.
-
-### Previous Releases
-
-Additionally, phar archives of older versions can be found here:
-
-* [Version 1.16.1](http://phpab.net/phpab-1.16.1.phar) - 196kb
-* [Version 1.16.0](http://phpab.net/phpab-1.16.0.phar) - 176kb
-
-* [Version 1.15.1](http://phpab.net/phpab-1.15.1.phar) - 175kb
-* [Version 1.15.0](http://phpab.net/phpab-1.15.0.phar) - 175kb
-
-* [Version 1.14.2](http://phpab.net/phpab-1.14.2.phar) - 169kb
-* [Version 1.14.1](http://phpab.net/phpab-1.14.1.phar) - 169kb
-* [Version 1.14.0](http://phpab.net/phpab-1.14.0.phar) - 169kb
-
-* [Version 1.13.1](http://phpab.net/phpab-1.13.1.phar) - 170kb
-
-* [Version 1.12.0](http://phpab.net/phpab-1.12.0.phar) - 170kb
-
-* [Version 1.11.0](http://phpab.net/phpab-1.11.0.phar) - 170kb
-
-* [Version 1.10.3](http://phpab.net/phpab-1.10.3.phar) - 170kb
-* [Version 1.10.2](http://phpab.net/phpab-1.10.2.phar) - 169kb
-* [Version 1.10.1](http://phpab.net/phpab-1.10.1.phar) - 185kb
 
 _Please note:_
 On Linux/Unix based system the phar needs to be marked executable for direct execution:
 ```
 [theseer@rikka ~]$ chmod +x phpab*.phar
-```
-
-Once it is marked as executable, you can run it directly. For instance:
-
-```
-[theseer@rikka ~]$ ./phpab.phar -v
-phpab 1.22.0 - Copyright (C) 2009 - 2016 by Arne Blankerts
 ```
 
 ## Other Downloads
@@ -172,7 +149,6 @@ if [ -f build.xml ]; then
     fi
 fi
 ```
-
 
 ## Template Variables
 
