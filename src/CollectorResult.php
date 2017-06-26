@@ -44,7 +44,7 @@ namespace TheSeer\Autoload {
                 }
                 if (isset($this->units[$unit])) {
                     if (!isset($this->duplicates[$unit])) {
-                        $this->duplicates[$unit] = [ $this->units[$unit] ];
+                        $this->duplicates[$unit] = array( $this->units[$unit] );
                     }
                     $this->duplicates[$unit][] = $filename;
                     continue;
