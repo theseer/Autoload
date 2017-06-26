@@ -43,7 +43,7 @@ namespace TheSeer\Autoload\Tests {
     class DuplicateDetectionTest extends \PHPUnit\Framework\TestCase {
 
         public function testBugIsFixed() {
-            $config = new Config([]);
+            $config = new Config(array());
             $config->setLowercaseMode(true);
 
             $factory = new Factory();
