@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.24.1
+* Merge PR [#78](https://github.com/theseer/Autoload/pull/78): Restore PHP 5.3 compatibility [Remi]
+
 ## Release 1.24.0
 * [#77](https://github.com/theseer/Autoload/issues/77): Change duplicate detection to collect all rather than exit on first
 
