@@ -130,14 +130,14 @@ When using *phpab* it is necessary to recreate the autoload file every time a ne
 This usually also happens after pulling from a repo or when switchting branches.
 Using a git `post-checkout` hook placed in `.git/hooks/post-update` this can be automated for most cases.
 
-####Basic Sample:
+#### Basic Sample:
 
 ```bash
 #!/bin/bash
 phpab -c -o src/autoload.inc.php src
 ```
 
-####Sample using an `ant build.xml` file.
+#### Sample using an `ant build.xml` file.
 
 ```bash
 #!/bin/bash
