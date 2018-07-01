@@ -15,7 +15,7 @@
             "src/"
         ]
     },
-    "license": "BSD License",
+    "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "Arne Blankerts",
