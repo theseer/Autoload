@@ -1,5 +1,9 @@
 # Changelog
 
+## Release 1.25.0
+* Add support for generating static files to use for opcache warming (-w, optionally with --reset) 
+* Minor internal cleanup
+
 ## Release 1.24.1
 * Merge PR [#78](https://github.com/theseer/Autoload/pull/78): Restore PHP 5.3 compatibility [Remi]
 
