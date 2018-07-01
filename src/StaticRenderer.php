@@ -45,9 +45,19 @@ namespace TheSeer\Autoload {
      */
     class StaticRenderer extends AutoloadRenderer {
 
-        protected $dependencies;
-        protected $phar;
-        protected $require = 'require';
+        private $dependencies;
+        private $phar;
+        private $require = 'require';
+
+        /**
+         * @var StaticListRenderer
+         */
+        private $renderHelper;
+
+        public function __construct(array $classlist, StaticListRenderer $renderHelper) {
+            parent::__construct($classlist);
+            $this->renderHelper = $renderHelper;
+        }
 
         /**
          * Setter for Dependency Array
@@ -72,8 +82,8 @@ namespace TheSeer\Autoload {
          * @param boolean $mode
          */
         public function setRequireOnce($mode) {
-            $this->require = (boolean)$mode ? 'require_once' : 'require';
         }
+
 
         /**
          * @param string $template
@@ -90,12 +100,15 @@ namespace TheSeer\Autoload {
 
             $entries = $this->sortByDependency();
 
-            $replace = array_merge($this->variables, array(
-            '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
-            '___FILELIST___' => join( $this->linebreak . $this->indent, $entries),
-            '___BASEDIR___'   => $baseDir,
-            '___AUTOLOAD___'  => uniqid('autoload', true)
-            ));
+            $replace = array_merge(
+                $this->variables,
+                array(
+                    '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
+                    '___FILELIST___' => $this->renderHelper->render($entries),
+                    '___BASEDIR___'   => $baseDir,
+                    '___AUTOLOAD___'  => uniqid('autoload', true)
+                )
+            );
 
             return str_replace(array_keys($replace), array_values($replace), $template);
         }
@@ -114,10 +127,11 @@ namespace TheSeer\Autoload {
                 if (!empty($this->baseDir) && strpos($fname, $this->baseDir)===0) {
                     $fname = str_replace($this->baseDir, '', $fname);
                 }
-                $entries[] = $this->require . " ___BASEDIR___'$fname';";
+                $entries[] =  "___BASEDIR___'$fname'";
             }
             return $entries;
         }
+
     }
 
 }

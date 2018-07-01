@@ -163,12 +163,23 @@ namespace TheSeer\Autoload {
             $isPhar   = $this->config->isPharMode();
             $isCompat = $this->config->isCompatMode();
             $isOnce   = $this->config->isOnceMode();
+            $isWarm   = $this->config->isWarmMode();
+            $isReset  = $this->config->isResetMode();
 
-            if ($isStatic === TRUE) {
-                $renderer = new StaticRenderer($result->getUnits());
+            if ($isWarm === TRUE) {
+                $renderer = new StaticRenderer(
+                    $result->getUnits(),
+                    $this->getCacheWarmingListRenderer($isReset)
+                );
                 $renderer->setDependencies($result->getDependencies());
                 $renderer->setPharMode($isPhar);
-                $renderer->setRequireOnce($isOnce);
+            } else if ($isStatic === TRUE) {
+                $renderer = new StaticRenderer(
+                    $result->getUnits(),
+                    $this->getStaticRequireListRenderer($isOnce)
+                );
+                $renderer->setDependencies($result->getDependencies());
+                $renderer->setPharMode($isPhar);
             } else {
                 $renderer = new AutoloadRenderer($result->getUnits());
                 if ($this->config->usePrepend()) {
@@ -200,6 +211,22 @@ namespace TheSeer\Autoload {
             }
 
             return $renderer;
+        }
+
+        private function getStaticRequireListRenderer($useOnce) {
+            return new StaticRequireListRenderer(
+                $useOnce,
+                $this->config->getIndent(),
+                $this->config->getLinebreak()
+            );
+        }
+
+        private function getCacheWarmingListRenderer($addReset) {
+            return new CacheWarmingListRenderer(
+                $addReset,
+                $this->config->getIndent(),
+                $this->config->getLinebreak()
+            );
         }
 
     }

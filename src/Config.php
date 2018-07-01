@@ -55,9 +55,11 @@ namespace TheSeer\Autoload {
         private $php;
         private $compatMode = FALSE;
         private $staticMode = FALSE;
+        private $warmMode = FALSE;
         private $tolerant = FALSE;
         private $trusting = TRUE;
         private $once = FALSE;
+        private $reset = FALSE;
         private $lowercase = TRUE;
         private $dateFormat;
         private $variable = array();
@@ -166,7 +168,7 @@ namespace TheSeer\Autoload {
                 }
                 return $this->indent;
             }
-            if ($this->isStaticMode()) {
+            if ($this->isStaticMode() || $this->isWarmMode()) {
                 return '';
             }
             return str_repeat(' ', $this->isCompatMode() ? 12 : 16);
@@ -282,10 +284,28 @@ namespace TheSeer\Autoload {
 
         public function setStaticMode($staticMode) {
             $this->staticMode = (boolean)$staticMode;
+            $this->warmMode = FALSE;
         }
 
         public function isStaticMode() {
             return $this->staticMode;
+        }
+
+        public function setWarmMode($warmMode) {
+            $this->warmMode = (boolean)$warmMode;
+            $this->staticMode = FALSE;
+        }
+
+        public function isWarmMode() {
+            return $this->warmMode;
+        }
+
+        public function setResetMode($resetMode) {
+            $this->reset = (boolean)$resetMode;
+        }
+
+        public function isResetMode() {
+            return $this->reset;
         }
 
         public function setTemplate($template) {
@@ -322,7 +342,7 @@ namespace TheSeer\Autoload {
                 } else {
                     $tplFile = 'phar.php.tpl';
                 }
-            } elseif ($this->isStaticMode()) {
+            } elseif ($this->isStaticMode() || $this->isWarmMode()) {
                 $tplFile = 'static.php.tpl';
                 $tplType = '.';
             }
