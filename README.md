@@ -13,6 +13,7 @@ an autoload require file with the option of creating static require lists as wel
 * Case sensitive as well as case insensitive classname mapping
 * Phar generation, with or without compression and openssl key signing
 * Static require list generation
+* Opcache warming list generation
 * Linting of generated code
 
 ## Requirements
@@ -65,7 +66,10 @@ Usage: phpab [switches] <directory1|file1|/path/to/composer.json> [...<directory
   -t, --template      Path to code template to use
 
   -o, --output        Output file for generated code (default: STDOUT)
+  
   -p, --phar          Create a phar archive (requires -o )
+      --all           Include all files in given directory when creating a phar
+      --alias         Specify explicit internal phar alias filename (default: output filename)
       --hash          Force given hash algorithm (SHA-1, SHA-256 or SHA-512) (requires -p, conflicts with --key)
       --bzip2         Compress phar archive using bzip2 (requires -p) (bzip2 required)
       --gz            Compress phar archive using gzip (requires -p) (gzip required)
@@ -73,6 +77,9 @@ Usage: phpab [switches] <directory1|file1|/path/to/composer.json> [...<directory
 
   -c, --compat        Generate PHP 5.2 compatible code
   -s, --static        Generate a static require file
+  
+  -w, --warm          Generate a static opcache warming file
+      --reset         Add opcache reset call when generating opcache warming file
 
   -1, --prepend       Register as first autoloader (prepend to stack, default: append)
   -d, --no-exception  Do not throw exception on registration problem (default: throw exception)
@@ -91,9 +98,6 @@ Usage: phpab [switches] <directory1|file1|/path/to/composer.json> [...<directory
       --tolerant      Ignore Class Redeclarations in the same file
       --once          Use require_once instead of require when creating a static require file
 
-      --all           Include all files in given directory when creating a phar
-      --alias         Specify explicit internal phar alias filename (default: output filename)
-
       --trusting      Do not check mimetype of files prior to parsing (default)
       --paranoid      Do check mimetype of files prior to parsing
 
@@ -110,6 +114,8 @@ Usage: phpab [switches] <directory1|file1|/path/to/composer.json> [...<directory
 
     [theseer@rikka ~]$ phpab -o src/autoload.php -b src composer.json
 
+    [theseer@rikka ~]$ phpab -o opcache_warming.php -w --reset src
+
     [theseer@rikka ~]$ phpab -o src/autoload.inc.php src
 
     [theseer@rikka ~]$ phpab -c -o src/autoload.inc.php src
@@ -123,6 +129,7 @@ Usage: phpab [switches] <directory1|file1|/path/to/composer.json> [...<directory
     [theseer@rikka ~]$ phpab -p -o framework.phar --bzip2 --key sign.key framework/src
 
     [theseer@rikka ~]$ phpab -b . --tolerant -o zf1_autoload.php -e '*/Test/*' Zend
+    
 
 ### Automation
 
