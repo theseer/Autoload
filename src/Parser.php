@@ -166,32 +166,32 @@ namespace TheSeer\Autoload {
                     case T_COMMENT:
                     case T_DOC_COMMENT:
                     case T_WHITESPACE: {
-                        continue;
+                        break;
                     }
                     case T_STRING: {
                         $$mode .= $tok[1];
-                        continue;
+                        break;
                     }
                     case T_NS_SEPARATOR: {
                         $$mode .= '\\';
-                        continue;
+                        break;
                     }
                     case T_EXTENDS: {
                         $extendsFound = true;
                         $mode = 'extends';
-                        continue;
+                        break;
                     }
                     case T_IMPLEMENTS: {
                         $implementsFound = true;
                         $mode = 'implements';
-                        continue;
+                        break;
                     }
                     case ',': {
                         if ($mode == 'implements') {
                             $implementsList[] = $this->resolveDependencyName($implements);
                             $implements = '';
                         }
-                        continue;
+                        break;
                     }
                     default: {
                         throw new ParserException(sprintf(
@@ -233,11 +233,11 @@ namespace TheSeer\Autoload {
                     case T_NS_SEPARATOR:
                     case T_STRING: {
                         $$mode .= $tok[1];
-                        continue;
+                        break;
                     }
                     case T_EXTENDS: {
                         $mode = 'extends';
-                        continue;
+                        break;
                     }
                     case ',': {
                         if ($mode == 'extends') {
@@ -389,18 +389,18 @@ namespace TheSeer\Autoload {
                                 break;
                             }
                         }
-                        continue;
+                        break;
                     }
                     case ';':
                     case ',': {
                         $this->dependencies[$this->inUnit][] = $this->resolveDependencyName($use);
                         $use = '';
-                        continue;
+                        break;
                     }
                     case T_NS_SEPARATOR:
                     case T_STRING: {
                         $use .= $current[1];
-                        continue;
+                        break;
                     }
                 }
             }
@@ -421,11 +421,11 @@ namespace TheSeer\Autoload {
                     case T_CONST:
                     case T_FUNCTION: {
                         $ignore = true;
-                        continue;
+                        break;
                     }
                     case '{': {
                         $group = $use;
-                        continue;
+                        break;
                     }
                     case ';':
                     case ',': {
@@ -447,16 +447,16 @@ namespace TheSeer\Autoload {
                         $use = $group;
                         $mode = 'use';
                         $ignore = false;
-                        continue;
+                        break;
                     }
                     case T_NS_SEPARATOR:
                     case T_STRING: {
                         $$mode .= $current[1];
-                        continue;
+                        break;
                     }
                     case T_AS: {
                         $mode = 'alias';
-                        continue;
+                        break;
                     }
                 }
             }
