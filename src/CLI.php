@@ -545,7 +545,7 @@ EOF;
             ));
 
             $warm = $input->registerOption( new \ezcConsoleOption(
-                'w','warm', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                'w', 'warm', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'generate opcache warming file',
                 NULL,
                 array(),
@@ -556,7 +556,7 @@ EOF;
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL,'reset', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                NULL, 'reset', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'add reset call to generated opcache warming file',
                 NULL,
                 array(
