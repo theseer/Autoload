@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.25.1
+* Merge PR [#81](https://github.com/theseer/Autoload/pull/81): Fix PHP 7.3 warnings [Remi]
+
 ## Release 1.25.0
 * Add support for generating static files to use for opcache warming (-w, optionally with --reset) 
 * Minor internal cleanup
