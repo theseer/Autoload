@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * Copyright (c) 2009-2016 Arne Blankerts <arne@blankerts.de>
+ * Copyright (c) 2009-2019 Arne Blankerts <arne@blankerts.de> and contributors
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
