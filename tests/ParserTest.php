@@ -524,6 +524,24 @@ namespace TheSeer\Autoload\Tests {
             $this->assertEquals(array('foo'), $rc->getUnits());
         }
 
+        public function testInlineUseOfKeywordClassGetsIgnored() {
+            $parser = new Parser();
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/inline-class.php')));
+            $this->assertEquals(array('demo'), $rc->getUnits());
+        }
+
+        public function testInlineUseOfKeywordInterfaceGetsIgnored() {
+            $parser = new Parser();
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/inline-interface.php')));
+            $this->assertEquals(array('demo'), $rc->getUnits());
+        }
+
+        public function testInlineUseOfKeywordTraitGetsIgnored() {
+            $parser = new Parser();
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/inline-trait.php')));
+            $this->assertEquals(array('demo'), $rc->getUnits());
+        }
+
     }
 
 }

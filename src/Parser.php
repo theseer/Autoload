@@ -114,7 +114,7 @@ namespace TheSeer\Autoload {
             for($t=0; $t<$tokenCount; $t++) {
                 $current = (array)$this->tokenArray[$t];
 
-                if ($current[0]==T_STRING && $current[1]=='trait' && T_TRAIT==-1) {
+                if ($current[0]===T_STRING && $current[1]==='trait' && T_TRAIT===-1) {
                     // PHP < 5.4 compat fix
                     $current[0] = T_TRAIT_53;
                     $this->tokenArray[$t] = $current;
@@ -135,7 +135,7 @@ namespace TheSeer\Autoload {
 
         private function processBracketClose($pos) {
             $this->bracketLevel--;
-            if ($this->nsBracket != 0 && $this->bracketLevel < $this->nsBracket) {
+            if ($this->nsBracket !== 0 && $this->bracketLevel < $this->nsBracket) {
                 $this->inNamespace = '';
                 $this->nsBracket = 0;
                 $this->aliases = array();
@@ -154,7 +154,7 @@ namespace TheSeer\Autoload {
             $list = array('{');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
-            $classname = $this->inNamespace != '' ? $this->inNamespace . '\\' : '';
+            $classname = $this->inNamespace !== '' ? $this->inNamespace . '\\' : '';
             $extends = '';
             $extendsFound = false;
             $implementsFound = false;
@@ -187,7 +187,7 @@ namespace TheSeer\Autoload {
                         break;
                     }
                     case ',': {
-                        if ($mode == 'implements') {
+                        if ($mode === 'implements') {
                             $implementsList[] = $this->resolveDependencyName($implements);
                             $implements = '';
                         }
@@ -224,6 +224,12 @@ namespace TheSeer\Autoload {
             $list = array('{');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
+            $next = $stack[1];
+            if (is_array($next) && $next[0] === '(') {
+                // sort of inline use - ignore
+                return $pos + $stackSize;
+            }
+
             $name = $this->inNamespace != '' ? $this->inNamespace . '\\' : '';
             $extends = '';
             $extendsList = array();
@@ -307,16 +313,18 @@ namespace TheSeer\Autoload {
             $list = array(';', '{');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);
-            $newpos = $pos + count($stack);
+            $newpos = $pos + $stackSize;
             if ($stackSize < 3) { // empty namespace defintion == root namespace
                 $this->inNamespace = '';
                 $this->aliases = array();
                 return $newpos - 1;
             }
             $next = $stack[1];
-            if (is_array($next) && $next[0] == T_NS_SEPARATOR) { // inline use - ignore
+            if (is_array($next) && ($next[0] === T_NS_SEPARATOR || $next[0] === '(')) {
+                // sort of inline use - ignore
                 return $newpos;
             }
+
             $this->inNamespace = '';
             foreach(array_slice($stack, 1, -1) as $tok) {
                 $this->inNamespace .= $tok[1];
@@ -471,6 +479,10 @@ namespace TheSeer\Autoload {
 
             // PHP 7 has anonymous classes: $x = new class { ... }
             if ($position > 2 && $this->tokenArray[$position-2][0] === T_NEW) {
+                return false;
+            }
+
+            if ($this->tokenArray[$position + 1] === '(' || $this->tokenArray[$position + 2] === '(') {
                 return false;
             }
 
