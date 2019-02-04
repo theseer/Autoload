@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.25.2
+* Fix Parser to ignore "inline" use of keywords `class`, `interface` and `trait`
+
 ## Release 1.25.1
 * Merge PR [#81](https://github.com/theseer/Autoload/pull/81): Fix PHP 7.3 warnings [Remi]
 
