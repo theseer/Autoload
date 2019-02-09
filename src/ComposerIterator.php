@@ -7,6 +7,7 @@ namespace TheSeer\Autoload {
          * @var array
          */
         private $directories = array();
+        private $seen = [];
 
         private $pos = 0;
 
@@ -52,6 +53,11 @@ namespace TheSeer\Autoload {
         }
 
         private function processRequire($basedir, $require) {
+            if (isset($this->seen[$require])) {
+                return;
+            }
+            $this->seen[$require] = true;
+
             $requireDir = $basedir . '/vendor/' . $require;
             $jsonFile = $this->findComposerJson($requireDir);
             $jsonData = json_decode(file_get_contents($jsonFile), true);
