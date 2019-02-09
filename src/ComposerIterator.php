@@ -6,7 +6,8 @@ namespace TheSeer\Autoload {
         /**
          * @var array
          */
-        private $directories = array();
+        private $directories = [];
+
         private $seen = [];
 
         private $pos = 0;
@@ -22,7 +23,7 @@ namespace TheSeer\Autoload {
             $composerData = json_decode(file_get_contents($composerFile->getRealPath()), true);
             if (isset($composerData['require'])) {
                 foreach($composerData['require'] as $require => $version) {
-                    if ($require == 'php' || strpos($require, 'ext-') === 0) {
+                    if ($require === 'php' || strpos($require, 'ext-') === 0) {
                         continue;
                     }
                     $this->processRequire($composerDir, $require);
@@ -63,11 +64,11 @@ namespace TheSeer\Autoload {
             $jsonData = json_decode(file_get_contents($jsonFile), true);
 
             if (isset($jsonData['require'])) {
-                foreach($jsonData['require'] as $require => $version) {
-                    if ($require == 'php' || strpos($require, 'ext-') === 0) {
+                foreach($jsonData['require'] as $entry => $version) {
+                    if ($entry === 'php' || strpos($entry, 'ext-') === 0) {
                         continue;
                     }
-                    $this->processRequire($basedir, $require);
+                    $this->processRequire($basedir, $entry);
                 }
             }
 
