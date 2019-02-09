@@ -1,0 +1,7 @@
+{
+  "name": "recursion",
+  "require": {
+    "php": ">= 5.5.9",
+    "foo/bar": "0.0"
+  }
+}
