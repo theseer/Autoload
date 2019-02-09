@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.25.3
+* Fix [#83](https://github.com/theseer/Autoload/issues/83): Error with recursive Composer dependencies
+
 ## Release 1.25.2
 * Fix Parser to ignore "inline" use of keywords `class`, `interface` and `trait`
 
