@@ -6,9 +6,9 @@ namespace TheSeer\Autoload {
         /**
          * @var array
          */
-        private $directories = [];
+        private $directories = array();
 
-        private $seen = [];
+        private $seen = array();
 
         private $pos = 0;
 
