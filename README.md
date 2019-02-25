@@ -19,6 +19,7 @@ an autoload require file with the option of creating static require lists as wel
 ## Requirements
 
 * PHP 5.3+
+* Fileinfo (ext/fileinfo)
 * Tokenizer (ext/tokenizer)
 * For PHAR generation support:
     + ext/phar (write enabled: phar.readonly = Off)
