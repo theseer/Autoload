@@ -1,5 +1,9 @@
 # Changelog
 
+## Release 1.25.4
+* Ensure include/exclude filter gets applied also in composer.json mode when files are explicitly set
+* Ensure files do not get processed multiple times in case composer.json has duplicate definitions in autoload section 
+
 ## Release 1.25.3
 * Fix [#83](https://github.com/theseer/Autoload/issues/83): Error with recursive Composer dependencies
 
