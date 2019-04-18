@@ -38,6 +38,7 @@
 namespace TheSeer\Autoload {
 
     use TheSeer\DirectoryScanner\DirectoryScanner;
+    use TheSeer\DirectoryScanner\IncludeExcludeFilterIterator;
 
     class Factory {
 
@@ -134,6 +135,13 @@ namespace TheSeer\Autoload {
                 $scanner->setFlag(\FilesystemIterator::FOLLOW_SYMLINKS);
             }
             return $scanner;
+        }
+
+        public function getFilter(\Iterator $files) {
+            $filter = new IncludeExcludeFilterIterator($files);
+            $filter->setInclude($this->config->getInclude());
+            $filter->setExclude($this->config->getExclude());
+            return $filter;
         }
 
 

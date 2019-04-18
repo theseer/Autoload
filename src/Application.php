@@ -85,8 +85,12 @@ namespace TheSeer\Autoload {
                     // this unset is needed to "fix" a segfault on shutdown in some PHP Versions
                     unset($scanner);
                 } else {
-                    $this->logger->log('Scanning file ' . $directory . "\n");
-                    $collector->processFile(new \SplFileInfo($directory));
+                    $file = new \SplFileInfo($directory);
+                    $filter = $this->factory->getFilter(new \ArrayIterator([$file]));
+                    foreach($filter as $file) {
+                        $this->logger->log('Scanning file ' . $file . "\n");
+                        $collector->processFile($file);
+                    }
                 }
             }
             return $collector->getResult();
