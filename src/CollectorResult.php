@@ -26,6 +26,11 @@ namespace TheSeer\Autoload {
         /**
          * @var array
          */
+        private $seenFiles = array();
+
+        /**
+         * @var array
+         */
         private $duplicates = array();
 
         public function __construct(array $whitelist, array $blacklist) {
@@ -33,11 +38,17 @@ namespace TheSeer\Autoload {
             $this->blacklist = $blacklist;
         }
 
+        public function hasResultFor(\SplFileInfo $file) {
+            return isset($this->seenFiles[$file->getRealPath()]);
+        }
+
         public function addParseResult(\SplFileInfo $file, ParseResult $result) {
             if (!$result->hasUnits()) {
                 return;
             }
             $filename = $file->getRealPath();
+            $this->seenFiles[$filename] = true;
+
             foreach($result->getUnits() as $unit) {
                 if (!$this->accept($unit)) {
                     continue;

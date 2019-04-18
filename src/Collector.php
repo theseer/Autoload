@@ -53,35 +53,38 @@ namespace TheSeer\Autoload {
         }
 
         public function processFile(\SplFileInfo $file) {
-                try {
-                    $parseResult = $this->parser->parse(new SourceFile($file->getRealPath()));
-                    if ($parseResult->hasRedeclarations() && !$this->tolerantMode) {
-                        throw new CollectorException(
-                            sprintf(
-                                "Duplicate (potentially conditional) definitions of the following unit(s) found:\n\n\tUnit(s): %s\n\tFile: %s",
-                                join(', ', $parseResult->getRedeclarations()),
-                                $file->getRealPath()
-                            ),
-                            CollectorException::InFileRedeclarationFound
-                        );
-                    }
-                    $this->collectorResult->addParseResult($file, $parseResult);
-                } catch(ParserException $e) {
+            if ($this->collectorResult->hasResultFor($file)) {
+                return;
+            }
+            try {
+                $parseResult = $this->parser->parse(new SourceFile($file->getRealPath()));
+                if ($parseResult->hasRedeclarations() && !$this->tolerantMode) {
                     throw new CollectorException(
                         sprintf(
-                            "Could not process file '%s' due to parse errors: %s",
-                            $file->getRealPath(),
-                            $e->getMessage()
+                            "Duplicate (potentially conditional) definitions of the following unit(s) found:\n\n\tUnit(s): %s\n\tFile: %s",
+                            join(', ', $parseResult->getRedeclarations()),
+                            $file->getRealPath()
                         ),
-                        CollectorException::ParseErrror,
-                        $e
-                    );
-                } catch(CollectorResultException $e) {
-                    throw new CollectorException(
-                        $e->getMessage(),
-                        CollectorException::RedeclarationFound
+                        CollectorException::InFileRedeclarationFound
                     );
                 }
+                $this->collectorResult->addParseResult($file, $parseResult);
+            } catch(ParserException $e) {
+                throw new CollectorException(
+                    sprintf(
+                        "Could not process file '%s' due to parse errors: %s",
+                        $file->getRealPath(),
+                        $e->getMessage()
+                    ),
+                    CollectorException::ParseErrror,
+                    $e
+                );
+            } catch(CollectorResultException $e) {
+                throw new CollectorException(
+                    $e->getMessage(),
+                    CollectorException::RedeclarationFound
+                );
+            }
         }
     }
 
