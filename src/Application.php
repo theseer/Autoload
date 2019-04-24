@@ -86,7 +86,7 @@ namespace TheSeer\Autoload {
                     unset($scanner);
                 } else {
                     $file = new \SplFileInfo($directory);
-                    $filter = $this->factory->getFilter(new \ArrayIterator([$file]));
+                    $filter = $this->factory->getFilter(new \ArrayIterator(array($file)));
                     foreach($filter as $file) {
                         $this->logger->log('Scanning file ' . $file . "\n");
                         $collector->processFile($file);
