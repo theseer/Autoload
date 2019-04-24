@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.25.5
+* Merge PR [#86](https://github.com/theseer/Autoload/pull/86): Restore PHP 5.3 compatibility [Remi]
+
 ## Release 1.25.4
 * Ensure include/exclude filter gets applied also in composer.json mode when files are explicitly set
 * Ensure files do not get processed multiple times in case composer.json has duplicate definitions in autoload section 
