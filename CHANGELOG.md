@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.25.6
+* Fix: Add `lib-` prefixed dependencies in composer.json to ignore list
+
 ## Release 1.25.5
 * Merge PR [#86](https://github.com/theseer/Autoload/pull/86): Restore PHP 5.3 compatibility [Remi]
 
