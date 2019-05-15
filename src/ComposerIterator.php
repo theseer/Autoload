@@ -65,7 +65,7 @@ namespace TheSeer\Autoload {
 
             if (isset($jsonData['require'])) {
                 foreach($jsonData['require'] as $entry => $version) {
-                    if ($entry === 'php' || strpos($entry, 'ext-') === 0) {
+                    if ($entry === 'php' || strpos($entry, 'ext-') === 0 || strpos($entry, 'lib-') === 0) {
                         continue;
                     }
                     $this->processRequire($basedir, $entry);
