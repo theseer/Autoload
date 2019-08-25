@@ -299,7 +299,7 @@ Usage: phpab [switches] <directory1|file1|/path/to/composer.json> [...<directory
       --alias         Specify explicit internal phar alias filename (default: output filename)
       --hash          Force given hash algorithm (SHA-1, SHA-256 or SHA-512) (requires -p, conflicts with --key)
       --bzip2         Compress phar archive using bzip2 (requires -p) (bzip2 required)
-      --gz            Compress phar archive using gzip (requires -p) (gzip required)
+      --gzip          Compress phar archive using gzip (requires -p) (gzip required)
       --key           OpenSSL key file to use for signing phar archive (requires -p) (openssl required)
 
   -c, --compat        Generate PHP 5.2 compatible code
