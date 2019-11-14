@@ -2,10 +2,8 @@
 
     <target name="clean" description="Cleanup build artifacts">
         <delete dir="${basedir}/build/api"/>
-        <delete dir="${basedir}/build/code-browser"/>
         <delete dir="${basedir}/build/coverage"/>
         <delete dir="${basedir}/build/logs"/>
-        <delete dir="${basedir}/build/pdepend"/>
         <delete dir="${basedir}/build/phar/_tmp" />
 
         <delete>
@@ -15,56 +13,23 @@
         </delete>
 
         <mkdir dir="${basedir}/build/logs"/>
-        <mkdir dir="${basedir}/build/pdepend"/>
+    </target>
+
+    <target name="lint">
+        <apply executable="php" failonerror="true">
+            <arg value="-l" />
+
+            <fileset dir="${basedir}/src">
+                <include name="**/*.php" />
+                <modified />
+            </fileset>
+
+        </apply>
     </target>
 
     <!-- Run unit tests and generate junit.xml and clover.xml -->
     <target name="phpunit">
         <exec executable="${basedir}/tools/phpunit" failonerror="true"/>
-    </target>
-
-    <!-- Run pdepend, phpmd, phpcpd, and phpcs in parallel -->
-    <target name="parallelTasks">
-        <parallel>
-            <antcall target="pdepend"/>
-            <antcall target="phpmd"/>
-            <antcall target="phpcpd"/>
-            <antcall target="phpcs"/>
-        </parallel>
-    </target>
-
-    <!-- Generate jdepend.xml and software metrics charts -->
-    <target name="pdepend">
-        <exec executable="pdepend">
-            <arg line="--jdepend-xml=${basedir}/build/logs/jdepend.xml
-              --jdepend-chart=${basedir}/build/pdepend/dependencies.svg
-              --overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg
-              src"/>
-        </exec>
-    </target>
-
-    <!-- Generate pmd.xml -->
-    <target name="phpmd">
-        <exec executable="phpmd">
-            <arg line="src xml codesize,design,naming,unusedcode --reportfile ${basedir}/build/logs/pmd.xml"/>
-        </exec>
-    </target>
-
-    <!-- Generate pmd-cpd.xml -->
-    <target name="phpcpd">
-        <exec executable="phpcpd">
-            <arg line="--log-pmd ${basedir}/build/logs/pmd-cpd.xml src"/>
-        </exec>
-    </target>
-
-    <!-- Generate checkstyle.xml -->
-    <target name="phpcs">
-        <exec executable="phpcs" output="/dev/null">
-            <arg line="--report=checkstyle
-              --report-file=${basedir}/build/logs/checkstyle.xml
-              --standard=${basedir}/phpcs.xml
-              src"/>
-        </exec>
     </target>
 
     <target name="phpab" description="Generate autoloader scripts">
@@ -75,37 +40,6 @@
             <arg path="src"/>
             <arg path="composer.json"/>
         </exec>
-    </target>
-
-    <target name="pear" depends="phar" description="Create a PEAR archive">
-        <delete dir="${basedir}/build/pear/_tmp"/>
-        <mkdir dir="${basedir}/build/pear/_tmp"/>
-
-        <exec executable="bash" outputproperty="version">
-            <arg value="-c" />
-            <arg value="git describe --tags --dirty" />
-        </exec>
-
-        <move file="${basedir}/build/phar/phpab-${version}.phar" tofile="${basedir}/build/pear/_tmp/phpab.phar" />
-
-        <copy todir="${basedir}/build/pear/_tmp">
-            <fileset dir="${basedir}">
-                <include name="phpab.bat"/>
-                <include name="package.xml" />
-            </fileset>
-        </copy>
-
-        <replace file="${basedir}/build/pear/_tmp/package.xml" token="%release%" value="${version}" />
-
-        <exec executable="bash" dir="${basedir}/build/pear/_tmp">
-            <arg value="-c" />
-            <arg value="pear package" />
-        </exec>
-
-        <move file="${basedir}/build/pear/_tmp/Autoload-${version}.tgz" todir="${basedir}/build/pear" />
-
-        <delete dir="${basedir}/build/pear/_tmp"/>
-
     </target>
 
     <target name="phar" description="Create PHAR archive of Autoload Builder and its dependencies">
@@ -189,5 +123,5 @@
 
     </target>
 
-    <target name="build" depends="clean,parallelTasks,phpunit"/>
+    <target name="build" depends="clean,lint,phpunit"/>
 </project>
