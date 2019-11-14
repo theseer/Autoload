@@ -26,8 +26,8 @@ class StaticRequireListRenderer implements StaticListRenderer {
      */
     public function render(array $list) {
         $require = (boolean)$this->useOnce ? 'require_once' : 'require';
-        $glue = ';' . $this->linebreak . $this->indent . $require . ' ';
+        $glue = '\';' . $this->linebreak . $this->indent . $require . ' ___BASEDIR___\'';
 
-        return $this->indent . $require . ' ' . implode($glue, $list) . ';';
+        return $this->indent . $require . ' ' . implode($glue, $list) . '\';';
     }
 }

@@ -29,11 +29,11 @@ class CacheWarmingListRenderer implements StaticListRenderer {
      * @return string
      */
     public function render(array $list) {
-        $line = $this->indent . 'opcache_compile_file(';
-        $glue = ');' . $this->linebreak . $line;
+        $line = $this->indent . 'opcache_compile_file(___BASEDIR___\'';
+        $glue = '\');' . $this->linebreak . $line;
 
         $firstLine = $this->addReset ? $this->indent . 'opcache_reset();' . $this->linebreak : '';
-        return $firstLine . $line . implode($glue, $list) . ');';
+        return $firstLine . $line . implode($glue, $list) . '\');';
 
     }
 }

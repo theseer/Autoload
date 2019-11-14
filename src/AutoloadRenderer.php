@@ -227,7 +227,7 @@ namespace TheSeer\Autoload {
          *
          * @return string
          */
-        private function resolvePath($fname) {
+        protected function resolvePath($fname) {
             if (empty($this->baseDir)) {
                 return str_replace('\\', '/', $fname);
             }

@@ -98,7 +98,10 @@ namespace TheSeer\Autoload {
                 $baseDir = $this->compat ? 'dirname(__FILE__) . ' : '__DIR__ . ';
             }
 
-            $entries = $this->sortByDependency();
+            $entries = array();
+            foreach($this->sortByDependency() as $fname) {
+                $entries[] = $this->resolvePath($fname);
+            }
 
             $replace = array_merge(
                 $this->variables,
@@ -121,15 +124,8 @@ namespace TheSeer\Autoload {
         protected function sortByDependency() {
             $sorter  = new ClassDependencySorter($this->classes, $this->dependencies);
             $list    = $sorter->process();
-            $entries = array();
-            foreach(array_unique($list) as $file) {
-                $fname = realpath($file);
-                if (!empty($this->baseDir) && strpos($fname, $this->baseDir)===0) {
-                    $fname = str_replace($this->baseDir, '', $fname);
-                }
-                $entries[] =  "___BASEDIR___'$fname'";
-            }
-            return $entries;
+
+            return array_unique($list);
         }
 
     }
