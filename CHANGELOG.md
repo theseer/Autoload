@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.25.7
+* Fix: Static require or compile lists now properly process pathes relative to and above the base directory
+
 ## Release 1.25.6
 * Fix: Add `lib-` prefixed dependencies in composer.json to ignore list
 
