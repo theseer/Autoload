@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.25.8
+* Fix Regression [#92](https://github.com/theseer/Autoload/issues/92): PHPAB 1.25.7 generates broken PHAR for PHPUnit
+
 ## Release 1.25.7
 * Fix: Static require or compile lists now properly process pathes relative to and above the base directory
 
