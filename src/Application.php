@@ -61,8 +61,14 @@ namespace TheSeer\Autoload {
             if ($this->config->isCacheEnabled()) {
                 $this->factory->getCache()->persist($this->config->getCacheFile());
             }
+
+            $template = @file_get_contents($this->config->getTemplate());
+            if ($template === false) {
+                throw new ApplicationException("Failed to read the template file.");
+            }
+
             $builder = $this->factory->getRenderer($result);
-            $code = $builder->render(file_get_contents($this->config->getTemplate()));
+            $code = $builder->render($template);
             if ($this->config->isLintMode()) {
                 return $this->runLint($code);
             }
