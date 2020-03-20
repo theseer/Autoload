@@ -2,8 +2,8 @@
     "name": "theseer/autoload",
     "description": "A tool and library to generate autoload code.",
     "require": {
-        "theseer/directoryscanner": "~1.3",
-        "zetacomponents/console-tools": "~1.7"
+        "theseer/directoryscanner": "^1.3",
+        "zetacomponents/console-tools": "^1.7.1"
     },
     "require-dev": {
         "php": ">=5.3"

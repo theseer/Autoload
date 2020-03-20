@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c2587e011c7eeaa7a69e0810796add19",
+    "content-hash": "4a52053e96ef55f8745704353154ec1e",
     "packages": [
         {
             "name": "theseer/directoryscanner",
@@ -114,22 +114,23 @@
         },
         {
             "name": "zetacomponents/console-tools",
-            "version": "1.7",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zetacomponents/ConsoleTools.git",
-                "reference": "30d67e9d04f458ac8cae4c49e50f81061460ff2c"
+                "reference": "1cee38174be119226727159bc8cf4ebb91b12a8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zetacomponents/ConsoleTools/zipball/30d67e9d04f458ac8cae4c49e50f81061460ff2c",
-                "reference": "30d67e9d04f458ac8cae4c49e50f81061460ff2c",
+                "url": "https://api.github.com/repos/zetacomponents/ConsoleTools/zipball/1cee38174be119226727159bc8cf4ebb91b12a8e",
+                "reference": "1cee38174be119226727159bc8cf4ebb91b12a8e",
                 "shasum": ""
             },
             "require": {
                 "zetacomponents/base": "~1.8"
             },
             "require-dev": {
+                "phpunit/phpunit": "~5.7",
                 "zetacomponents/unit-test": "*"
             },
             "type": "library",
@@ -176,7 +177,7 @@
             ],
             "description": "A set of classes to do different actions with the console (also called shell). It can render a progress bar, tables and a status bar and contains a class for parsing command line options.",
             "homepage": "https://github.com/zetacomponents",
-            "time": "2014-09-27T19:26:09+00:00"
+            "time": "2020-03-13T15:28:37+00:00"
         }
     ],
     "packages-dev": [],
