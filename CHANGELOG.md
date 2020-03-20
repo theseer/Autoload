@@ -1,5 +1,10 @@
 # Changelog
 
+## Release 1.25.9
+* Merge PR [#89](https://github.com/theseer/Autoload/pull/89): Throw an exception if the template file cannot be read
+* Update ConsoleTools, Fixes [#91](https://github.com/theseer/Autoload/issues/91) - Zeta Components ConsoleTools uses PHP syntax deprecated in PHP 7.4
+
+
 ## Release 1.25.8
 * Fix Regression [#92](https://github.com/theseer/Autoload/issues/92): PHPAB 1.25.7 generates broken PHAR for PHPUnit
 
