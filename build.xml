@@ -27,6 +27,34 @@
         </apply>
     </target>
 
+    <target name="getphive" description="Get phive on travis-ci">
+        <exec executable="wget" taskname="wget">
+            <arg value="https://phar.io/releases/phive.phar"/>
+        </exec>
+        <exec executable="wget" taskname="wget">
+            <arg value="https://phar.io/releases/phive.phar.asc"/>
+        </exec>
+        <exec executable="gpg" taskname="gpg-get-key">
+            <arg line="--keyserver hkps.pool.sks-keyservers.net --recv-keys 0x9D8A98B29B2D5D79" />
+        </exec>
+        <exec executable="gpg" taskname="gpg-verify">
+            <arg line="--verify phive.phar.asc phive.phar" />
+        </exec>
+        <chmod file="phive.phar" perm="+x" />
+        <delete file="phive.phar.asc" />
+    </target>
+
+    <target name="install-tools" description="Install tools with Phive">
+        <exec executable="${phive.bin}" taskname="phive">
+            <arg value="install"/>
+            <arg value="--copy" />
+            <arg value="--trust-gpg-keys" />
+            <!--        phpab,           phpunit,         phpstan,         psaml,           php-cs-fixer     -->
+            <arg value="4AA394086372C20A,2A8299CE842DD38C,CF1A108D0E7AE720,8A03EA3B385DBAA1,E82B2FB314E9906E" />
+        </exec>
+    </target>
+
+
     <!-- Run unit tests and generate junit.xml and clover.xml -->
     <target name="phpunit">
         <exec executable="${basedir}/tools/phpunit" failonerror="true"/>

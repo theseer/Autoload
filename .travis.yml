@@ -11,11 +11,17 @@ php:
 
 before_script:
     - composer install --prefer-dist --dev
+    - mkdir -p "$HOME/bin"
+    - export PATH="$HOME/bin:$PATH"
+    - if [ ! -d "$HOME/.phive" ]; then mkdir "$HOME/.phive"; fi
+    - if [ ! -f "$HOME/.phive/phive.phar" ]; then ant getphive; mv phive.phar "$HOME/.phive/"; fi
+    - install --mode=0755 -T "$HOME/.phive/phive.phar" "$HOME/bin/phive"
 
 script:
     - ant lint
-    - ./vendor/bin/phpunit --configuration phpunit.xml.dist
-    - ./vendor/bin/phpcs --standard=phpcs.xml  src/
+    - ant getphive
+    - ant install-tools
+    - ./tools/phpunit --configuration phpunit.xml.dist
 
 notifications:
   email: false
