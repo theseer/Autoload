@@ -43,6 +43,12 @@ namespace TheSeer\Autoload {
         define('T_TRAIT', -1);
     }
 
+    // PHP 8.0 forward compat
+    if (!defined('T_NAME_FULLY_QUALIFIED')) {
+        define('T_NAME_FULLY_QUALIFIED', -1);
+        define('T_NAME_QUALIFIED', -1);
+    }
+
     /**
      * Namespace aware parser to find and extract defined classes within php source files
      *
@@ -168,6 +174,9 @@ namespace TheSeer\Autoload {
                     case T_WHITESPACE: {
                         break;
                     }
+
+                    case T_NAME_FULLY_QUALIFIED:
+                    case T_NAME_QUALIFIED:
                     case T_STRING: {
                         $$mode .= $tok[1];
                         break;
@@ -186,6 +195,7 @@ namespace TheSeer\Autoload {
                         $mode = 'implements';
                         break;
                     }
+
                     case ',': {
                         if ($mode === 'implements') {
                             $implementsList[] = $this->resolveDependencyName($implements);
@@ -195,7 +205,8 @@ namespace TheSeer\Autoload {
                     }
                     default: {
                         throw new ParserException(sprintf(
-                            'Parse error while trying to process class definition (unexpected token in name).'
+                                'Parse error while trying to process class definition (unexpected token "%s" in name).',
+                                \token_name($tok[0])
                             ), ParserException::ParseError
                         );
                     }
@@ -237,6 +248,8 @@ namespace TheSeer\Autoload {
             foreach(array_slice($stack, 1, -1) as $tok) {
                 switch ($tok[0]) {
                     case T_NS_SEPARATOR:
+                    case T_NAME_QUALIFIED:
+                    case T_NAME_FULLY_QUALIFIED:
                     case T_STRING: {
                         $$mode .= $tok[1];
                         break;
@@ -406,6 +419,8 @@ namespace TheSeer\Autoload {
                         break;
                     }
                     case T_NS_SEPARATOR:
+                    case T_NAME_QUALIFIED:
+                    case T_NAME_FULLY_QUALIFIED:
                     case T_STRING: {
                         $use .= $current[1];
                         break;
@@ -458,6 +473,8 @@ namespace TheSeer\Autoload {
                         break;
                     }
                     case T_NS_SEPARATOR:
+                    case T_NAME_QUALIFIED:
+                    case T_NAME_FULLY_QUALIFIED:
                     case T_STRING: {
                         $$mode .= $current[1];
                         break;

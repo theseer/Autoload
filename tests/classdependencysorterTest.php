@@ -37,6 +37,7 @@
 
 namespace TheSeer\Autoload\Tests {
 
+    use TheSeer\Autoload\ClassDependencySorterException;
     use TheSeer\Autoload\Parser;
     use TheSeer\Autoload\AutoloadRenderer;
     use TheSeer\Autoload\ClassDependencySorter;
@@ -97,14 +98,12 @@ namespace TheSeer\Autoload\Tests {
             $this->assertEquals($expectFilesOrder, array_unique(array_values($r)));
         }
 
-        /**
-         * @expectedException \TheSeer\Autoload\ClassDependencySorterException
-         */
         public function testRecusriveDependencyThrowsException() {
             $classes=array('test1' => 'file1');
             $dependency=array('test1' => array('test1'));
 
             $x = new ClassDependencySorter($classes, $dependency);
+            $this->expectException(ClassDependencySorterException::class);
             $r = $x->process();
 
         }

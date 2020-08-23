@@ -38,14 +38,9 @@
 namespace TheSeer\Autoload\Tests {
 
     use TheSeer\Autoload\Parser;
+    use TheSeer\Autoload\ParserException;
     use TheSeer\Autoload\SourceFile;
 
-    /**
-     * Unit tests for ClassFinder class
-     *
-     * @author     Arne Blankerts <arne@blankerts.de>
-     * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
-     */
     class ParserTest extends \PHPUnit\Framework\TestCase {
 
         public function testNoClassDefined() {
@@ -84,66 +79,52 @@ namespace TheSeer\Autoload\Tests {
             $this->assertContains('demo', $rc->getRedeclarations());
         }
 
-        /**
-         * @expectedException  \TheSeer\Autoload\ParserException
-         * @expectedExceptionCode  \TheSeer\Autoload\ParserException::ParseError
-         */
         public function testInvalidClassnameThrowsException() {
             $parser = new \TheSeer\Autoload\Parser;
+            $this->expectException(ParserException::class);
+            $this->expectExceptionCode(ParserException::ParseError);
             $parser->parse(new SourceFile((__DIR__.'/_data/parser/parseerror1.php')));
         }
 
-        /**
-         * @expectedException  \TheSeer\Autoload\ParserException
-         * @expectedExceptionCode  \TheSeer\Autoload\ParserException::ParseError
-         */
         public function testInvalidClassnameWithExtendsThrowsException() {
             $parser = new \TheSeer\Autoload\Parser;
+            $this->expectException(ParserException::class);
+            $this->expectExceptionCode(ParserException::ParseError);
             $parser->parse(new SourceFile((__DIR__.'/_data/parser/parseerror2.php')));
         }
 
-        /**
-         * @expectedException  \TheSeer\Autoload\ParserException
-         * @expectedExceptionCode  \TheSeer\Autoload\ParserException::ParseError
-         */
         public function testInvalidClassnameForExtendsThrowsException() {
             $parser = new \TheSeer\Autoload\Parser(true);
+            $this->expectException(ParserException::class);
+            $this->expectExceptionCode(ParserException::ParseError);
             $parser->parse(new SourceFile((__DIR__.'/_data/parser/parseerror3.php')));
         }
 
-        /**
-         * @expectedException  \TheSeer\Autoload\ParserException
-         * @expectedExceptionCode  \TheSeer\Autoload\ParserException::ParseError
-         */
         public function testInvalidClassnameForImplementsThrowsException() {
             $parser = new \TheSeer\Autoload\Parser(true);
+            $this->expectException(ParserException::class);
+            $this->expectExceptionCode(ParserException::ParseError);
             $parser->parse(new SourceFile((__DIR__.'/_data/parser/parseerror4.php')));
         }
 
-        /**
-         * @expectedException  \TheSeer\Autoload\ParserException
-         * @expectedExceptionCode  \TheSeer\Autoload\ParserException::ParseError
-         */
         public function testSyntacticallyInvalidClassnameThrowsException() {
             $parser = new \TheSeer\Autoload\Parser;
+            $this->expectException(ParserException::class);
+            $this->expectExceptionCode(ParserException::ParseError);
             $parser->parse(new SourceFile((__DIR__.'/_data/parser/invalid1.php')));
         }
 
-        /**
-         * @expectedException  \TheSeer\Autoload\ParserException
-         * @expectedExceptionCode  \TheSeer\Autoload\ParserException::ParseError
-         */
         public function testInvalidTokenInClassnameThrowsException() {
             $parser = new \TheSeer\Autoload\Parser;
+            $this->expectException(ParserException::class);
+            $this->expectExceptionCode(ParserException::ParseError);
             $parser->parse(new SourceFile((__DIR__.'/_data/parser/invalid2.php')));
         }
 
-        /**
-         * @expectedException  \TheSeer\Autoload\ParserException
-         * @expectedExceptionCode  \TheSeer\Autoload\ParserException::ParseError
-         */
         public function testInvalidTokenInClassnameWithinNamespaceThrowsException() {
             $parser = new \TheSeer\Autoload\Parser;
+            $this->expectException(ParserException::class);
+            $this->expectExceptionCode(ParserException::ParseError);
             $parser->parse(new SourceFile((__DIR__.'/_data/parser/invalid3.php')));
         }
 
@@ -540,6 +521,12 @@ namespace TheSeer\Autoload\Tests {
             $parser = new Parser();
             $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/inline-trait.php')));
             $this->assertEquals(array('demo'), $rc->getUnits());
+        }
+
+        public function testPHP80Relative() {
+            $parser = new Parser();
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/relative.php')));
+            $this->assertEquals(array('foo\\demo'), $rc->getUnits());
         }
 
     }

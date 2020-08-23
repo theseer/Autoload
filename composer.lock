@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4a52053e96ef55f8745704353154ec1e",
+    "content-hash": "fe264875b1322a46b147a3e90523c87f",
     "packages": [
         {
             "name": "theseer/directoryscanner",
@@ -186,8 +186,10 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": {
+    "platform": {
         "php": ">=5.3"
+    },
+    "platform-dev": {
+        "php": ">=7.2"
     }
 }

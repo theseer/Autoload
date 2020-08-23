@@ -37,12 +37,10 @@
 
 namespace TheSeer\Autoload\Tests {
 
-    use TheSeer\Autoload\Parser;
+    use TheSeer\Autoload\AutoloadBuilderException;
     use TheSeer\Autoload\AutoloadRenderer;
 
     /**
-     * Unit tests for PHPFilter iterator class
-     *
      * @author     Arne Blankerts <arne@blankerts.de>
      * @copyright  Arne Blankerts <arne@blankerts.de>, All rights reserved.
      */
@@ -51,7 +49,7 @@ namespace TheSeer\Autoload\Tests {
         private $classlist;
         private $template;
 
-        public function setUp() {
+        public function setUp(): void {
             $this->classlist = array();
             $this->classlist['demo1'] = realpath(__DIR__ . '/_data/parser/class.php');
             $this->classlist['demo2'] = realpath(__DIR__ . '/_data/parser/class.php');
@@ -59,7 +57,6 @@ namespace TheSeer\Autoload\Tests {
         }
 
         /**
-         *
          * @covers \TheSeer\Autoload\AutoloadRenderer::__construct
          * @covers \TheSeer\Autoload\AutoloadRenderer::render
          */
@@ -67,9 +64,9 @@ namespace TheSeer\Autoload\Tests {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
             $expected = "         \$classes = array(\n                'demo1' => '".__DIR__."/_data/parser/class.php',\n";
             $expected = strtr($expected, '\\', '/');
-            $this->assertContains($expected, $ab->render($this->template));
+            $this->assertStringContainsString($expected, $ab->render($this->template));
             $expected = "require \$classes[\$cn]";
-            $this->assertContains($expected, $ab->render($this->template));
+            $this->assertStringContainsString($expected, $ab->render($this->template));
         }
 
         /**
@@ -81,7 +78,7 @@ namespace TheSeer\Autoload\Tests {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
             $ab->setLineBreak("\r\n");
             $expected = "_data/parser/class.php',\r\n";
-            $this->assertContains($expected, $ab->render($this->template));
+            $this->assertStringContainsString($expected, $ab->render($this->template));
         }
 
         /**
@@ -104,7 +101,7 @@ namespace TheSeer\Autoload\Tests {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
             $ab->setIndent("\t");
             $expected = "\t'demo2'";
-            $this->assertContains($expected, $ab->render($this->template));
+            $this->assertStringContainsString($expected, $ab->render($this->template));
         }
 
 
@@ -120,10 +117,10 @@ namespace TheSeer\Autoload\Tests {
 
             $expected = "require __DIR__ . \$classes[\$cn];";
             $expected = strtr($expected, '\\', '/');
-            $this->assertContains($expected, $result);
+            $this->assertStringContainsString($expected, $result);
 
             $expected = "         \$classes = array(\n                'demo1' => '/tests/_data/parser/class.php',\n";
-            $this->assertContains($expected, $result);
+            $this->assertStringContainsString($expected, $result);
         }
 
         /**
@@ -135,7 +132,7 @@ namespace TheSeer\Autoload\Tests {
             $ab->setCompat(true);
             $ab->setBaseDir(realpath(__DIR__));
             $expected = "require dirname(__FILE__) . \$classes[\$cn];";
-            $this->assertContains($expected, $ab->render($this->template));
+            $this->assertStringContainsString($expected, $ab->render($this->template));
 
         }
 
@@ -146,15 +143,12 @@ namespace TheSeer\Autoload\Tests {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
             $ab->setBaseDir(realpath(__DIR__.'/_data/dependency'));
             $expected = "'demo1' => '/../parser/class.php'";
-            $this->assertContains($expected, $ab->render($this->template));
+            $this->assertStringContainsString($expected, $ab->render($this->template));
         }
 
-        /**
-         *
-         * @expectedException \TheSeer\Autoload\AutoloadBuilderException
-         */
         public function testSettingInvalidTimestamp() {
             $ab = new \TheSeer\Autoload\AutoloadRenderer($this->classlist);
+            $this->expectException(AutoloadBuilderException::class);
             $ab->setTimestamp('Bad');
         }
 

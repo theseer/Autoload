@@ -44,7 +44,7 @@ namespace TheSeer\Autoload\Tests {
 
     class FactoryTest extends \PHPUnit\Framework\TestCase {
 
-        public function setUp() {
+        public function setUp(): void {
             $this->factory = new Factory();
             $this->config = new Config(array());
             $this->factory->setConfig($this->config);
