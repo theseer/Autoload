@@ -1,8 +1,8 @@
 # Changelog
 
-## Release 1.26.0
+## Release 1.26.0 (unreleased)
 * Fix Issue [#95](https://github.com/theseer/Autoload/pull/95): Update Parser to work with PHP 8.0's new tokens
-* Raise build requirement to PHP 7.2+ and PHPUnit 9.3+, Runtime Version 5.3 still supported
+* Raise build requirement to PHP 7.2+ and PHPUnit 8.5; No change for runtime Version, so 5.3 is _still_ supported
 
 
 ## Release 1.25.9
