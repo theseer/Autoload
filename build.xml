@@ -1,4 +1,5 @@
 <project name="Autoload" default="build" basedir=".">
+    <property name="phive.bin" value="phive"/>
 
     <target name="clean" description="Cleanup build artifacts">
         <delete dir="${basedir}/build/api"/>
