@@ -160,6 +160,6 @@
 * Added compression support to phar mode
 * Added support for openssl key signing of phars
 
-#####Older Releases
+##### Older Releases
 
 Please refer to the git history log for details
