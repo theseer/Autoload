@@ -1,7 +1,9 @@
 # Changelog
 
-## Release 1.26.0 (unreleased)
+## Release 1.26.0
 * Fix Issue [#95](https://github.com/theseer/Autoload/pull/95): Update Parser to work with PHP 8.0's new tokens
+* Fix Issue [#90](https://github.com/theseer/Autoload/pull/90): Warnings and Notices in ComposerIterator
+* Merge PR [#97](https://github.com/theseer/Autoload/pull/97): Fix for xdebug v3
 * Raise build requirement to PHP 7.2+ and PHPUnit 8.5; No change for runtime Version, so 5.3 is _still_ supported
 
 
