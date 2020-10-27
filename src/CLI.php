@@ -591,7 +591,9 @@ EOF;
                 ini_set('xdebug.scream', 0);
                 ini_set('xdebug.max_nesting_level', 8192);
                 ini_set('xdebug.show_exception_trace', 0);
-                xdebug_disable();
+                if (function_exists('xdebug_disable')) { // Xdebug v2
+                    xdebug_disable();
+                }
             }
 
         }
