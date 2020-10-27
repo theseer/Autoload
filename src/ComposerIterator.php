@@ -61,6 +61,9 @@ namespace TheSeer\Autoload {
 
             $requireDir = $basedir . '/vendor/' . $require;
             $jsonFile = $this->findComposerJson($requireDir);
+            if ($jsonFile === null) {
+                return;
+            }
             $jsonData = json_decode(file_get_contents($jsonFile), true);
 
             if (isset($jsonData['require'])) {
