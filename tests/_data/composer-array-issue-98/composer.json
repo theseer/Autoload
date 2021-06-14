@@ -1,0 +1,13 @@
+{
+  "name": "issue/98",
+  "require": {
+    "php": ">= 5.5.9",
+    "bar/foo": "0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "": ["../src/", "modules/"],
+      "MyApp\\": "src/"
+    }
+  }
+}

@@ -16,4 +16,16 @@ class ComposerIteratorTest extends TestCase {
         }
     }
 
+    public function testPSR14ArrayIsSupported() {
+        $iterator = new ComposerIterator(new \SplFileInfo(__DIR__ . '/_data/composer-array-issue-98/composer.json'));
+        $expected = array(
+            __DIR__ . '/_data/composer-array-issue-98/../src',
+            __DIR__ . '/_data/composer-array-issue-98/modules',
+            __DIR__ . '/_data/composer-array-issue-98/src'
+        );
+        foreach($iterator as $pos => $entry) {
+            $this->assertEquals($expected[$pos], $entry);
+        }
+    }
+
 }

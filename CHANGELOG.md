@@ -1,5 +1,9 @@
 # Changelog
 
+## Release 1.26.1
+* Fix Issue [#98](https://github.com/theseer/Autoload/issues/98): Array to string conversion on parsing composer.json
+
+
 ## Release 1.26.0
 * Fix Issue [#95](https://github.com/theseer/Autoload/pull/95): Update Parser to work with PHP 8.0's new tokens
 * Fix Issue [#90](https://github.com/theseer/Autoload/pull/90): Warnings and Notices in ComposerIterator
