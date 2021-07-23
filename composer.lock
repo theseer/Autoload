@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe264875b1322a46b147a3e90523c87f",
+    "content-hash": "96bf8b45602196c913dbaab85ebdb8b2",
     "packages": [
         {
             "name": "theseer/directoryscanner",
@@ -46,6 +46,10 @@
                 }
             ],
             "description": "A recursive directory scanner and filter",
+            "support": {
+                "issues": "https://github.com/theseer/DirectoryScanner/issues",
+                "source": "https://github.com/theseer/DirectoryScanner/tree/master"
+            },
             "time": "2015-03-24T21:28:20+00:00"
         },
         {
@@ -110,27 +114,31 @@
             ],
             "description": "The Base package provides the basic infrastructure that all packages rely on. Therefore every component relies on this package.",
             "homepage": "https://github.com/zetacomponents",
+            "support": {
+                "issues": "https://github.com/zetacomponents/Base/issues",
+                "source": "https://github.com/zetacomponents/Base/tree/1.9.1"
+            },
             "time": "2017-11-28T11:30:00+00:00"
         },
         {
             "name": "zetacomponents/console-tools",
-            "version": "1.7.1",
+            "version": "1.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zetacomponents/ConsoleTools.git",
-                "reference": "1cee38174be119226727159bc8cf4ebb91b12a8e"
+                "reference": "97fb0743eb9aa3be76de01ce30503027840da55c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zetacomponents/ConsoleTools/zipball/1cee38174be119226727159bc8cf4ebb91b12a8e",
-                "reference": "1cee38174be119226727159bc8cf4ebb91b12a8e",
+                "url": "https://api.github.com/repos/zetacomponents/ConsoleTools/zipball/97fb0743eb9aa3be76de01ce30503027840da55c",
+                "reference": "97fb0743eb9aa3be76de01ce30503027840da55c",
                 "shasum": ""
             },
             "require": {
                 "zetacomponents/base": "~1.8"
             },
             "require-dev": {
-                "phpunit/phpunit": "~5.7",
+                "phpunit/phpunit": "~7.0",
                 "zetacomponents/unit-test": "*"
             },
             "type": "library",
@@ -177,7 +185,11 @@
             ],
             "description": "A set of classes to do different actions with the console (also called shell). It can render a progress bar, tables and a status bar and contains a class for parsing command line options.",
             "homepage": "https://github.com/zetacomponents",
-            "time": "2020-03-13T15:28:37+00:00"
+            "support": {
+                "issues": "https://github.com/zetacomponents/ConsoleTools/issues",
+                "source": "https://github.com/zetacomponents/ConsoleTools/tree/1.7.2"
+            },
+            "time": "2020-10-30T12:00:49+00:00"
         }
     ],
     "packages-dev": [],
@@ -191,5 +203,6 @@
     },
     "platform-dev": {
         "php": ">=7.2"
-    }
+    },
+    "plugin-api-version": "2.1.0"
 }
