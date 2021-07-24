@@ -1,8 +1,10 @@
 # Changelog
 
+## Release 1.26.2
+* Fix Issue [#99](https://github.com/theseer/Autoload/pull/99): Fix PHP 8.0 deprecation warnings [jrfnl]
+
 ## Release 1.26.1
 * Fix Issue [#98](https://github.com/theseer/Autoload/issues/98): Array to string conversion on parsing composer.json
-
 
 ## Release 1.26.0
 * Fix Issue [#95](https://github.com/theseer/Autoload/pull/95): Update Parser to work with PHP 8.0's new tokens
