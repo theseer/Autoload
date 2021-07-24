@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.26.3
+* Update DirectoryScanner to 1.3.3 for PHP 8.1 compatibilty
+
 ## Release 1.26.2
 * Fix Issue [#99](https://github.com/theseer/Autoload/pull/99): Fix PHP 8.0 deprecation warnings [jrfnl]
 
