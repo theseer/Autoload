@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phive xmlns="https://phar.io/phive">
-  <phar name="phpunit" version="^8.0" installed="8.5.16" location="./tools/phpunit" copy="false"/>
+  <phar name="phpunit" version="^8.0" installed="8.5.22" location="./tools/phpunit" copy="false"/>
 </phive>
