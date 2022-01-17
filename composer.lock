@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "600f1769578af7899194748f88fae5a4",
+    "content-hash": "a50986cd1b1258e3cf82f7984c66b134",
     "packages": [
         {
             "name": "theseer/directoryscanner",
@@ -54,20 +54,20 @@
         },
         {
             "name": "zetacomponents/base",
-            "version": "1.9.1",
+            "version": "1.9.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zetacomponents/Base.git",
-                "reference": "489e20235989ddc97fdd793af31ac803972454f1"
+                "reference": "2f432f4117a5aa2164d4fb1784f84db91dbdd3b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zetacomponents/Base/zipball/489e20235989ddc97fdd793af31ac803972454f1",
-                "reference": "489e20235989ddc97fdd793af31ac803972454f1",
+                "url": "https://api.github.com/repos/zetacomponents/Base/zipball/2f432f4117a5aa2164d4fb1784f84db91dbdd3b8",
+                "reference": "2f432f4117a5aa2164d4fb1784f84db91dbdd3b8",
                 "shasum": ""
             },
             "require-dev": {
-                "phpunit/phpunit": "~5.7",
+                "phpunit/phpunit": "~8.0",
                 "zetacomponents/unit-test": "*"
             },
             "type": "library",
@@ -116,31 +116,32 @@
             "homepage": "https://github.com/zetacomponents",
             "support": {
                 "issues": "https://github.com/zetacomponents/Base/issues",
-                "source": "https://github.com/zetacomponents/Base/tree/1.9.1"
+                "source": "https://github.com/zetacomponents/Base/tree/1.9.3"
             },
-            "time": "2017-11-28T11:30:00+00:00"
+            "time": "2021-07-25T15:46:08+00:00"
         },
         {
             "name": "zetacomponents/console-tools",
-            "version": "1.7.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zetacomponents/ConsoleTools.git",
-                "reference": "97fb0743eb9aa3be76de01ce30503027840da55c"
+                "reference": "c72fed7e4ddb4d0ad75b1bdef27388cb8c234778"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zetacomponents/ConsoleTools/zipball/97fb0743eb9aa3be76de01ce30503027840da55c",
-                "reference": "97fb0743eb9aa3be76de01ce30503027840da55c",
+                "url": "https://api.github.com/repos/zetacomponents/ConsoleTools/zipball/c72fed7e4ddb4d0ad75b1bdef27388cb8c234778",
+                "reference": "c72fed7e4ddb4d0ad75b1bdef27388cb8c234778",
                 "shasum": ""
             },
             "require": {
                 "zetacomponents/base": "~1.8"
             },
             "require-dev": {
-                "phpunit/phpunit": "~7.0",
+                "phpunit/phpunit": "~8.0",
                 "zetacomponents/unit-test": "*"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -187,15 +188,17 @@
             "homepage": "https://github.com/zetacomponents",
             "support": {
                 "issues": "https://github.com/zetacomponents/ConsoleTools/issues",
-                "source": "https://github.com/zetacomponents/ConsoleTools/tree/1.7.2"
+                "source": "https://github.com/zetacomponents/ConsoleTools/tree/master"
             },
-            "time": "2020-10-30T12:00:49+00:00"
+            "time": "2021-08-06T13:20:01+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "zetacomponents/console-tools": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
