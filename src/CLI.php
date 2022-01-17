@@ -355,7 +355,7 @@ EOF;
             $this->helpOption->shorthelp    = 'Prints this usage information';
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'cache', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                '', 'cache', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
                 'Enable cache and set cache filename'
             ));
 
@@ -372,28 +372,28 @@ EOF;
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'all', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                '', 'all', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'Add all files from src dir to phar',
                 NULL,
                 array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'alias', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                '', 'alias', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
                 'Provide explicit internal alias filename for phar',
                 NULL,
                 array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
             ));
 
             $bzip2 = $input->registerOption( new \ezcConsoleOption(
-                NULL, 'bzip2', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                '', 'bzip2', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'Compress files phar with bzip2',
                 NULL,
                 array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
             ));
 
             $gzip = $input->registerOption( new \ezcConsoleOption(
-                NULL, 'gzip', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                '', 'gzip', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'Compress files phar with gzip',
                 NULL,
                 array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) ),
@@ -402,14 +402,14 @@ EOF;
             $bzip2->addExclusion(new \ezcConsoleOptionRule($gzip));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'key', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                '', 'key', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
                 'Keyfile to use for signing phar archive',
                 NULL,
                 array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
             ));
 
             $this->outputOption = $input->registerOption( new \ezcConsoleOption(
-                NULL, 'hash', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                '', 'hash', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
                 'Force given hash algorithm (SHA-1, SHA-256 or SHA-512) (requires -p)',
                 NULL,
                 array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) ),
@@ -422,12 +422,12 @@ EOF;
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'blacklist', \ezcConsoleInput::TYPE_STRING, NULL, TRUE,
+                '', 'blacklist', \ezcConsoleInput::TYPE_STRING, NULL, TRUE,
                 'Name pattern to exclude'
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'whitelist', \ezcConsoleInput::TYPE_STRING, '*', TRUE,
+                '', 'whitelist', \ezcConsoleInput::TYPE_STRING, '*', TRUE,
                 'Name pattern to include (default: *)'
             ));
 
@@ -447,7 +447,7 @@ EOF;
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'follow', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                '', 'follow', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'Enables following symbolic links',
                 NULL,
                 array(),
@@ -455,27 +455,27 @@ EOF;
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'format', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                '', 'format', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
                 'Dateformat string for timestamp'
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'linebreak', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                '', 'linebreak', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
                 'Linebreak style (CR, CR/LF or LF)'
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'indent', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                '', 'indent', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
                 'String used for indenting (default: 3 spaces)'
             ));
 
             $this->lintOption = $input->registerOption( new \ezcConsoleOption(
-                NULL, 'lint', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                '', 'lint', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'Run lint on generated code'
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'lint-php', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                '', 'lint-php', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
                 'PHP binary path for linting (default: /usr/bin/php or c:\\php\\php.exe)',
                 NULL,
                 array( new \ezcConsoleOptionRule( $input->getOption( 'lint' ) ) )
@@ -492,16 +492,16 @@ EOF;
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'tolerant', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                '', 'tolerant', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'Ignore Class Redeclarations in the same file'
             ));
 
             $trusting = $input->registerOption( new \ezcConsoleOption(
-                NULL, 'trusting', \ezcConsoleInput::TYPE_NONE, TRUE, FALSE,
+                '', 'trusting', \ezcConsoleInput::TYPE_NONE, TRUE, FALSE,
                 'Do not check mimetype of files prior to parsing'
             ));
             $paranoid = $input->registerOption( new \ezcConsoleOption(
-                NULL, 'paranoid', \ezcConsoleInput::TYPE_NONE, FALSE, FALSE,
+                '', 'paranoid', \ezcConsoleInput::TYPE_NONE, FALSE, FALSE,
                 'Do check mimetype of files prior to parsing',
                 NULL,
                 array(),
@@ -510,7 +510,7 @@ EOF;
             $trusting->addExclusion(new \ezcConsoleOptionRule($paranoid));
 
             $this->onceOption = $input->registerOption( new \ezcConsoleOption(
-                NULL, 'once', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                '', 'once', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'Use require_once in static require mode',
                 NULL,
                 array( new \ezcConsoleOptionRule( $input->getOption( 's' ) ) )
@@ -540,7 +540,7 @@ EOF;
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'var', \ezcConsoleInput::TYPE_STRING, array(), TRUE,
+                '', 'var', \ezcConsoleInput::TYPE_STRING, array(), TRUE,
                 'Assign variable'
             ));
 
@@ -556,7 +556,7 @@ EOF;
             ));
 
             $input->registerOption( new \ezcConsoleOption(
-                NULL, 'reset', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
+                '', 'reset', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'add reset call to generated opcache warming file',
                 NULL,
                 array(
