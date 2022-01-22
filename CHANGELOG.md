@@ -1,5 +1,9 @@
 # Changelog
 
+## Release 1.27.0
+* Update ConsoleTools to 1.7.3. for better PHP 8.1 compatibilty
+* Add support for ENUM types (basic and backed)
+
 ## Release 1.26.3
 * Update DirectoryScanner to 1.3.3 for PHP 8.1 compatibilty
 
