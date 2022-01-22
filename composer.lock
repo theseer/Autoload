@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a50986cd1b1258e3cf82f7984c66b134",
+    "content-hash": "799a08a42874d2be88175b317929e370",
     "packages": [
         {
             "name": "theseer/directoryscanner",
@@ -122,16 +122,16 @@
         },
         {
             "name": "zetacomponents/console-tools",
-            "version": "dev-master",
+            "version": "1.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zetacomponents/ConsoleTools.git",
-                "reference": "c72fed7e4ddb4d0ad75b1bdef27388cb8c234778"
+                "reference": "fbc31f1be66ccd178c68d846d7c0ae09dbb97c89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zetacomponents/ConsoleTools/zipball/c72fed7e4ddb4d0ad75b1bdef27388cb8c234778",
-                "reference": "c72fed7e4ddb4d0ad75b1bdef27388cb8c234778",
+                "url": "https://api.github.com/repos/zetacomponents/ConsoleTools/zipball/fbc31f1be66ccd178c68d846d7c0ae09dbb97c89",
+                "reference": "fbc31f1be66ccd178c68d846d7c0ae09dbb97c89",
                 "shasum": ""
             },
             "require": {
@@ -141,7 +141,6 @@
                 "phpunit/phpunit": "~8.0",
                 "zetacomponents/unit-test": "*"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -188,17 +187,15 @@
             "homepage": "https://github.com/zetacomponents",
             "support": {
                 "issues": "https://github.com/zetacomponents/ConsoleTools/issues",
-                "source": "https://github.com/zetacomponents/ConsoleTools/tree/master"
+                "source": "https://github.com/zetacomponents/ConsoleTools/tree/1.7.3"
             },
-            "time": "2021-08-06T13:20:01+00:00"
+            "time": "2022-01-19T11:16:04+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "zetacomponents/console-tools": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
