@@ -529,6 +529,25 @@ namespace TheSeer\Autoload\Tests {
             $this->assertEquals(array('foo\\demo'), $rc->getUnits());
         }
 
+        /**
+         * @requires PHP 8.1
+         */
+        public function testCanParseSimpleEnums() {
+            $parser = new Parser();
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/basic-enum.php')));
+            $this->assertEquals(array('test\\foo','test\\barinterface','test\\bazenum','test\\barenum'), $rc->getUnits());
+        }
+
+        /**
+         * @requires PHP 8.1
+         */
+        public function testCanParseBackedEnums() {
+            $parser = new Parser();
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/backed-enum.php')));
+            $this->assertEquals(array('sample'), $rc->getDependenciesForUnit('foo'));
+            $this->assertEquals(array('sample','foo'), $rc->getUnits());
+        }
+
     }
 
 }
