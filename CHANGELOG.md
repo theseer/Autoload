@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.27.1
+* Fix/Avoid deprecation notices in PHP 8.1
+
 ## Release 1.27.0
 * Update ConsoleTools to 1.7.3. for better PHP 8.1 compatibilty
 * Add support for ENUM types (basic and backed)
