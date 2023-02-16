@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.27.2
+* Fix/Avoid deprecation notices in PHP 8.2
+
 ## Release 1.27.1
 * Fix/Avoid deprecation notices in PHP 8.1
 
