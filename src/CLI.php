@@ -359,7 +359,7 @@ EOF;
                 'Enable cache and set cache filename'
             ));
 
-            $this->outputOption = $input->registerOption( new \ezcConsoleOption(
+            $input->registerOption( new \ezcConsoleOption(
                 'o', 'output', \ezcConsoleInput::TYPE_STRING, 'STDOUT', FALSE,
                 'Output file for generated code (default: STDOUT)'
             ));
@@ -408,7 +408,7 @@ EOF;
                 array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
             ));
 
-            $this->outputOption = $input->registerOption( new \ezcConsoleOption(
+            $input->registerOption( new \ezcConsoleOption(
                 '', 'hash', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
                 'Force given hash algorithm (SHA-1, SHA-256 or SHA-512) (requires -p)',
                 NULL,
@@ -469,7 +469,7 @@ EOF;
                 'String used for indenting (default: 3 spaces)'
             ));
 
-            $this->lintOption = $input->registerOption( new \ezcConsoleOption(
+            $input->registerOption( new \ezcConsoleOption(
                 '', 'lint', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'Run lint on generated code'
             ));
