@@ -1,7 +1,7 @@
 @echo off
 REM phpab
 REM
-REM Copyright (c) 2009-2019, Arne Blankerts <arne@blankerts.de and contributors
+REM Copyright (c) 2009-2023, Arne Blankerts <arne@blankerts.de and contributors
 REM All rights reserved.
 REM
 REM Redistribution and use in source and binary forms, with or without
