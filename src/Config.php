@@ -73,6 +73,8 @@ namespace TheSeer\Autoload {
         private $prepend = false;
         private $exceptions = true;
 
+        private $homeDirectory = '';
+
         public function __construct(Array $directories) {
             $this->directories = $directories;
             $this->php = (PHP_OS === 'WIN' ? 'C:\php\php.exe' : '/usr/bin/php');
@@ -80,6 +82,14 @@ namespace TheSeer\Autoload {
 
         public function setBaseDirectory($baseDirectory) {
             $this->baseDirectory = $baseDirectory;
+        }
+
+        public function setHomeDirectory($homeDir) {
+            $this->homeDirectory = $homeDir;
+        }
+
+        public function getHomeDirectory(): string {
+            return $this->homeDirectory;
         }
 
         public function getBaseDirectory() {
@@ -391,7 +401,7 @@ namespace TheSeer\Autoload {
             $list = array();
             foreach($this->directories as $dir) {
                 if (is_file($dir) && basename($dir) == 'composer.json') {
-                    foreach(new ComposerIterator(new \SplFileInfo($dir)) as $d) {
+                    foreach(new ComposerIterator(new \SplFileInfo($dir), $this->getHomeDirectory()) as $d) {
                         $list[] = $d;
                     }
                 } else {

@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 class ComposerIteratorTest extends TestCase {
 
     public function testRecursionIsHandledProperly() {
-        $iterator = new ComposerIterator(new \SplFileInfo(__DIR__ . '/_data/recursion/composer.json'));
+        $iterator = new ComposerIterator(new \SplFileInfo(__DIR__ . '/_data/recursion/composer.json'), array());
         $expected = array(
             __DIR__ . '/_data/recursion/vendor/foo/bar',
             __DIR__ . '/_data/recursion/vendor/bar/foo'
@@ -17,7 +17,7 @@ class ComposerIteratorTest extends TestCase {
     }
 
     public function testPSR14ArrayIsSupported() {
-        $iterator = new ComposerIterator(new \SplFileInfo(__DIR__ . '/_data/composer-array-issue-98/composer.json'));
+        $iterator = new ComposerIterator(new \SplFileInfo(__DIR__ . '/_data/composer-array-issue-98/composer.json'), array());
         $expected = array(
             __DIR__ . '/_data/composer-array-issue-98/../src',
             __DIR__ . '/_data/composer-array-issue-98/modules',

@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.28.0
+* Add support for composer's `vendor-dir` setting when building autoloader based on composer.json and custom vendor directory location
+
 ## Release 1.27.2
 * Fix/Avoid deprecation notices in PHP 8.2
 

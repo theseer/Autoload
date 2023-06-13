@@ -12,7 +12,7 @@ namespace TheSeer\Autoload {
 
         private $pos = 0;
 
-        public function __construct(\SplFileInfo $composerFile) {
+        public function __construct(\SplFileInfo $composerFile, $homeDirectory) {
             if (!$composerFile->isFile() || !$composerFile->isReadable()) {
                 throw new ComposerIteratorException(
                     sprintf('Composer file "%s" not found or not readable', $composerFile->getPathname()),
@@ -21,12 +21,22 @@ namespace TheSeer\Autoload {
             }
             $composerDir = dirname($composerFile->getRealPath());
             $composerData = json_decode(file_get_contents($composerFile->getRealPath()), true);
+
+            $vendorDir = $composerDir . '/vendor';
+            if (isset($composerData['config']['vendor-dir'])) {
+                $vendorDir = preg_replace(
+                    '/($HOME|~)/',
+                     $homeDirectory,
+                     $composerData['config']['vendor-dir']
+                );
+            }
+
             if (isset($composerData['require'])) {
                 foreach($composerData['require'] as $require => $version) {
                     if ($require === 'php' || strpos($require, 'ext-') === 0) {
                         continue;
                     }
-                    $this->processRequire($composerDir, $require);
+                    $this->processRequire($vendorDir, $require);
                 }
             }
             if (isset($composerData['autoload'])) {
@@ -66,7 +76,8 @@ namespace TheSeer\Autoload {
             }
             $this->seen[$require] = true;
 
-            $requireDir = $basedir . '/vendor/' . $require;
+            $requireDir = $basedir . '/' . $require;
+
             $jsonFile = $this->findComposerJson($requireDir);
             if ($jsonFile === null) {
                 return;
@@ -168,7 +179,6 @@ namespace TheSeer\Autoload {
         public function rewind() {
             $this->pos = 0;
         }
-
     }
 
     class ComposerIteratorException extends \Exception {

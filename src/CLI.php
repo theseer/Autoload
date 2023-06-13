@@ -73,7 +73,7 @@ namespace TheSeer\Autoload {
          *
          * @return void
          */
-        public function run() {
+        public function run(array $env) {
 
             try {
 
@@ -93,7 +93,7 @@ namespace TheSeer\Autoload {
                     exit(CLI::RC_OK);
                 }
 
-                $config = $this->configure($input);
+                $config = $this->configure($env, $input);
                 $this->factory->setConfig($config);
                 if (!$config->isQuietMode()) {
                     $this->showVersion();
@@ -140,7 +140,7 @@ namespace TheSeer\Autoload {
          *
          * @return \TheSeer\Autoload\Config
          */
-        private function configure(\ezcConsoleInput $input) {
+        private function configure(array $env, \ezcConsoleInput $input) {
             $config = new Config($input->getArguments());
             if ($input->getOption('quiet')->value) {
                 $config->setQuietMode(TRUE);
@@ -260,6 +260,14 @@ namespace TheSeer\Autoload {
 
             if ($input->getOption('paranoid')->value || !$input->getOption('trusting')->value) {
                 $config->setTrusting(FALSE);
+            }
+
+            if (isset($env['HOME'])) {
+                $config->setHomeDirectory($env['HOME']);
+            } elseif (isset($env['HOMEDRIVE']) && isset($env['HOMEPATH'])) {
+                $config->setHomeDirectory($env['HOMEDRIVE'] . $env['HOMEPATH']);
+            } else {
+                $config->setHomeDirectory('/');
             }
 
             return $config;
