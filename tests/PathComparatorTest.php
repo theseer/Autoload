@@ -25,6 +25,9 @@ namespace TheSeer\Autoload\Tests {
                 'two' => array(
                     array(__DIR__, dirname(__DIR__)), dirname(__DIR__)
                 ),
+                'shortfirst' => array(
+                    array(dirname(__DIR__), __DIR__), dirname(__DIR__)
+                ),
                 'parents' => array(
                     array(__DIR__ . '/../src', __DIR__ . '/../tests/_data'), dirname(__DIR__)
                 ),
