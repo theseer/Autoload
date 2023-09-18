@@ -71,7 +71,7 @@ namespace TheSeer\Autoload {
         /**
          * Main executor method
          *
-         * @return void
+         * @return int exit code
          */
         public function run(array $env) {
 
@@ -99,19 +99,19 @@ namespace TheSeer\Autoload {
                     $this->showVersion();
                 }
                 $rc = $this->factory->getApplication()->run();
-                exit($rc);
+                return $rc;
 
             } catch (CLIEnvironmentException $e) {
                 $this->showVersion();
                 fwrite(STDERR, 'Sorry, but your PHP environment is currently not able to run phpab due to');
                 fwrite(STDERR, "\nthe following issue(s):\n\n" . $e->getMessage() . "\n\n");
                 fwrite(STDERR, "Please adjust your PHP configuration and try again.\n\n");
-                exit(CLI::RC_EXEC_ERROR);
+                return CLI::RC_EXEC_ERROR;
             } catch (\ezcConsoleException $e) {
                 $this->showVersion();
                 echo $e->getMessage() . "\n\n";
                 $this->showUsage();
-                exit(CLI::RC_PARAM_ERROR);
+                return CLI::RC_PARAM_ERROR;
             } catch (CollectorException $e) {
                 switch($e->getCode()) {
                     case CollectorException::InFileRedeclarationFound:
@@ -126,11 +126,11 @@ namespace TheSeer\Autoload {
                 }
                 $this->showVersion();
                 fwrite(STDERR, $message . "\n\n");
-                exit(CLI::RC_EXEC_ERROR);
+                return CLI::RC_EXEC_ERROR;
             } catch (\Exception $e) {
                 $this->showVersion();
                 fwrite(STDERR, "\nError while processing request:\n - " . $e->getMessage()."\n");
-                exit(CLI::RC_EXEC_ERROR);
+                return CLI::RC_EXEC_ERROR;
             }
 
         }
