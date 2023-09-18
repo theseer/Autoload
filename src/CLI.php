@@ -71,16 +71,25 @@ namespace TheSeer\Autoload {
         /**
          * Main executor method
          *
+         * @param  array|null  $options  Command line arguments. Will be forwarded as process arguments.
+         * @param  array|null  $env      Environment variables used to configure the homeDirectory.
+         *
          * @return int exit code
          */
-        public function run(array $env) {
+        public function run( array $options = null, array $env = null) {
 
             try {
 
                 $this->preBootstrap();
 
+
+                if (isset($options)) {
+                    // add $args[0]
+                    array_unshift($options, __FILE__);
+                }
+
                 $input = $this->setupInput();
-                $input->process();
+                $input->process($options);
 
                 if ($input->getOption('help')->value === TRUE) {
                     $this->showVersion();
@@ -93,7 +102,7 @@ namespace TheSeer\Autoload {
                     return CLI::RC_OK;
                 }
 
-                $config = $this->configure($env, $input);
+                $config = $this->configure($input, $env);
                 $this->factory->setConfig($config);
                 if (!$config->isQuietMode()) {
                     $this->showVersion();
@@ -140,7 +149,7 @@ namespace TheSeer\Autoload {
          *
          * @return \TheSeer\Autoload\Config
          */
-        private function configure(array $env, \ezcConsoleInput $input) {
+        private function configure(\ezcConsoleInput $input, array $env = null) {
             $config = new Config($input->getArguments());
             if ($input->getOption('quiet')->value) {
                 $config->setQuietMode(TRUE);
@@ -253,13 +262,17 @@ namespace TheSeer\Autoload {
                     if (strpos($var, '=')===FALSE) {
                         throw new \RuntimeException("Variable defintion '$var' is invalid and cannot be processed.");
                     }
-                    list($name, $value) = explode('=', $var, 2);
+                    [$name, $value] = explode('=', $var, 2);
                     $config->setVariable($name, $value);
                 }
             }
 
             if ($input->getOption('paranoid')->value || !$input->getOption('trusting')->value) {
                 $config->setTrusting(FALSE);
+            }
+
+            if ($env === null) {
+                $env = $_SERVER;
             }
 
             if (isset($env['HOME'])) {
