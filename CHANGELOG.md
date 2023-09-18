@@ -1,5 +1,8 @@
 # Changelog
 
+## Release 1.29.0
+* Merge PR [#105](https://github.com/theseer/Autoload/pull/105): Return exit code from CLI::run(), rather than exiting [martin-rueegg]
+
 ## Release 1.28.0
 * Add support for composer's `vendor-dir` setting when building autoloader based on composer.json and custom vendor directory location
 
