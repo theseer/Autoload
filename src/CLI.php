@@ -79,7 +79,7 @@ namespace TheSeer\Autoload {
 
                 $this->preBootstrap();
                 $input = $this->setupInput();
-                $input->process($env['argv'] ?: array());
+                $input->process(isset($env['argv']) ? $env['argv'] : array());
 
                 if ($input->getOption('help')->value === TRUE) {
                     $this->showVersion();
