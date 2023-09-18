@@ -20,14 +20,14 @@ namespace TheSeer\Autoload {
         }
 
         public function getCommonBase() {
-            if (count($this->directories) == 0) {
+            if (count($this->directories) === 0) {
                 return '/';
             }
             $result = $this->directories[0];
             foreach($this->directories as $dir) {
-                $result = substr($dir, 0, $this->commonPrefix($result, $dir));
+                $result = substr($dir, 0, $this->commonPrefix($result, $dir)).'/';
             }
-            return ($result ?: '/');
+            return (rtrim($result, '/') ?: '/');
         }
 
 
