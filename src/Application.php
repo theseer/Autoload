@@ -134,6 +134,9 @@ namespace TheSeer\Autoload {
             if ($aliasName = $this->config->getPharAliasName()) {
                 $pharBuilder->setAliasName($aliasName);
             }
+            if ($bootstrapName = $this->config->getPharBootstrapName()) {
+                $pharBuilder->setBootstrapName($bootstrapName);
+            }
             if ($this->config->hasPharHashAlgorithm()) {
                 $pharBuilder->setSignatureType($this->config->getPharHashAlgorithm());
             }

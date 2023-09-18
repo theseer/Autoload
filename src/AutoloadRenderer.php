@@ -95,6 +95,20 @@ namespace TheSeer\Autoload {
         protected $variables = array();
 
         /**
+         * Templates head
+         *
+         * @var string
+         */
+        protected $head = "<?php\n";
+
+        /**
+         * Template tail
+         *
+         * @var string
+         */
+        protected $tail = '';
+
+        /**
          * Flag to toggle PHP 5.2 compat mode
          *
          * @var boolean
@@ -218,6 +232,50 @@ namespace TheSeer\Autoload {
             $this->variables['___'.$name.'___'] = $value;
         }
 
+      /**
+         * Set head of the template code.
+         *
+         * @param string|string[] $head One or more filenames or code fragments to be included at the beginning of the template
+         */
+        public function setHead($head) {
+            $heads = (array) $head;
+            foreach ($heads as &$fileOrCode)
+            {
+                if (file_exists($fileOrCode)) {
+                    $fileOrCode = file_get_contents($fileOrCode);
+                }
+            }
+            unset($fileOrCode);
+            $this->head = implode("\n;\n",$heads);
+            if (!preg_match('@<\?php\s@',$this->head)) {
+                $this->head = "<?php\n".$this->head;
+            }
+        }
+
+        /**
+         * Set tail of the template code.
+         *
+         * @param  string|string[]  $tail  One or more filenames or code fragments to be included at the end of the
+         *                                 template
+         *
+         * @throws \TheSeer\Autoload\AutoloadBuilderException
+         */
+        public function setTail($tail) {
+            $tail = (array) $tail;
+            foreach ( $tail as &$fileOrCode)
+            {
+                if (file_exists($fileOrCode)) {
+                    $fileOrCode = file_get_contents($fileOrCode);
+                    $fileOrCode = preg_replace('@^(#!/.*?[\r\n]+)?<\?php\s@', '', $fileOrCode);
+                }
+            }
+            unset($fileOrCode);
+            $this->tail = implode("\n;\n",$tail);
+            $test = preg_replace('@\?>.*?<\?php\s@', '', $this->tail);
+            if (preg_match('@<\?php\s@', $test)) {
+                throw new AutoloadBuilderException("Template tail includes unmatched '<?php'", AutoloadBuilderException::TemplateIncludesPhpOpener);
+            }
+        }
 
         /**
          * Resolve relative location of file path to basedir if one is set and fix potential
@@ -237,14 +295,14 @@ namespace TheSeer\Autoload {
             $max = count($basedir);
             while (isset($filedir[$pos]) && $filedir[$pos] == $basedir[$pos]) {
                 $pos++;
-                if ($pos == $max) {
+                if ($pos === $max) {
                     break;
                 }
             }
-            if ($pos == 0) {
+            if ($pos === 0) {
                 return str_replace('\\', '/', $fname);
             }
-            $rel = join('/', array_slice($filedir, $pos));
+            $rel = implode('/', array_slice($filedir, $pos));
             if (!empty($rel)) {
                 $rel .= '/';
             }
@@ -274,14 +332,21 @@ namespace TheSeer\Autoload {
             }
 
             $replace = array_merge($this->variables, array(
-                '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
-                '___CLASSLIST___' => join( ',' . $this->linebreak . $this->indent, $entries),
+                '___CREATED___'   => date( $this->dateformat, $this->timestamp ?: time()),
+                '___CLASSLIST___' => implode( ',' . $this->linebreak . $this->indent, $entries),
                 '___BASEDIR___'   => $baseDir,
                 '___AUTOLOAD___'  => 'autoload' . md5(serialize($entries)),
                 '___EXCEPTION___' => $this->throwExceptions ? 'true' : 'false',
-                '___PREPEND___'   => $this->usePrepend ? 'true' : 'false'
+                '___PREPEND___'   => $this->usePrepend ? 'true' : 'false',
+                '___HEAD___'      => $this->head,
+                '___TAIL___'      => $this->tail
             ));
-            return str_replace(array_keys($replace), array_values($replace), $template);
+
+            do {
+                $template = str_replace(array_keys($replace), array_values($replace), $template, $count);
+            } while ($count);
+
+            return $template;
         }
 
     }
@@ -291,6 +356,7 @@ namespace TheSeer\Autoload {
 
         const TemplateNotFound = 1;
         const InvalidTimestamp = 2;
+        const TemplateIncludesPhpOpener = 3;
 
     }
 

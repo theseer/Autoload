@@ -109,11 +109,17 @@ namespace TheSeer\Autoload {
                     '___CREATED___'   => date( $this->dateformat, $this->timestamp ? $this->timestamp : time()),
                     '___FILELIST___' => $this->renderHelper->render($entries),
                     '___BASEDIR___'   => $baseDir,
-                    '___AUTOLOAD___'  => uniqid('autoload', true)
+                    '___AUTOLOAD___'  => uniqid('autoload', true),
+                    '___HEAD___'      => $this->head,
+                    '___TAIL___'      => $this->tail
                 )
             );
 
-            return str_replace(array_keys($replace), array_values($replace), $template);
+            do {
+                $template = str_replace(array_keys($replace), array_values($replace), $template, $count);
+            } while ($count);
+
+            return $template;
         }
 
         /**

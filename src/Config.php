@@ -49,6 +49,8 @@ namespace TheSeer\Autoload {
         private $blacklist = array();
         private $baseDirectory = NULL;
         private $template;
+        private $head = '';
+        private $tail = '';
         private $linebreak = "\n";
         private $indent;
         private $lint = FALSE;
@@ -67,6 +69,7 @@ namespace TheSeer\Autoload {
         private $pharKey;
         private $pharAll = false;
         private $pharAliasName = '';
+        private $pharBootstrapName = '';
         private $pharHashAlgorithm;
         private $followSymlinks = false;
         private $cacheFilename;
@@ -88,7 +91,7 @@ namespace TheSeer\Autoload {
             $this->homeDirectory = $homeDir;
         }
 
-        public function getHomeDirectory(): string {
+        public function getHomeDirectory() {
             return $this->homeDirectory;
         }
 
@@ -100,7 +103,7 @@ namespace TheSeer\Autoload {
                 $comparator = new PathComparator($this->directories);
                 return  $comparator->getCommonBase();
             }
-            if ($this->outputFile != 'STDOUT') {
+            if ($this->outputFile !== 'STDOUT') {
                 return realpath(dirname($this->outputFile) ?: '.');
             }
             $tmp = $this->getDirectories();
@@ -229,12 +232,13 @@ namespace TheSeer\Autoload {
             return $this->outputFile;
         }
 
-        public function enablePharMode($compression = 'NONE', $all = true, $key = NULL, $alias = NULL) {
+        public function enablePharMode($compression = 'NONE', $all = true, $key = NULL, $alias = NULL, $bootstrap = NULL) {
             $this->pharMode = true;
             $this->pharCompression = $compression;
             $this->pharAll = (boolean)$all;
             $this->pharKey = $key;
             $this->pharAliasName = $alias;
+            $this->pharBootstrapName = $bootstrap;
         }
 
         public function isPharMode() {
@@ -255,6 +259,10 @@ namespace TheSeer\Autoload {
 
         public function getPharAliasName() {
             return $this->pharAliasName;
+        }
+
+        public function getPharBootstrapName() {
+            return $this->pharBootstrapName;
         }
 
         public function hasPharHashAlgorithm() {
@@ -361,6 +369,22 @@ namespace TheSeer\Autoload {
 
         }
 
+        public function setHead($head) {
+            $this->head = $head;
+        }
+
+        public function getHead() {
+            return $this->head;
+        }
+
+        public function setTail($tail) {
+            $this->tail = $tail;
+        }
+
+        public function getTail() {
+            return $this->tail;
+        }
+
         public function setTolerantMode($tolerant) {
             $this->tolerant = (boolean)$tolerant;
         }
@@ -400,7 +424,7 @@ namespace TheSeer\Autoload {
         public function getDirectories() {
             $list = array();
             foreach($this->directories as $dir) {
-                if (is_file($dir) && basename($dir) == 'composer.json') {
+                if (is_file($dir) && basename($dir) === 'composer.json') {
                     foreach(new ComposerIterator(new \SplFileInfo($dir), $this->getHomeDirectory()) as $d) {
                         $list[] = $d;
                     }

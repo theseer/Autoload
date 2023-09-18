@@ -164,7 +164,8 @@ namespace TheSeer\Autoload {
                     $compression,
                     $input->getOption('all')->value,
                     $input->getOption('key')->value,
-                    $input->getOption('alias')->value
+                    $input->getOption('alias')->value,
+                    $input->getOption('bootstrap')->value
                 );
                 $config->setVariable('PHAR',
                     $input->getOption('alias')->value ? $input->getOption('alias')->value : basename($output)
@@ -241,6 +242,12 @@ namespace TheSeer\Autoload {
             if ($template = $input->getOption('template')->value) {
                 $config->setTemplate($template);
             }
+            if ($head = $input->getOption('head')->value) {
+                $config->setHead($head);
+            }
+            if ($tail = $input->getOption('tail')->value) {
+                $config->setTail($tail);
+            }
             if ($linebreak = $input->getOption('linebreak')->value) {
                 $config->setLinebreak($linebreak);
             }
@@ -298,10 +305,16 @@ Usage: phpab [switches] <directory1|file1|/path/to/composer.json> [...<directory
 
   -b, --basedir       Basedir for filepaths
   -t, --template      Path to code template to use
+  -H, --head          Path to file or code to include at the beginning of the file (must include "<?php" !)
+  -T, --tail          Path to file or code to include at the end of the file ("<?php" will be stripped!)
 
   -o, --output        Output file for generated code (default: STDOUT)
   
   -p, --phar          Create a phar archive (requires -o )
+      --bootstrap <file>
+                      Save bootstrap code (stub) also in <file> within the phar file. If -o points to anything
+                      other than a .phar file (thus creating a PharData archive), this is required, defaulting
+                      to 'autoload.php' if omitted (requires -p)
       --all           Include all files in given directory when creating a phar
       --alias         Specify explicit internal phar alias filename (default: output filename)
       --hash          Force given hash algorithm (SHA-1, SHA-256 or SHA-512) (requires -p, conflicts with --key)
@@ -378,6 +391,13 @@ EOF;
                 array( new \ezcConsoleOptionRule( $input->getOption( 'o' ) ) )
             ));
 
+           $input->registerOption( new \ezcConsoleOption(
+                '', 'bootstrap', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
+                'Filename within the phar, if a PharData is created (output does not end on .phar, but .tar, .tar.gz, tar.bz)',
+                NULL,
+                array( new \ezcConsoleOptionRule( $input->getOption( 'p' ) ) )
+            ));
+
             $input->registerOption( new \ezcConsoleOption(
                 '', 'all', \ezcConsoleInput::TYPE_NONE, NULL, FALSE,
                 'Add all files from src dir to phar',
@@ -451,6 +471,16 @@ EOF;
             $input->registerOption( new \ezcConsoleOption(
                 't', 'template', \ezcConsoleInput::TYPE_STRING, NULL, FALSE,
                 'Path to code template to use'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                'H', 'head', \ezcConsoleInput::TYPE_STRING, NULL, TRUE,
+                'Path to file or code to include at the beginning of the file (must include "<?php" !)'
+            ));
+
+            $input->registerOption( new \ezcConsoleOption(
+                'T', 'tail', \ezcConsoleInput::TYPE_STRING, NULL, TRUE,
+                'Path to file or code to include at the end of the file ("<?php" at the beginning will be stripped!)'
             ));
 
             $input->registerOption( new \ezcConsoleOption(
@@ -589,7 +619,7 @@ EOF;
             }
             if (count($missing)) {
                 throw new CLIEnvironmentException(
-                    join("\n", $missing),
+                    implode("\n", $missing),
                     CLIEnvironmentException::ExtensionMissing
                 );
             }

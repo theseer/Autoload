@@ -46,6 +46,7 @@ namespace TheSeer\Autoload {
         private $key;
         private $basedir;
         private $aliasName;
+        private $bootstrapName;
         private $signatureType;
 
         private $directories = array();
@@ -66,7 +67,7 @@ namespace TheSeer\Autoload {
         }
 
         public function setSignatureType($type) {
-            if (!in_array($type, array_keys($this->supportedSignatureTypes))) {
+            if (!array_key_exists($type, $this->supportedSignatureTypes)) {
                 throw new \InvalidArgumentException(
                     sprintf('Signature type "%s" not known or not supported by this PHP installation.', $type)
                 );
@@ -86,13 +87,27 @@ namespace TheSeer\Autoload {
             $this->aliasName = $name;
         }
 
+        public function setBootstrapName($name) {
+            $this->bootstrapName = $name;
+        }
+
         public function build($filename, $stub) {
             if (file_exists($filename)) {
                 unlink($filename);
             }
-            $phar = new \Phar($filename, 0, $this->aliasName != '' ? $this->aliasName : basename($filename));
+            $filename = new \SplFileInfo($filename);
+            $class = $filename->getExtension() === 'phar' ? \Phar::class : \PharData::class;
+            $phar = new $class($filename, 0, $this->aliasName ?: basename($filename));
             $phar->startBuffering();
-            $phar->setStub($stub);
+            if ('\\Phar' === $class) {
+                $phar->setStub($stub);
+            } elseif (empty($this->bootstrapName)) {
+                $this->bootstrapName = 'autoload.php';
+            }
+            if ($this->bootstrapName) {
+                $phar[$this->bootstrapName] = $stub;
+                $phar->setMetadata(array('bootstrap' => $this->bootstrapName));
+            }
             if ($this->key !== NULL) {
                 $privateKey = '';
                 openssl_pkey_export($this->key, $privateKey);
@@ -126,7 +141,7 @@ namespace TheSeer\Autoload {
             }
             $supported = \Phar::getSupportedSignatures();
             foreach($this->supportedSignatureTypes as $candidate => $type) {
-                if (in_array($candidate, $supported)) {
+                if (in_array($candidate, $supported, true)) {
                     return $type;
                 }
             }

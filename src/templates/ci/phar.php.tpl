@@ -1,4 +1,4 @@
-<?php
+___HEAD___
 spl_autoload_register(
     function($class) {
         static $classes = null;
@@ -16,4 +16,5 @@ spl_autoload_register(
     ___PREPEND___
 );
 Phar::mapPhar('___PHAR___');
+___TAIL___
 __HALT_COMPILER();

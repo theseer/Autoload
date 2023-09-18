@@ -163,7 +163,7 @@ namespace TheSeer\Autoload {
          *
          * @param CollectorResult $result
          *
-         * @throws \RuntimeException
+         * @throws \RuntimeException|\TheSeer\Autoload\AutoloadBuilderException
          * @return \TheSeer\Autoload\AutoloadRenderer|\TheSeer\Autoload\StaticRenderer
          */
         public function getRenderer(CollectorResult $result) {
@@ -216,6 +216,14 @@ namespace TheSeer\Autoload {
 
             foreach($this->config->getVariables() as $name => $value) {
                 $renderer->setVariable($name, $value);
+            }
+
+            if($head = $this->config->getHead()) {
+                $renderer->setHead($head);
+            }
+
+            if($tail = $this->config->getTail()) {
+                $renderer->setTail($tail);
             }
 
             return $renderer;
