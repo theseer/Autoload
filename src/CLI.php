@@ -73,8 +73,7 @@ namespace TheSeer\Autoload {
          *
          * @return int exit code
          */
-        public function run(array $env): int
-        {
+        public function run(array $env) {
 
             try {
 
