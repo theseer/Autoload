@@ -73,7 +73,8 @@ namespace TheSeer\Autoload {
          *
          * @return int exit code
          */
-        public function run(array $env) {
+        public function run(array $env): int
+        {
 
             try {
 
@@ -85,12 +86,12 @@ namespace TheSeer\Autoload {
                 if ($input->getOption('help')->value === TRUE) {
                     $this->showVersion();
                     $this->showUsage();
-                    exit(CLI::RC_OK);
+                    return CLI::RC_OK;
                 }
 
                 if ($input->getOption('version')->value === TRUE ) {
                     $this->showVersion();
-                    exit(CLI::RC_OK);
+                    return CLI::RC_OK;
                 }
 
                 $config = $this->configure($env, $input);
@@ -98,8 +99,8 @@ namespace TheSeer\Autoload {
                 if (!$config->isQuietMode()) {
                     $this->showVersion();
                 }
-                $rc = $this->factory->getApplication()->run();
-                return $rc;
+
+                return $this->factory->getApplication()->run();
 
             } catch (CLIEnvironmentException $e) {
                 $this->showVersion();
