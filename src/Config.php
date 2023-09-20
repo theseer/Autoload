@@ -88,7 +88,7 @@ namespace TheSeer\Autoload {
             $this->homeDirectory = $homeDir;
         }
 
-        public function getHomeDirectory(): string {
+        public function getHomeDirectory() {
             return $this->homeDirectory;
         }
 
