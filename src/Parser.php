@@ -214,7 +214,7 @@ namespace TheSeer\Autoload {
                     default: {
                         throw new ParserException(sprintf(
                                 'Parse error while trying to process class definition (unexpected token "%s" in name).',
-                                \token_name($tok[0])
+                                is_int($tok[0]) ? \token_name($tok[0]) : $tok[0]
                             ), ParserException::ParseError
                         );
                     }

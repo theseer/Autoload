@@ -1,5 +1,8 @@
 # Changelog
 
+# Release 1.29.1
+* Fix crash on generating error message for invalid token
+
 ## Release 1.29.0
 * Merge PR [#105](https://github.com/theseer/Autoload/pull/105): Return exit code from CLI::run(), rather than exiting [martin-rueegg]
 
