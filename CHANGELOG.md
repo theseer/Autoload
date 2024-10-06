@@ -1,5 +1,8 @@
 # Changelog
 
+# Release 1.29.2
+* Fix Issue [#115](https://github.com/theseer/Autoload/pull/115): Parser does not handle (class) constants named NAMESPACE
+
 # Release 1.29.1
 * Fix crash on generating error message for invalid token
 
