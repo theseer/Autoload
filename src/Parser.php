@@ -405,6 +405,10 @@ namespace TheSeer\Autoload {
         }
 
         private function processNamespace($pos) {
+            if ($this->inUnit !== '') {
+                return $pos + 1;
+            }
+
             $list = array(';', '{');
             $stack = $this->getTokensTill($pos, $list);
             $stackSize = count($stack);

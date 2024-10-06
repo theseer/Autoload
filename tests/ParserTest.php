@@ -548,6 +548,12 @@ namespace TheSeer\Autoload\Tests {
             $this->assertEquals(array('sample','foo'), $rc->getUnits());
         }
 
+        public function testHandlesTokenAsContstantName() {
+            $parser = new Parser();
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/token-constant.php')));
+            $this->assertEquals(array('foo\baz'), $rc->getUnits());
+        }
+
     }
 
 }
