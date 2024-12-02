@@ -1,5 +1,8 @@
 # Changelog
 
+# Release 1.29.3
+* Update Zeta Components for PHP 8.4 compatibilty
+
 # Release 1.29.2
 * Fix Issue [#115](https://github.com/theseer/Autoload/pull/115): Parser does not handle (class) constants named NAMESPACE
 

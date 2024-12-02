@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "799a08a42874d2be88175b317929e370",
+    "content-hash": "aa1466787353808e328b7be65f96f706",
     "packages": [
         {
             "name": "theseer/directoryscanner",
@@ -54,21 +54,23 @@
         },
         {
             "name": "zetacomponents/base",
-            "version": "1.9.3",
+            "version": "1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zetacomponents/Base.git",
-                "reference": "2f432f4117a5aa2164d4fb1784f84db91dbdd3b8"
+                "reference": "b6ae5f6177f6e51c5fc3514800e1c3fb076ec4be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zetacomponents/Base/zipball/2f432f4117a5aa2164d4fb1784f84db91dbdd3b8",
-                "reference": "2f432f4117a5aa2164d4fb1784f84db91dbdd3b8",
+                "url": "https://api.github.com/repos/zetacomponents/Base/zipball/b6ae5f6177f6e51c5fc3514800e1c3fb076ec4be",
+                "reference": "b6ae5f6177f6e51c5fc3514800e1c3fb076ec4be",
                 "shasum": ""
             },
             "require-dev": {
-                "phpunit/phpunit": "~8.0",
-                "zetacomponents/unit-test": "*"
+                "phpunit/php-invoker": "^2.0|^3.1",
+                "phpunit/phpunit": "~9.0",
+                "zetacomponents/coding-standard": "dev-main",
+                "zetacomponents/unit-test": "~1.2.3"
             },
             "type": "library",
             "autoload": {
@@ -116,29 +118,29 @@
             "homepage": "https://github.com/zetacomponents",
             "support": {
                 "issues": "https://github.com/zetacomponents/Base/issues",
-                "source": "https://github.com/zetacomponents/Base/tree/1.9.3"
+                "source": "https://github.com/zetacomponents/Base/tree/1.9.4"
             },
-            "time": "2021-07-25T15:46:08+00:00"
+            "time": "2022-11-30T16:16:25+00:00"
         },
         {
             "name": "zetacomponents/console-tools",
-            "version": "1.7.3",
+            "version": "1.7.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zetacomponents/ConsoleTools.git",
-                "reference": "fbc31f1be66ccd178c68d846d7c0ae09dbb97c89"
+                "reference": "de081f422b574d638e62e15661bf833d80fac61a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zetacomponents/ConsoleTools/zipball/fbc31f1be66ccd178c68d846d7c0ae09dbb97c89",
-                "reference": "fbc31f1be66ccd178c68d846d7c0ae09dbb97c89",
+                "url": "https://api.github.com/repos/zetacomponents/ConsoleTools/zipball/de081f422b574d638e62e15661bf833d80fac61a",
+                "reference": "de081f422b574d638e62e15661bf833d80fac61a",
                 "shasum": ""
             },
             "require": {
                 "zetacomponents/base": "~1.8"
             },
             "require-dev": {
-                "phpunit/phpunit": "~8.0",
+                "phpunit/phpunit": "~9.0",
                 "zetacomponents/unit-test": "*"
             },
             "type": "library",
@@ -187,9 +189,9 @@
             "homepage": "https://github.com/zetacomponents",
             "support": {
                 "issues": "https://github.com/zetacomponents/ConsoleTools/issues",
-                "source": "https://github.com/zetacomponents/ConsoleTools/tree/1.7.3"
+                "source": "https://github.com/zetacomponents/ConsoleTools/tree/1.7.5"
             },
-            "time": "2022-01-19T11:16:04+00:00"
+            "time": "2024-10-04T15:51:48+00:00"
         }
     ],
     "packages-dev": [],
@@ -199,10 +201,11 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.3"
+        "php": ">=5.3",
+        "ext-openssl": "*"
     },
     "platform-dev": {
         "php": ">=7.2"
     },
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.6.0"
 }
