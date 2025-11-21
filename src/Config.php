@@ -198,7 +198,7 @@ namespace TheSeer\Autoload {
         }
 
         public function setLintMode($lint) {
-            $this->lint = (boolean)$lint;
+            $this->lint = (bool)$lint;
         }
 
         public function isLintMode() {
@@ -206,7 +206,7 @@ namespace TheSeer\Autoload {
         }
 
         public function setLowercaseMode($lowercase) {
-            $this->lowercase = (boolean)$lowercase;
+            $this->lowercase = (bool)$lowercase;
         }
 
         public function isLowercaseMode() {
@@ -214,7 +214,7 @@ namespace TheSeer\Autoload {
         }
 
         public function setOnceMode($once) {
-            $this->once = (boolean)$once;
+            $this->once = (bool)$once;
         }
 
         public function isOnceMode() {
@@ -232,7 +232,7 @@ namespace TheSeer\Autoload {
         public function enablePharMode($compression = 'NONE', $all = true, $key = NULL, $alias = NULL) {
             $this->pharMode = true;
             $this->pharCompression = $compression;
-            $this->pharAll = (boolean)$all;
+            $this->pharAll = (bool)$all;
             $this->pharKey = $key;
             $this->pharAliasName = $alias;
         }
@@ -289,11 +289,11 @@ namespace TheSeer\Autoload {
         }
 
         public function setQuietMode($quietMode) {
-            $this->quietMode = (boolean)$quietMode;
+            $this->quietMode = (bool)$quietMode;
         }
 
         public function setStaticMode($staticMode) {
-            $this->staticMode = (boolean)$staticMode;
+            $this->staticMode = (bool)$staticMode;
             $this->warmMode = FALSE;
         }
 
@@ -302,7 +302,7 @@ namespace TheSeer\Autoload {
         }
 
         public function setWarmMode($warmMode) {
-            $this->warmMode = (boolean)$warmMode;
+            $this->warmMode = (bool)$warmMode;
             $this->staticMode = FALSE;
         }
 
@@ -311,7 +311,7 @@ namespace TheSeer\Autoload {
         }
 
         public function setResetMode($resetMode) {
-            $this->reset = (boolean)$resetMode;
+            $this->reset = (bool)$resetMode;
         }
 
         public function isResetMode() {
@@ -362,7 +362,7 @@ namespace TheSeer\Autoload {
         }
 
         public function setTolerantMode($tolerant) {
-            $this->tolerant = (boolean)$tolerant;
+            $this->tolerant = (bool)$tolerant;
         }
 
         public function isTolerantMode() {
@@ -370,11 +370,11 @@ namespace TheSeer\Autoload {
         }
 
         public function setTrusting($trusting) {
-            $this->trusting = (boolean)$trusting;
+            $this->trusting = (bool)$trusting;
         }
 
         public function setFollowSymlinks($followSymlinks) {
-            $this->followSymlinks = (boolean)$followSymlinks;
+            $this->followSymlinks = (bool)$followSymlinks;
         }
 
         public function isFollowSymlinks() {
