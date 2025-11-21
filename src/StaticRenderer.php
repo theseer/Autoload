@@ -73,7 +73,7 @@ namespace TheSeer\Autoload {
          * @param boolean $phar
          */
         public function setPharMode($phar) {
-            $this->phar = (boolean)$phar;
+            $this->phar = (bool)$phar;
         }
 
         /**
