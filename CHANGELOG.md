@@ -1,5 +1,8 @@
 # Changelog
 
+# Release 1.29.4
+*  Use (bool) cast instead of deprecated (boolean) cast (Thanks @sebastianbergmann)
+
 # Release 1.29.3
 * Update Zeta Components for PHP 8.4 compatibilty
 
