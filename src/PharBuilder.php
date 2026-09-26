@@ -105,13 +105,28 @@ namespace TheSeer\Autoload {
 
             $basedir = $this->basedir ? $this->basedir : $this->directories[0];
             foreach($this->directories as $directory) {
-                $phar->buildFromIterator($this->scanner->__invoke($directory), $basedir);
+                $phar->buildFromIterator($this->sortedFiles($directory), $basedir);
             }
 
             if ($this->compression !== \Phar::NONE) {
                 $phar->compressFiles($this->compression);
             }
             $phar->stopBuffering();
+        }
+
+        /**
+         * The order in which the filesystem returns directory entries is not defined,
+         * sorting them ensures that the same input always results in the same phar
+         */
+        private function sortedFiles($directory) {
+            $files = array();
+            foreach($this->scanner->__invoke($directory) as $file) {
+                $files[] = $file;
+            }
+            usort($files, function(\SplFileInfo $a, \SplFileInfo $b) {
+                return strcmp($a->getPathname(), $b->getPathname());
+            });
+            return new \ArrayIterator($files);
         }
 
         private function selectSignatureType() {
