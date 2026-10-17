@@ -138,6 +138,15 @@ namespace TheSeer\Autoload\Tests {
             $this->assertContains('demo3', $classes);
         }
 
+        /**
+         * @requires PHP 8.0
+         */
+        public function testNamedArgumentReusingClassKeywordGetsIgnored() {
+            $parser = new Parser();
+            $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/named-argument-class.php')));
+            $this->assertEquals(array('foo'), $rc->getUnits());
+        }
+
         public function testExtends() {
             $parser = new \TheSeer\Autoload\Parser;
             $rc = $parser->parse(new SourceFile((__DIR__.'/_data/parser/extends.php')));

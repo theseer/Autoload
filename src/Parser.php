@@ -589,6 +589,11 @@ namespace TheSeer\Autoload {
                 return false;
             }
 
+            // PHP 8 allows keywords as named arguments: new Foo(class: $bar)
+            if ($this->tokenArray[$position + 1] === ':' || $this->tokenArray[$position + 2] === ':') {
+                return false;
+            }
+
             return true;
         }
 
